@@ -1,0 +1,177 @@
+<main>
+        <div class="content">
+            <div class="left">
+                <div class="avatar">
+                    <img src="https://public-cdn.tomys.top/head.png">
+                </div>
+                <ul class="menu">
+                    <li>
+                        <a goto="#home" class="active">HOME</a>
+                    </li>
+                    <li>
+                        <a goto="#archives">ARCHIVES</a>
+                    </li>
+                    <li>
+                        <a goto="#contact">CONTACT</a>
+                    </li>
+                    <li>
+                        <a goto="#donate">DONATE</a>
+                    </li>
+                </ul>
+                <div class="copyright">
+                    Made with
+                    <i class="fa fa-heart"></i> by
+                    <br>
+                    <a href="https://fly.moe" target="_blank">Fly</a> & <a href="https://vov.moe" target="_blank">TJ</a>
+                </div>
+            </div>
+            <div class="right">
+                <section id="home" class="active">
+                    <h1>TomyJan</h1>
+                    <p>
+                        我，荼蘼 TomyJan ，是一只菜狗<br>
+                        彭家坪皇家理工学生 / 西北老汉<br>
+                        <del>没啥特长</del>特长吃喝拉撒 / 宅 / <del>变态</del>loli控 / 2.5次元 / 萌物( ? ? )<br>
+                        刘慈欣 / PKD / 陈楸帆 / 米猴 / 米卫兵 / 原批<br>
+                        艺画鸽天 / 京阿尼 / 白狐社 / <a href="https://blog.tomys.top/index.php/about" target="_blank"><font color="black">...</font></a><br>
+                        <br>
+                        <br>
+                        『 人生即是到来、相遇、陪伴、离开 』<br>
+                        <br>
+                        # TECH OTAKUS SAVE THE WORLD! #
+                    </p>
+                </section>
+                <section id="archives">
+                    <h1>近期文章</h1>
+                    <ul class="archive-list">
+                        <li>Loading...</li>
+                    </ul>
+                </section>
+                <section id="contact">
+                    <h1>捕捉方式</h1>
+                    <div class="items">
+                        <a href="https://blog.tomys.top" target="_blank" rel="noopener">
+                            <i class="fa fa-home"></i>
+                            <span>Blog</span>
+                        </a>
+                        <a href="https://pan.tomys.top" target="_blank" rel="noopener">
+                            <i class="fa fa-hdd-o"></i>
+                            <span>CloudDrive</span>
+                        </a>
+                        <a href="https://go.tomys.top" target="_blank" rel="noopener">
+                            <i class="fa fa-globe"></i>
+                            <span>Start</span>
+                        </a>
+                        <a href="https://mirror.tomys.top" target="_blank" rel="noopener">
+                            <i class="fa fa-download"></i>
+                            <span>Mirrors</span>
+                        </a>
+                        <a href="https://qiscord.tomys.top" target="_blank" rel="noopener">
+                            <i class="fa fa-qq"></i>
+                            <span>Qiscord</span>
+                        </a>
+                        <!--
+                        <a href="https://www.facebook.com/tomyjan" target="_blank" rel="noopener">
+                            <i class="fa fa-facebook-official"></i>
+                            <span>Facebook</span>
+                        </a>
+                        -->
+                        <a href="https://t.me/tomyjan" target="_blank" rel="noopener">
+                            <i class="fa fa-telegram"></i>
+                            <span>Telegram</span>
+                        </a>
+                    </div>
+                </section>
+                <section id="donate">
+                    <h1>拯救吃土的 TomyJan</h1>
+                    <p>
+                        <br>
+                        贫穷限制了我的想象力，创造力，巧克力。<br>
+                        希望您帮我摆脱贫穷。<br>
+                        <br><a href="https://donate.tomys.top/" title="救救荼蘼吧"><font color="black">Bro, Could U Click HERE?</font></a>
+                    </p>
+                </section>
+                <!--<section id="donate">
+                    <h1>求投食喵 !</h1>
+                    <div class="donate-img-box">
+                        <a href="http://url.cn/55yndVO" target="_blank"">
+                            <img src="assets/img/poor.jpg" >
+                        </a>
+                    </div>
+                </section>-->
+            </div>
+        </div>
+        <footer>
+        <br />
+        <p id="hitokoto">Loading...</p>
+        <br />
+        
+        
+        <div id="hitokoto">
+  <div>
+    
+    <!--下面是运行时间统计代码-->
+    <script>
+        function secondToDate(second) {
+            if (!second) {
+                    return 0;
+                    }
+            var time = new Array(0, 0, 0, 0, 0);
+            if (second >= 365 * 24 * 3600) {
+                time[0] = parseInt(second / (365 * 24 * 3600));
+                second %= 365 * 24 * 3600;
+                }
+            if (second >= 24 * 3600) {
+                time[1] = parseInt(second / (24 * 3600));
+                second %= 24 * 3600;
+                }
+            if (second >= 3600) {
+                time[2] = parseInt(second / 3600);
+                second %= 3600;
+                }
+            if (second >= 60) {
+                time[3] = parseInt(second / 60);
+                second %= 60;
+                }
+            if (second > 0) {
+                time[4] = second;
+                }
+            return time;
+        }
+    </script>
+    <script type="text/javascript" language="javascript">
+        function setTime() {
+            //下面是建站时间，月份需要-1
+            var create_time = Math.round(new Date(Date.UTC(2020, 06, 15, 18, 0, 0)).getTime() / 1000);
+            var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
+            currentTime = secondToDate((timestamp - create_time));
+            currentTimeHtml = currentTime[0] + '年' + currentTime[1] + '天'
+                    + currentTime[2] + '时' + currentTime[3] + '分'
+                    + currentTime[4] + '秒';
+            document.getElementById("htmer_time").innerHTML = currentTimeHtml;
+        }
+        setInterval(setTime, 1000);
+    </script>
+    <span>在风雨中度过<span id="htmer_time"></span></span>
+    <!--运行时间代码结束位置-->
+    
+    | <a href="https://www.tomys.top/sitemap.txt" target="_blank">站点地图</a>
+  </div>
+  <div>
+    <a href="https://run.amoe.cc/" target="_blank">探针</a>
+     | <a href="https://status.tomys.top/" target="_blank">运行状态</a>
+     | <a href="https://icp.gov.moe" target="_blank">萌ICP备 </a><a href="https://icp.gov.moe/?keyword=20210101" target="_blank"> 20210101号</a>
+     </div>
+     <div><a target="_blank" href="//www.beian.gov.cn/portal/registerSystemInfo?recordcode=62082502000107">
+      甘公网安备62082502000107号
+    </a>
+    | <a href="https://beian.miit.gov.cn/" target="_blank">陇ICP备20002637号-1</a>
+  </div>
+</div>
+        
+        
+        <br />
+        </footer>
+    
+    </main>
+    
