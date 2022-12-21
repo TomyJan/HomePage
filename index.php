@@ -106,6 +106,9 @@
   <script>
     (function () {
     var bv = new Bideo();
+    //视频背景直链数组
+    var videoUrls = ['https://vkceyugu.cdn.bspapp.com/VKCEYUGU-eaa4ef77-e815-459e-abcb-7df8b7cb11cc/c10b47ec-6640-4ab9-be6f-f17288c0c7b2.mp4', 'https://vkceyugu.cdn.bspapp.com/VKCEYUGU-eaa4ef77-e815-459e-abcb-7df8b7cb11cc/790948c5-808d-46a1-9e7c-1a343767ee41.mp4'];
+    var videoUrl = videoUrls[Math.floor(Math.random()*videoUrls.length)];
     bv.init({
       // Video元素
       videoEl: document.querySelector('#background_video'),
@@ -122,7 +125,7 @@
       // 加载视频源, 根据实际业务更换自己的视频源文件
       src: [
         {
-          src: 'https://vkceyugu.cdn.bspapp.com/VKCEYUGU-eaa4ef77-e815-459e-abcb-7df8b7cb11cc/c10b47ec-6640-4ab9-be6f-f17288c0c7b2.mp4',//old: https://tomys.top/bg/av843658646_2K.mp4    https://file.tomys.top/static/av843658646_2K.mp4    https://img.dujin.org/file/mp4/tomys.top_av843658646_2K.mp4
+          src: videoUrl,
           type: 'video/mp4'
         }
       ],
