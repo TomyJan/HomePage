@@ -108,8 +108,8 @@
     var bv = new Bideo();
     //视频背景直链数组 rain 心火
     var videoUrls = [
-        'https://mirror.tomys.top/d/files/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=V6G70UfuSfFNyq-XewQ8Wp4sGO7h7c1mG8YBmCheXgk=:0',
-        'https://mirror.tomys.top/d/files/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=vDXUI8Xehu9WkGRzPn4RksoyDvH154iOK-e5PcwXd00=:0'
+        'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=l7jUsLmGNnZbujtD4HeXqEA4MvC2lcFOFn1dKl3WXV8=:0',
+        'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=yBhJNT5F7L9uTdZYuNCfM1YLpb8vI9GTtgrwLkC3cts=:0'
         ];
     var videoUrl = videoUrls[Math.floor(Math.random()*videoUrls.length)];
     bv.init({
