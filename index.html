@@ -280,19 +280,37 @@
                 }
               </script>
               <script type="text/javascript" language="javascript">
-                function setTime() {
-                  //下面是建站时间，月份需要-1
-                  var create_time = Math.round(new Date(Date.UTC(2020, 6, 15, 18, 0, 0)).getTime() / 1000);
-                  var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
-                  currentTime = secondToDate((timestamp - create_time));
-                  currentTimeHtml = currentTime[0] + '年' + currentTime[1] + '天'
-                    + currentTime[2] + '时' + currentTime[3] + '分'
-                    + currentTime[4] + '秒';
-                  document.getElementById("htmer_time").innerHTML = currentTimeHtml;
+                function setTime(createTimestamp) {
+                  // 获取当前时间戳（十位），并加上8小时的偏移量
+                  let currentTimestamp = Math.floor(Date.now() / 1000) + 8 * 60 * 60;
+
+                  // 计算时间差（秒）
+                  let elapsed = currentTimestamp - createTimestamp;
+
+                  // 转换为年、天、时、分、秒
+                  let years = Math.floor(elapsed / (365 * 24 * 60 * 60));
+                  elapsed %= (365 * 24 * 60 * 60);
+                  let days = Math.floor(elapsed / (24 * 60 * 60));
+                  elapsed %= (24 * 60 * 60);
+                  let hours = Math.floor(elapsed / (60 * 60));
+                  elapsed %= (60 * 60);
+                  let minutes = Math.floor(elapsed / 60);
+                  let seconds = elapsed % 60;
+
+                  // 更新页面内容
+                  let element = document.getElementById("htmer_time");
+                  if (element) {
+                    element.innerHTML = `${years}年${days}天${hours}时${minutes}分${seconds}秒`;
+                  }
                 }
-                setInterval(setTime, 1000);
+
+                // 设置初始建站时间戳（十位时间戳：2020-07-15 18:00:00 UTC）
+                let create_time = 1594836000;
+
+                // 每秒更新
+                setInterval(() => setTime(create_time), 1000);
               </script>
-              <span>在风雨中度过<span id="htmer_time"></span></span>
+              <span>在风雨中度过<span id="htmer_time">...</span></span>
               <!--运行时间代码结束位置-->
 
               | <a href="https://www.tomys.top/sitemap.txt" target="_blank">站点地图</a>
