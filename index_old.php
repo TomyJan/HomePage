@@ -31,10 +31,11 @@
         
         gtag('config', 'G-N194P9LRRJ');
     </script>
-    
-    <!--51la统计-->
-    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-    <script>LA.init({id: "JidmAiOYd9mmSih3",ck: "JidmAiOYd9mmSih3"})</script>
+    <script>
+        if (document.referrer.includes("hostloc.com")) {
+            alert("看起来你是从 HostLoc 来到本站的? \n如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长, 也并未和本站站长相识, 只是一个拙劣的抹黑! \n不过感谢送来的流量喔~");
+        }
+    </script>
 
   </head>
 

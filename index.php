@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
-<head>
-
+<html>
+  <head>
     <meta charset="UTF-8">
     <title>TomyJan</title>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -64,11 +63,11 @@
 
         gtag('config', 'G-N194P9LRRJ');
     </script>
-    
-    <!--51la统计-->
-    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-    <script>LA.init({id: "JidmAiOYd9mmSih3",ck: "JidmAiOYd9mmSih3"})</script>
-    
+    <script>
+        if (document.referrer.includes("hostloc.com")) {
+            alert("看起来你是从 HostLoc 来到本站的? \n如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长, 也并未和本站站长相识, 只是一个拙劣的抹黑! \n不过感谢送来的流量喔~");
+        }
+    </script>
     
 </head>
 
@@ -106,11 +105,16 @@
   <script>
     (function () {
     var bv = new Bideo();
-    //视频背景直链数组 rain 心火
+    //视频背景直链数组 rain 心火 萤之森
+    // var videoUrls = [
+    //     'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=l7jUsLmGNnZbujtD4HeXqEA4MvC2lcFOFn1dKl3WXV8=:0',
+    //     'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=yBhJNT5F7L9uTdZYuNCfM1YLpb8vI9GTtgrwLkC3cts=:0',
+    //     'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av89474889_%E8%8D%A7%E4%B9%8B%E6%A3%AE.mp4?sign=n6T4tRGOT-ybnsTZnUKvAJ87Ss1RlLuiE_YGtkgzBi0=:0'
+    //     ];
     var videoUrls = [
-        'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=l7jUsLmGNnZbujtD4HeXqEA4MvC2lcFOFn1dKl3WXV8=:0',
-        'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=yBhJNT5F7L9uTdZYuNCfM1YLpb8vI9GTtgrwLkC3cts=:0',
-	'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av89474889_%E8%8D%A7%E4%B9%8B%E6%A3%AE.mp4?sign=n6T4tRGOT-ybnsTZnUKvAJ87Ss1RlLuiE_YGtkgzBi0=:0'
+        'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/e208855e3270835015471114876/iAbeVyX87O8A.mp4?bili-avid=95473051',
+        'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/9e4c871a3270835015446138405/A2whnUfubTgA.mp4?bili-avid=802039278',
+        'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/ccf9295d3270835015467515037/khX5M4cLkukA.mp4?bili-avid=89474889'
         ];
     var videoUrl = videoUrls[Math.floor(Math.random()*videoUrls.length)];
     bv.init({
@@ -137,6 +141,7 @@
       onLoad: function () {
         document.querySelector('#video_cover').style.display = 'none';
         document.querySelector('#mute').style.backgroundImage = "url('https://cdn.tomys.top/myindex/videobg/mute.png')";
+        
       }
     });
   }());
