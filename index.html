@@ -413,7 +413,7 @@
     window.addEventListener('load', () => {
       document.getElementById('loading-overlay').style.display = 'none';
       document.getElementById('container').style.display = 'block';
-      const hostname = window.location.hostname;
+      const hostname = window.top.location.hostname;
       if (hostname.endsWith('tomys.top')) {
         document.getElementById('links-tomys-top').style.display = 'block';
       } else if (hostname.endsWith('amoe.cc')) {
