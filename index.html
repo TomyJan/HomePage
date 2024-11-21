@@ -73,6 +73,10 @@
       background-position: center;
     }
 
+    .icp-links {
+      display: none;
+    }
+
     #overlay {
       position: absolute;
       top: 0;
@@ -365,15 +369,31 @@
               <span>在风雨中度过<span id="htmer_time">...</span></span>
               <!--运行时间代码结束位置-->
             </div>
+            <!-- 站点地图和探针 -->
             <div>
               <a href="https://www.tomys.top/sitemap.txt" target="_blank">站点地图</a>
-              |&nbsp;<a href="https://run.amoe.cc/" target="_blank">探针</a>
+              |&nbsp;<a href="https://run.amoe.cc/" target="_blank">服务探针</a>
               |&nbsp;<a href="https://status.tomys.top/" target="_blank">运行状态</a>
             </div>
-            <div>
+            <!-- 备案链接组 -->
+            <div class="icp-links" id="links-tomys-top">
               <a href="https://icp.gov.moe/?keyword=20210101" target="_blank">萌ICP备20210101号</a>
               |&nbsp;<a href="https://beian.miit.gov.cn/" target="_blank">陇ICP备20002637号-1</a>
               |&nbsp;<a target="_blank" href="//www.beian.gov.cn/portal/registerSystemInfo?recordcode=62082502000107">甘公网安备62082502000107号</a>
+            </div>
+            <div class="icp-links" id="link-amoe-cc">
+              <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021003464号-1</a>
+            </div>
+            <div class="icp-links" id="links-tomyjan-com">
+              <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021003464号-10</a>
+            </div>
+            <div class="icp-links" id="links-local">
+              <a href="#" target="_blank">正如你所见, 你正在本地进行开发~</a>
+            </div>
+            <div class="icp-links" id="links-unk">
+              <a href="https://www.tomys.top" target="_blank">天哪, 这居然是个未知的域名?</a>
+            </div>
+            <div class="icp-links" id="links-nothing">
             </div>
           </div>
 
@@ -431,10 +451,24 @@
   </div>
 
   <script>
-    // 页面加载完成后移除遮罩并显示内容
+    // 页面加载完成后移除遮罩, 显示内容, 动态调整备案号
     window.addEventListener('load', () => {
       document.getElementById('loading-overlay').style.display = 'none';
       document.getElementById('container').style.display = 'block';
+      const hostname = window.location.hostname;
+      if (hostname.endsWith('tomys.top')) {
+        document.getElementById('links-tomys-top').style.display = 'block';
+      } else if (hostname.endsWith('amoe.cc')) {
+        document.getElementById('link-amoe-cc').style.display = 'block';
+      } else if (hostname.endsWith('tomyjan.com')) {
+        document.getElementById('links-tomyjan-com').style.display = 'block';
+      } else if (hostname.includes('localhost') || hostname.includes('127.0.0.') || hostname.includes('10.0.') || hostname.includes('10.1.')) {  
+        document.getElementById('links-local').style.display = 'block';
+      } else if (hostname.endsWith('vov.moe') || hostname.endsWith('misaka.site') || hostname.endsWith('ctx.cm') || hostname.endsWith('tu.edu.kg') || hostname.endsWith('tomy.pp.ua') || hostname.endsWith('tomyjan.pp.ua') || hostname.endsWith('喵.cf') || hostname.endsWith('喵.tk') || hostname.endsWith('tomyjan.cf') || hostname.endsWith('tomyjan.gq') || hostname.endsWith('tomyjan.tk') || hostname.endsWith('荼蘼.gq') || hostname.endsWith('荼蘼.tk')) {
+        document.getElementById('links-nothing').style.display = 'block';
+      } else {
+        document.getElementById('links-unk').style.display = 'block';
+      }
     });
   </script>
 </body>
