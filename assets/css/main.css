@@ -42,8 +42,6 @@ p,
 ul,
 li,
 h1 {
-    margin: 0;
-    padding: 0;
     font-weight: initial;
 }
 
@@ -71,6 +69,68 @@ img {
 
 a {
     text-decoration: none;
+}
+
+a:link,
+a:visited {
+    color: #FFFFFF;
+}
+
+a:hover {
+    color: #00FBFF;
+}
+
+a:active {
+    color: #0000FF;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#background_video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    z-index: -9999;
+}
+
+#video_cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('https://api.tomys.top/api/acgimg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.icp-links {
+    display: none;
+}
+
+#video_controls {
+    position: absolute;
+    left: 96%;
+    top: 92%;
+    transform: translate(-50%, 0);
+}
+
+#mute img {
+    width: 23px;
+    height: 23px;
+    background: url('assets/img/blank.png') no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 /* loading */
@@ -131,9 +191,6 @@ a {
 
 /* Main */
 body {
-    font-family: Lucida Grande, Lucida Sans Unicode, Lucida, Helvetica Neue,
-        Helvetica, Arial, Microsoft Yahei, Hiragino Sans GB, Heiti SC,
-        WenQuanYi Micro Hei, sans-serif;
     -webkit-font-smoothing: antialiased;
     background-repeat: no-repeat;
     background-position: center;
@@ -356,7 +413,6 @@ footer #hitokoto {
 /* APlayer */
 .aplayer {
     background: #fff;
-    font-family: Arial, Helvetica, sans-serif;
     margin: 5px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.07), 0 1px 5px 0 rgba(0, 0, 0, 0.1);
     border-radius: 2px;

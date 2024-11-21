@@ -50,7 +50,7 @@ function getHitokoto() {
 }
 
 function write(text) {
-    if (text.length < 30) {
+    if (text.length <= 50) {
         $('#hitokoto').html(text);
     } else {
         getHitokoto();
@@ -78,28 +78,3 @@ Date.prototype.Format = function (fmt) { //author: meizz
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
-
-//异步加载背景
-
-function blobToDataURI(blob, callback) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        callback(e.target.result);
-    }
-    reader.readAsDataURL(blob);
-}
-var url = "https://api.tomys.top/api/acgimg";
-var xhr = new XMLHttpRequest();
-xhr.open('GET', url, true);
-xhr.responseType = "blob";
-xhr.onload = function () {
-    if (this.status == 200) {
-        var blob = this.response;
-        blobToDataURI(blob, function (t) {
-            $("body").css("background-image", "url('" + t + "')");
-            $("#background-small").addClass("smallBg");
-            $("#background-small").css("opacity", "0");
-        });
-    }
-}
-xhr.send();

@@ -35,60 +35,6 @@
       overflow: hidden;
     }
 
-    a:link {
-      color: #FFFFFF;
-    }
-
-    /* 未访问链接*/
-    a:visited {
-      color: #FFFFFF;
-    }
-
-    /* 已访问链接 */
-    a:hover {
-      color: #00FBFF;
-    }
-
-    /* 鼠标移动到链接上 */
-    a:active {
-      color: #0000FF;
-    }
-
-    /* 鼠标点击时 */
-
-    #background_video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      object-fit: cover;
-      height: 100%;
-      width: 100%;
-      z-index: -9999;
-    }
-
-    #video_cover {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: url('');
-      background-size: cover;
-      background-position: center;
-    }
-
-    .icp-links {
-      display: none;
-    }
-
-    #overlay {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
     #loading-overlay {
       position: fixed;
       top: 0;
@@ -99,8 +45,23 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: rgba(0, 0, 0, 0.8);
       z-index: 10000;
+    }
+
+    #loading-overlay::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: calc(100% + 100px);
+      height: calc(100% + 100px);
+      background-color: rgba(0, 0, 0, 0.9);
+      background-image: url('https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(10px);
+      z-index: -1;
     }
 
     .loading-spinner {
@@ -145,20 +106,13 @@
       font-size: 1.6em;
     }
 
-    #video_controls {
-      position: absolute;
-      left: 96%;
-      top: 92%;
-      transform: translate(-50%, 0);
+    /* 深色模式使用不同的背景 */
+    @media (prefers-color-scheme: dark) {
+      #loading-overlay::before {
+        background-image: url('https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background_dark.jpg');
+      }
     }
 
-    #mute img {
-      width: 23px;
-      height: 23px;
-      background: url('assets/img/blank.png') no-repeat;
-      background-size: cover;
-      background-position: center;
-    }
   </style>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
