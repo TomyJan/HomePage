@@ -128,7 +128,7 @@ a:active {
 #mute img {
     width: 23px;
     height: 23px;
-    background: url('assets/img/blank.png') no-repeat;
+    background: url('/assets/img/blank.png') no-repeat;
     background-size: cover;
     background-position: center;
 }
