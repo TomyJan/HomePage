@@ -2,7 +2,7 @@ var api = "https://blog.tomys.top/";
 
 $(document).ready(function () {
     $(".loading").hide();
-    getAchives();
+    getAchieves();
     getHitokoto();
 });
 
@@ -18,7 +18,7 @@ function switchTo(target) {
     $(target).addClass('active');
 }
 
-function getAchives() {
+function getAchieves() {
     t = ``;
     $.ajax({
         type: "GET",
@@ -38,7 +38,7 @@ function getAchives() {
 
 function getHitokoto() {
     $.ajax({
-        url: "https://api.tomys.top/api/hitokoto",
+        url: "https://api.tomys.top/api/hitokoto?c=a",
         dataType: "json",
         success: function (result) {
             write(result.hitokoto + " —— " + result.from);
