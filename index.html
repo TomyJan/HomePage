@@ -150,8 +150,8 @@
     <div id="overlay"></div>
     <!-- #video_controls 用来控制视频静音、取消静音 -->
     <div id="video_controls">
-      <span id="mute" style="background-repeat: no-repeat;">
-        <img src="assets/img/blank.png">
+      <span id="mute">
+        <i class="fa-solid fa-volume-xmark"></i>
       </span>
     </div>
     <!-- section 中添加任意你想展示的HTML内容 -->
@@ -387,10 +387,6 @@
           resize: true,
           // autoplay: false,
           muteButton: document.querySelector('#mute'),
-          // 静音图标
-          _muteImage: 'assets/img/mute.png',
-          // 取消静音图标
-          _unmuteImage: 'assets/img/unmute.png',
           // 加载视频源, 根据实际业务更换自己的视频源文件
           src: [
             {
@@ -401,8 +397,7 @@
           // 一旦视频加载后即将视频封面隐藏
           onLoad: function () {
             document.querySelector('#video_cover').style.display = 'none';
-            document.querySelector('#mute').style.backgroundImage = "url('assets/img/mute.png')";
-
+            document.querySelector('#mute i').className = 'fa-solid fa-volume-xmark';
           }
         });
       }());

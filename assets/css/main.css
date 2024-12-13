@@ -119,18 +119,31 @@ a:active {
 }
 
 #video_controls {
-    position: absolute;
-    left: 96%;
-    top: 92%;
-    transform: translate(-50%, 0);
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 999;
 }
 
-#mute img {
-    width: 23px;
-    height: 23px;
-    background: url('/assets/img/blank.png') no-repeat;
-    background-size: cover;
-    background-position: center;
+#mute {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#mute i {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5em;
+    transition: all 0.3s ease;
+}
+
+#mute:hover i {
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
 }
 
 /* loading */

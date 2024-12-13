@@ -95,14 +95,12 @@ function setupBideoInstance() {
             "click",
             function () {
               if (self.videoEl.muted) {
-                self.opt.muteButton.style.backgroundImage =
-                  "url('" + self.opt._unmuteImage + "')";
+                self.videoEl.muted = false;
+                this.querySelector('i').className = 'fa-solid fa-volume-high';
               } else {
-                self.opt.muteButton.style.backgroundImage =
-                  "url('" + self.opt._muteImage + "')";
+                self.videoEl.muted = true;
+                this.querySelector('i').className = 'fa-solid fa-volume-xmark';
               }
-              self.videoEl.muted = !self.videoEl.muted;
-              console.log(self.videoEl.muted);
             },
             false
           );
