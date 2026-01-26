@@ -1,0 +1,16 @@
+{
+  "name": "tomyjan-homepage",
+  "__intro__": "https://edgeone.cloud.tencent.com/pages/document/162936771610066944",
+  "redirects": [
+    {
+      "source": "/pay.php*",
+      "destination": "/pay.html?from=old_paycode",
+      "statusCode": 301
+    },
+    {
+      "source": "/feed*",
+      "destination": "https://donate.tomys.top/from=old_feed",
+      "statusCode": 301
+    }
+  ]
+}
