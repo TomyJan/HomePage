@@ -9,7 +9,7 @@
     },
     {
       "source": "/feed*",
-      "destination": "https://donate.tomys.top/from=old_feed",
+      "destination": "https://donate.tomys.top/?from=old_feed",
       "statusCode": 301
     }
   ]
