@@ -410,7 +410,28 @@
     window.addEventListener('load', () => {
       document.getElementById('loading-overlay').style.display = 'none';
       document.getElementById('container').style.display = 'block';
-      const hostname = document.referrer ? new URL(document.referrer).hostname : window.location.hostname;
+      
+      let hostname = window.location.hostname;
+      
+      // 检查是否在 iframe 中
+      try {
+        if (window.self !== window.top) {
+          // 在 iframe 中，尝试获取顶层窗口的 hostname
+          hostname = window.top.location.hostname;
+        }
+      } catch (e) {
+        // 跨域情况下无法访问 window.top.location，使用 referrer 作为后备方案
+        if (document.referrer) {
+          try {
+            hostname = new URL(document.referrer).hostname;
+          } catch (err) {
+            // referrer 解析失败，保持使用当前 hostname
+            console.warn('无法解析 referrer，使用当前页面 hostname');
+          }
+        }
+      }
+      
+      // 根据 hostname 显示对应的备案链接
       if (hostname.endsWith('tomys.top')) {
         document.getElementById('links-tomys-top').style.display = 'block';
       } else if (hostname.endsWith('amoe.cc')) {
