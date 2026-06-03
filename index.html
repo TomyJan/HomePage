@@ -1,452 +1,517 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
-  <meta charset="UTF-8">
-  <title>TomyJan</title>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta http-equiv="Cache-Control" content="no-transform">
-  <meta http-equiv="Cache-Control" content="no-siteapp">
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <meta name="robots" content="index,follow">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="keywords" content="TomyJan,荼蘼,主页">
-  <meta name="description" content="TomyJan的个人主页">
-  <link rel="me" href="https://mastodon.social/@TomyJan"><!-- Mastodon Verification -->
-  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
-  <link rel="stylesheet" href="https://cdn.amoe.cc/lib/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="https://font.sec.miui.com/font/css?family=MiSans:400,700:MiSans" />
-  <script src="https://cdn.amoe.cc/lib/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdn.amoe.cc/lib/aplayer/1.10.1/APlayer.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-family: MiSans;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
-
-    #loading-overlay::before {
-      content: '';
-      position: absolute;
-      top: -50px;
-      left: -50px;
-      width: calc(100% + 100px);
-      height: calc(100% + 100px);
-      background-color: rgba(0, 0, 0, 0.9);
-      background-image: url('https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      filter: blur(10px);
-      z-index: -1;
-    }
-
-    .loading-spinner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 80px;
-    }
-
-    .loading-spinner div {
-      width: 15px;
-      height: 15px;
-      background-color: white;
-      border-radius: 50%;
-      animation: bounce 1.4s infinite ease-in-out;
-    }
-
-    .loading-spinner div:nth-child(2) {
-      animation-delay: -0.32s;
-    }
-
-    .loading-spinner div:nth-child(3) {
-      animation-delay: -0.16s;
-    }
-
-    @keyframes bounce {
-      0%,
-      80%,
-      100% {
-        transform: scale(0);
+  <head>
+    <meta charset="UTF-8" />
+    <title>TomyJan</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="robots" content="index,follow" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <meta name="keywords" content="TomyJan,荼蘼,主页" />
+    <meta name="description" content="TomyJan的个人主页" />
+    <link rel="me" href="https://mastodon.social/@TomyJan" />
+    <!-- Mastodon Verification -->
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.amoe.cc/lib/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://font.sec.miui.com/font/css?family=MiSans:400,700:MiSans"
+    />
+    <script src="https://cdn.amoe.cc/lib/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.amoe.cc/lib/aplayer/1.10.1/APlayer.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: MiSans;
       }
 
-      40% {
-        transform: scale(1);
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
       }
-    }
 
-    #loading-text {
-      margin-top: 100px;
-      text-align: center;
-      color: white;
-      font-size: 1.6em;
-    }
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+      }
 
-    /* 深色模式使用不同的背景 */
-    @media (prefers-color-scheme: dark) {
       #loading-overlay::before {
-        background-image: url('https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background_dark.jpg');
+        content: "";
+        position: absolute;
+        top: -50px;
+        left: -50px;
+        width: calc(100% + 100px);
+        height: calc(100% + 100px);
+        background-color: rgba(0, 0, 0, 0.9);
+        background-image: url("https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(10px);
+        z-index: -1;
       }
-    }
 
-  </style>
+      .loading-spinner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80px;
+      }
 
-  <script defer src="https://umami.amoe.cc/script.js" data-website-id="456b5804-762e-4747-a9b1-c6b82061a177"></script>
-  <!-- Global site tag (gtag.js) - Google Analytics https://www.googletagmanager.com/gtag/js?id=G-N194P9LRRJ -->
-  <script async src="assets/js/gtag.js?id=G-N194P9LRRJ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-N194P9LRRJ');
-  </script>
-  <script>
-    if (document.referrer.includes("hostloc.com")) {
-      alert("看起来你是从 HostLoc 来到本站的? \n如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长, 也并未和本站站长相识, 只是一个拙劣的抹黑! \n不过感谢送来的流量喔~");
-    }
-  </script>
-</head>
+      .loading-spinner div {
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        border-radius: 50%;
+        animation: bounce 1.4s infinite ease-in-out;
+      }
 
-<body>
-  <!-- 加载遮罩层 -->
-  <div id="loading-overlay">
-    <div class="loading-spinner">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-    <div id="loading-text">&nbsp;&nbsp;Loading...</div>
-  </div>
+      .loading-spinner div:nth-child(2) {
+        animation-delay: -0.32s;
+      }
 
-  <div id="container" style="display: none;">
-    <video id="background_video" loop muted>你的浏览器好像不支持内嵌视频诶，换个浏览器试试吧~</video>
-    <!-- #video_cover 是默认的视频封面 -->
-    <div id="video_cover"></div>
-    <!-- #overlay 遮罩层 -->
-    <div id="overlay"></div>
-    <!-- #video_controls 用来控制视频静音、取消静音 -->
-    <div id="video_controls">
-      <span id="mute">
-        <i class="fa-solid fa-volume-xmark"></i>
-      </span>
-    </div>
-    <!-- section 中添加任意你想展示的HTML内容 -->
-    <section id="main_content">
-      <div class="loading">
-        <div class="spinner">
-          <div class="rect1"></div>
-          <div class="rect2"></div>
-          <div class="rect3"></div>
-          <div class="rect4"></div>
-          <div class="rect5"></div>
-        </div>
-      </div>
-      <main>
-        <div class="content">
-          <div class="left">
-            <div class="avatar">
-              <img src="https://public-cdn.tomys.top/head.png">
-            </div>
-            <ul class="menu">
-              <li>
-                <a goto="#home" class="active">HOME</a>
-              </li>
-              <li>
-                <a goto="#archives">ARCHIVES</a>
-              </li>
-              <li>
-                <a goto="#contact">CONTACT</a>
-              </li>
-              <li>
-                <a goto="#donate">DONATE</a>
-              </li>
-            </ul>
-            <div class="copyright">
-              Made with
-              <i class="fa-solid fa-heart"></i> by
-              <br>
-              <a href="https://github.com/TomyJan/HomePage" target="_blank">TomyJan</a>
-            </div>
-          </div>
-          <div class="right">
-            <section id="home" class="active">
-              <h1>TomyJan</h1>
-              <p>
-                我，荼蘼 TomyJan ，是一只菜狗<br>
-                彭家坪皇家理工学生 / 全沾工程师 / 西北老汉<br>
-                <del>没啥特长</del>特长吃喝拉撒 / 宅 / <del>变态</del>loli控 / 2.5次元 / 萌物( ? ? )<br>
-                刘慈欣 / PKD / 米猴 / 库孝子 / 收集癖<br>
-                艺画鸽天 / 京阿尼 / <a href="https://blog.tomys.top/about" target="_blank">
-                  <font color="black">...</font>
-                </a><br>
-                <br>
-                <br>
-                『 人生即是到来、相遇、陪伴、离开 』<br>
-                <br>
-              </p>
-            </section>
-            <section id="archives">
-              <h1>近期文章</h1>
-              <ul class="archive-list">
-                <li>Loading...</li>
-              </ul>
-            </section>
-            <section id="contact">
-              <h1>捕捉方式</h1>
-              <div class="items">
-                <a href="https://blog.tomys.top/" target="_blank">
-                  <i class="fa-duotone fa-solid fa-blog"></i>
-                  <span>Blog</span>
-                </a>
-                <a href="https://pan.tomys.top/" target="_blank">
-                  <i class="fa-solid fa-hard-drive"></i>
-                  <span>CloudDrive</span>
-                </a>
-                <a href="https://go.tomys.top/" target="_blank">
-                  <i class="fa-solid fa-globe"></i>
-                  <span>Start</span>
-                </a>
-                <a href="https://mirror.tomys.top/" target="_blank">
-                  <i class="fa-solid fa-file-arrow-down"></i>
-                  <span>Mirrors</span>
-                </a>
-                <a href="https://qun.tomys.top/" target="_blank">
-                  <i class="fa-brands fa-qq"></i>
-                  <span>QGroup</span>
-                </a>
-                <a href="https://t.me/tomyjan/" target="_blank">
-                  <i class="fa-brands fa-telegram"></i>
-                  <span>Telegram</span>
-                </a>
-              </div>
-            </section>
-            <section id="donate">
-              <h1>拯救吃土的 TomyJan</h1>
-              <p>
-                <br>
-                贫穷限制了我的想象力，创造力，巧克力。<br>
-                希望您帮我摆脱贫穷。<br>
-                <br><a href="https://donate.tomys.top/" target="_blank" title="救救荼蘼吧">
-                  <font color="black">Bro, Could U Click HERE?</font>
-                </a>
-              </p>
-            </section>
-          </div>
-        </div>
-        <footer>
-          <br />
-          <p id="hitokoto">Loading...</p>
-          <br />
+      .loading-spinner div:nth-child(3) {
+        animation-delay: -0.16s;
+      }
 
-          <div>
-            <div>
+      @keyframes bounce {
+        0%,
+        80%,
+        100% {
+          transform: scale(0);
+        }
 
-              <!--下面是运行时间统计代码-->
-              <script>
-                function secondToDate(second) {
-                  if (!second) {
-                    return 0;
-                  }
-                  var time = new Array(0, 0, 0, 0, 0);
-                  if (second >= 365 * 24 * 3600) {
-                    time[0] = parseInt(second / (365 * 24 * 3600));
-                    second %= 365 * 24 * 3600;
-                  }
-                  if (second >= 24 * 3600) {
-                    time[1] = parseInt(second / (24 * 3600));
-                    second %= 24 * 3600;
-                  }
-                  if (second >= 3600) {
-                    time[2] = parseInt(second / 3600);
-                    second %= 3600;
-                  }
-                  if (second >= 60) {
-                    time[3] = parseInt(second / 60);
-                    second %= 60;
-                  }
-                  if (second > 0) {
-                    time[4] = second;
-                  }
-                  return time;
-                }
-              </script>
-              <script type="text/javascript" language="javascript">
-                function setTime(createTimestamp) {
-                  // 获取当前时间戳（十位），并加上8小时的偏移量
-                  let currentTimestamp = Math.floor(Date.now() / 1000) + 8 * 60 * 60;
+        40% {
+          transform: scale(1);
+        }
+      }
 
-                  // 计算时间差（秒）
-                  let elapsed = currentTimestamp - createTimestamp;
+      #loading-text {
+        margin-top: 100px;
+        text-align: center;
+        color: white;
+        font-size: 1.6em;
+      }
 
-                  // 转换为年、天、时、分、秒
-                  let years = Math.floor(elapsed / (365 * 24 * 60 * 60));
-                  elapsed %= (365 * 24 * 60 * 60);
-                  let days = Math.floor(elapsed / (24 * 60 * 60));
-                  elapsed %= (24 * 60 * 60);
-                  let hours = Math.floor(elapsed / (60 * 60));
-                  elapsed %= (60 * 60);
-                  let minutes = Math.floor(elapsed / 60);
-                  let seconds = elapsed % 60;
+      /* 深色模式使用不同的背景 */
+      @media (prefers-color-scheme: dark) {
+        #loading-overlay::before {
+          background-image: url("https://cdn.amoe.cc/web-static/private/tomyjan-website/common/img/blog-background_dark.jpg");
+        }
+      }
+    </style>
 
-                  // 更新页面内容
-                  let element = document.getElementById("htmer_time");
-                  if (element) {
-                    element.innerHTML = `${years}年${days}天${hours}时${minutes}分${seconds}秒`;
-                  }
-                }
-
-                // 设置初始建站时间戳（十位时间戳：2020-07-15 18:00:00 UTC）
-                let create_time = 1594836000;
-
-                // 每秒更新
-                setInterval(() => setTime(create_time), 1000);
-              </script>
-              <span>在风雨中度过<span id="htmer_time">...</span></span>
-              <!--运行时间代码结束位置-->
-            </div>
-            <!-- 站点地图和探针 -->
-            <div>
-              <a href="https://www.tomys.top/sitemap.txt" target="_blank">站点地图</a>
-              |&nbsp;<a href="https://run.amoe.cc/" target="_blank">服务探针</a>
-              |&nbsp;<a href="https://status.tomys.top/" target="_blank">运行状态</a>
-            </div>
-            <!-- 备案链接组 -->
-            <div class="icp-links" id="links-tomys-top">
-              <a href="https://icp.gov.moe/?keyword=20210101" target="_blank">萌ICP备20210101号</a>
-              |&nbsp;<a href="https://beian.miit.gov.cn/" target="_blank">陇ICP备20002637号-1</a>
-              |&nbsp;<a target="_blank" href="//www.beian.gov.cn/portal/registerSystemInfo?recordcode=62082502000107">甘公网安备62082502000107号</a>
-            </div>
-            <div class="icp-links" id="link-amoe-cc">
-              <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021003464号-1</a>
-            </div>
-            <div class="icp-links" id="links-tomyjan-com">
-              <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021003464号-10</a>
-            </div>
-            <div class="icp-links" id="links-local">
-              <a href="#">正如你所见, 你正在本地进行开发~</a>
-            </div>
-            <div class="icp-links" id="links-unk">
-              <a href="https://www.tomys.top" target="_blank">天哪, 这居然是个未知的域名?</a>
-            </div>
-            <div class="icp-links" id="links-nothing">
-            </div>
-          </div>
-
-          <br />
-        </footer>
-
-      </main>
-      <script src="assets/js/main.js"></script>
-    </section>
-    <script src="assets/js/bideo.js"></script>
+    <script
+      defer
+      src="https://umami.amoe.cc/script.js"
+      data-website-id="456b5804-762e-4747-a9b1-c6b82061a177"
+    ></script>
+    <!-- Global site tag (gtag.js) - Google Analytics https://www.googletagmanager.com/gtag/js?id=G-N194P9LRRJ -->
+    <script async src="assets/js/gtag.js?id=G-N194P9LRRJ"></script>
     <script>
-      (function () {
-        var bv = new Bideo();
-        //视频背景直链数组 rain 心火 萤之森
-        // var videoUrls = [
-        // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=l7jUsLmGNnZbujtD4HeXqEA4MvC2lcFOFn1dKl3WXV8=:0',
-        // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=yBhJNT5F7L9uTdZYuNCfM1YLpb8vI9GTtgrwLkC3cts=:0',
-        // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av89474889_%E8%8D%A7%E4%B9%8B%E6%A3%AE.mp4?sign=n6T4tRGOT-ybnsTZnUKvAJ87Ss1RlLuiE_YGtkgzBi0=:0'
-        // ];
-        var videoUrls = [
-          'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/e208855e3270835015471114876/iAbeVyX87O8A.mp4?bili-avid=95473051',
-          'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/9e4c871a3270835015446138405/A2whnUfubTgA.mp4?bili-avid=802039278',
-          'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/ccf9295d3270835015467515037/khX5M4cLkukA.mp4?bili-avid=89474889'
-        ];
-        var videoUrl = videoUrls[Math.floor(Math.random() * videoUrls.length)];
-        bv.init({
-          // Video元素
-          videoEl: document.querySelector('#background_video'),
-          // 容器元素
-          container: document.querySelector('body'),
-          // 自适应调整
-          resize: true,
-          // autoplay: false,
-          muteButton: document.querySelector('#mute'),
-          // 加载视频源, 根据实际业务更换自己的视频源文件
-          src: [
-            {
-              src: videoUrl,
-              type: 'video/mp4'
-            }
-          ],
-          // 一旦视频加载后即将视频封面隐藏
-          onLoad: function () {
-            document.querySelector('#video_cover').style.display = 'none';
-            document.querySelector('#mute i').className = 'fa-solid fa-volume-xmark';
-          }
-        });
-      }());
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-N194P9LRRJ");
     </script>
-  </div>
+    <script>
+      if (document.referrer.includes("hostloc.com")) {
+        alert(
+          "看起来你是从 HostLoc 来到本站的? \n如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长, 也并未和本站站长相识, 只是一个拙劣的抹黑! \n不过感谢送来的流量喔~",
+        );
+      }
+    </script>
+  </head>
 
-  <script>
-    // 页面加载完成后移除遮罩, 显示内容, 动态调整备案号
-    window.addEventListener('load', () => {
-      document.getElementById('loading-overlay').style.display = 'none';
-      document.getElementById('container').style.display = 'block';
-      
-      let hostname = window.location.hostname;
-      
-      // 检查是否在 iframe 中
-      try {
-        if (window.self !== window.top) {
-          // 在 iframe 中，尝试获取顶层窗口的 hostname
-          hostname = window.top.location.hostname;
-        }
-      } catch (e) {
-        // 跨域情况下无法访问 window.top.location，使用 referrer 作为后备方案
-        if (document.referrer) {
-          try {
-            hostname = new URL(document.referrer).hostname;
-          } catch (err) {
-            // referrer 解析失败，保持使用当前 hostname
-            console.warn('无法解析 referrer，使用当前页面 hostname');
+  <body>
+    <!-- 加载遮罩层 -->
+    <div id="loading-overlay">
+      <div class="loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div id="loading-text">&nbsp;&nbsp;Loading...</div>
+    </div>
+
+    <div id="container" style="display: none">
+      <video id="background_video" loop muted>
+        你的浏览器好像不支持内嵌视频诶，换个浏览器试试吧~
+      </video>
+      <!-- #video_cover 是默认的视频封面 -->
+      <div id="video_cover"></div>
+      <!-- #overlay 遮罩层 -->
+      <div id="overlay"></div>
+      <!-- #video_controls 用来控制视频静音、取消静音 -->
+      <div id="video_controls">
+        <span id="mute">
+          <i class="fa-solid fa-volume-xmark"></i>
+        </span>
+      </div>
+      <!-- section 中添加任意你想展示的HTML内容 -->
+      <section id="main_content">
+        <div class="loading">
+          <div class="spinner">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+          </div>
+        </div>
+        <main>
+          <div class="content">
+            <div class="left">
+              <div class="avatar">
+                <img src="https://public-cdn.tomys.top/head.png" />
+              </div>
+              <ul class="menu">
+                <li>
+                  <a goto="#home" class="active">HOME</a>
+                </li>
+                <li>
+                  <a goto="#archives">ARCHIVES</a>
+                </li>
+                <li>
+                  <a goto="#contact">CONTACT</a>
+                </li>
+                <li>
+                  <a goto="#donate">DONATE</a>
+                </li>
+              </ul>
+              <div class="copyright">
+                Made with
+                <i class="fa-solid fa-heart"></i> by
+                <br />
+                <a href="https://github.com/TomyJan/HomePage" target="_blank"
+                  >TomyJan</a
+                >
+              </div>
+            </div>
+            <div class="right">
+              <section id="home" class="active">
+                <h1>TomyJan</h1>
+                <p>
+                  我，荼蘼 TomyJan ，是一只菜狗<br />
+                  彭家坪皇家理工学生 / 全沾工程师 / 西北老汉<br />
+                  <del>没啥特长</del>特长吃喝拉撒 / 宅 / <del>变态</del>loli控 /
+                  2.5次元 / 萌物( ? ? )<br />
+                  刘慈欣 / PKD / 米猴 / 库孝子 / 收集癖<br />
+                  艺画鸽天 / 京阿尼 /
+                  <a href="https://blog.tomys.top/about" target="_blank">
+                    <font color="black">...</font> </a
+                  ><br />
+                  <br />
+                  <br />
+                  『 人生即是到来、相遇、陪伴、离开 』<br />
+                  <br />
+                </p>
+              </section>
+              <section id="archives">
+                <h1>近期文章</h1>
+                <ul class="archive-list">
+                  <li>Loading...</li>
+                </ul>
+              </section>
+              <section id="contact">
+                <h1>捕捉方式</h1>
+                <div class="items">
+                  <a href="https://blog.tomys.top/" target="_blank">
+                    <i class="fa-duotone fa-solid fa-blog"></i>
+                    <span>Blog</span>
+                  </a>
+                  <a href="https://pan.tomys.top/" target="_blank">
+                    <i class="fa-solid fa-hard-drive"></i>
+                    <span>CloudDrive</span>
+                  </a>
+                  <a href="https://go.tomys.top/" target="_blank">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>Start</span>
+                  </a>
+                  <a href="https://mirror.tomys.top/" target="_blank">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Mirrors</span>
+                  </a>
+                  <a href="https://qun.tomys.top/" target="_blank">
+                    <i class="fa-brands fa-qq"></i>
+                    <span>QGroup</span>
+                  </a>
+                  <a href="https://t.me/tomyjan/" target="_blank">
+                    <i class="fa-brands fa-telegram"></i>
+                    <span>Telegram</span>
+                  </a>
+                </div>
+              </section>
+              <section id="donate">
+                <h1>拯救吃土的 TomyJan</h1>
+                <p>
+                  <br />
+                  贫穷限制了我的想象力，创造力，巧克力。<br />
+                  希望您帮我摆脱贫穷。<br />
+                  <br /><a
+                    href="https://donate.tomys.top/"
+                    target="_blank"
+                    title="救救荼蘼吧"
+                  >
+                    <font color="black">Bro, Could U Click HERE?</font>
+                  </a>
+                </p>
+              </section>
+            </div>
+          </div>
+          <footer>
+            <br />
+            <p id="hitokoto">Loading...</p>
+            <br />
+
+            <div>
+              <div>
+                <!--下面是运行时间统计代码-->
+                <script>
+                  function secondToDate(second) {
+                    if (!second) {
+                      return 0;
+                    }
+                    var time = new Array(0, 0, 0, 0, 0);
+                    if (second >= 365 * 24 * 3600) {
+                      time[0] = parseInt(second / (365 * 24 * 3600));
+                      second %= 365 * 24 * 3600;
+                    }
+                    if (second >= 24 * 3600) {
+                      time[1] = parseInt(second / (24 * 3600));
+                      second %= 24 * 3600;
+                    }
+                    if (second >= 3600) {
+                      time[2] = parseInt(second / 3600);
+                      second %= 3600;
+                    }
+                    if (second >= 60) {
+                      time[3] = parseInt(second / 60);
+                      second %= 60;
+                    }
+                    if (second > 0) {
+                      time[4] = second;
+                    }
+                    return time;
+                  }
+                </script>
+                <script type="text/javascript" language="javascript">
+                  function setTime(createTimestamp) {
+                    // 获取当前时间戳（十位），并加上8小时的偏移量
+                    let currentTimestamp =
+                      Math.floor(Date.now() / 1000) + 8 * 60 * 60;
+
+                    // 计算时间差（秒）
+                    let elapsed = currentTimestamp - createTimestamp;
+
+                    // 转换为年、天、时、分、秒
+                    let years = Math.floor(elapsed / (365 * 24 * 60 * 60));
+                    elapsed %= 365 * 24 * 60 * 60;
+                    let days = Math.floor(elapsed / (24 * 60 * 60));
+                    elapsed %= 24 * 60 * 60;
+                    let hours = Math.floor(elapsed / (60 * 60));
+                    elapsed %= 60 * 60;
+                    let minutes = Math.floor(elapsed / 60);
+                    let seconds = elapsed % 60;
+
+                    // 更新页面内容
+                    let element = document.getElementById("htmer_time");
+                    if (element) {
+                      element.innerHTML = `${years}年${days}天${hours}时${minutes}分${seconds}秒`;
+                    }
+                  }
+
+                  // 设置初始建站时间戳（十位时间戳：2020-07-15 18:00:00 UTC）
+                  let create_time = 1594836000;
+
+                  // 每秒更新
+                  setInterval(() => setTime(create_time), 1000);
+                </script>
+                <span>在风雨中度过<span id="htmer_time">...</span></span>
+                <!--运行时间代码结束位置-->
+              </div>
+              <!-- 站点地图和探针 -->
+              <div>
+                <a href="https://www.tomys.top/sitemap.txt" target="_blank"
+                  >站点地图</a
+                >
+                |&nbsp;<a href="https://run.amoe.cc/" target="_blank"
+                  >服务探针</a
+                >
+                |&nbsp;<a href="https://status.tomys.top/" target="_blank"
+                  >运行状态</a
+                >
+              </div>
+              <!-- 备案链接组 -->
+              <div class="icp-links" id="links-tomys-top">
+                <a href="https://icp.gov.moe/?keyword=20210101" target="_blank"
+                  >萌ICP备20210101号</a
+                >
+                |&nbsp;<a href="https://beian.miit.gov.cn/" target="_blank"
+                  >陇ICP备20002637号-1</a
+                >
+                |&nbsp;<a
+                  target="_blank"
+                  href="//www.beian.gov.cn/portal/registerSystemInfo?recordcode=62082502000107"
+                  >甘公网安备62082502000107号</a
+                >
+              </div>
+              <div class="icp-links" id="link-amoe-cc">
+                <a href="https://beian.miit.gov.cn/" target="_blank"
+                  >鲁ICP备2021003464号-1</a
+                >
+              </div>
+              <div class="icp-links" id="links-tomyjan-com">
+                <a href="https://beian.miit.gov.cn/" target="_blank"
+                  >鲁ICP备2021003464号-10</a
+                >
+              </div>
+              <div class="icp-links" id="links-local">
+                <a href="#">正如你所见, 你正在本地进行开发~</a>
+              </div>
+              <div class="icp-links" id="links-unk">
+                <a href="https://www.tomys.top" target="_blank"
+                  >天哪, 这居然是个未知的域名?</a
+                >
+              </div>
+              <div class="icp-links" id="links-nothing"></div>
+            </div>
+
+            <br />
+          </footer>
+        </main>
+        <script src="assets/js/main.js"></script>
+      </section>
+      <script src="assets/js/bideo.js"></script>
+      <script>
+        (function () {
+          var bv = new Bideo();
+          //视频背景直链数组 rain 心火 萤之森
+          // var videoUrls = [
+          // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av95473051_%E2%80%9CDo%20You%20Like%20Rain%E2%80%9D%20%E2%80%9CI%20Prefer%20You%E2%80%9D_2K.mp4?sign=l7jUsLmGNnZbujtD4HeXqEA4MvC2lcFOFn1dKl3WXV8=:0',
+          // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av802039278_%E2%80%9C%E8%8B%A5%E5%BF%83%E7%81%AB%E7%BB%9A%E7%83%82%EF%BC%8C%E4%BA%BA%E4%BA%A6%E4%B8%8E%E7%83%9F%E8%8A%B1%E5%85%B1%E6%9F%93%E2%80%9D_2K.mp4?sign=yBhJNT5F7L9uTdZYuNCfM1YLpb8vI9GTtgrwLkC3cts=:0',
+          // 'https://mirror.tomys.top/d/189Cloud/tomyjan-websites/static/video/av89474889_%E8%8D%A7%E4%B9%8B%E6%A3%AE.mp4?sign=n6T4tRGOT-ybnsTZnUKvAJ87Ss1RlLuiE_YGtkgzBi0=:0'
+          // ];
+          var videoUrls = [
+            "https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/e208855e3270835015471114876/iAbeVyX87O8A.mp4?bili-avid=95473051",
+            "https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/9e4c871a3270835015446138405/A2whnUfubTgA.mp4?bili-avid=802039278",
+            "https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/ccf9295d3270835015467515037/khX5M4cLkukA.mp4?bili-avid=89474889",
+          ];
+          var videoUrl =
+            videoUrls[Math.floor(Math.random() * videoUrls.length)];
+          bv.init({
+            // Video元素
+            videoEl: document.querySelector("#background_video"),
+            // 容器元素
+            container: document.querySelector("body"),
+            // 自适应调整
+            resize: true,
+            // autoplay: false,
+            muteButton: document.querySelector("#mute"),
+            // 加载视频源, 根据实际业务更换自己的视频源文件
+            src: [
+              {
+                src: videoUrl,
+                type: "video/mp4",
+              },
+            ],
+            // 一旦视频加载后即将视频封面隐藏
+            onLoad: function () {
+              document.querySelector("#video_cover").style.display = "none";
+              document.querySelector("#mute i").className =
+                "fa-solid fa-volume-xmark";
+            },
+          });
+        })();
+      </script>
+    </div>
+
+    <script>
+      // 页面加载完成后移除遮罩, 显示内容, 动态调整备案号
+      window.addEventListener("load", () => {
+        document.getElementById("loading-overlay").style.display = "none";
+        document.getElementById("container").style.display = "block";
+
+        let hostname = window.location.hostname;
+
+        // 检查是否在 iframe 中
+        try {
+          if (window.self !== window.top) {
+            // 在 iframe 中，尝试获取顶层窗口的 hostname
+            hostname = window.top.location.hostname;
+          }
+        } catch (e) {
+          // 跨域情况下无法访问 window.top.location，使用 referrer 作为后备方案
+          if (document.referrer) {
+            try {
+              hostname = new URL(document.referrer).hostname;
+            } catch (err) {
+              // referrer 解析失败，保持使用当前 hostname
+              console.warn("无法解析 referrer，使用当前页面 hostname");
+            }
           }
         }
-      }
-      
-      // 根据 hostname 显示对应的备案链接
-      if (hostname.endsWith('tomys.top')) {
-        document.getElementById('links-tomys-top').style.display = 'block';
-      } else if (hostname.endsWith('amoe.cc')) {
-        document.getElementById('link-amoe-cc').style.display = 'block';
-      } else if (hostname.endsWith('tomyjan.com')) {
-        document.getElementById('links-tomyjan-com').style.display = 'block';
-      } else if (hostname.endsWith('vov.moe') || hostname.endsWith('misaka.site') || hostname.endsWith('ctx.cm') || hostname.endsWith('tu.edu.kg') || hostname.endsWith('tomy.pp.ua') || hostname.endsWith('tomyjan.pp.ua') || hostname.endsWith('喵.cf') || hostname.endsWith('喵.tk') || hostname.endsWith('tomyjan.cf') || hostname.endsWith('tomyjan.gq') || hostname.endsWith('tomyjan.tk') || hostname.endsWith('荼蘼.gq') || hostname.endsWith('荼蘼.tk') || hostname.endsWith('tomyjan.me')) {
-        document.getElementById('links-nothing').style.display = 'block';
-      } else if (hostname.includes('localhost') || hostname.includes('127.0.0.') || hostname.includes('10.0.') || hostname.includes('10.1.')) {
-        document.getElementById('links-local').style.display = 'block';
-      } else {
-        document.getElementById('links-unk').style.display = 'block';
-      }
-    });
-  </script>
-</body>
 
+        // 根据 hostname 显示对应的备案链接
+        if (hostname.endsWith("tomys.top")) {
+          document.getElementById("links-tomys-top").style.display = "block";
+        } else if (hostname.endsWith("amoe.cc")) {
+          document.getElementById("link-amoe-cc").style.display = "block";
+        } else if (hostname.endsWith("tomyjan.com")) {
+          document.getElementById("links-tomyjan-com").style.display = "block";
+        } else if (
+          hostname.endsWith("vov.moe") ||
+          hostname.endsWith("misaka.site") ||
+          hostname.endsWith("ctx.cm") ||
+          hostname.endsWith("tu.edu.kg") ||
+          hostname.endsWith("tomy.pp.ua") ||
+          hostname.endsWith("tomyjan.pp.ua") ||
+          hostname.endsWith("喵.cf") ||
+          hostname.endsWith("喵.tk") ||
+          hostname.endsWith("tomyjan.cf") ||
+          hostname.endsWith("tomyjan.gq") ||
+          hostname.endsWith("tomyjan.tk") ||
+          hostname.endsWith("荼蘼.gq") ||
+          hostname.endsWith("荼蘼.tk") ||
+          hostname.endsWith("tomyjan.me")
+        ) {
+          document.getElementById("links-nothing").style.display = "block";
+        } else if (
+          hostname.includes("localhost") ||
+          hostname.includes("127.0.0.") ||
+          hostname.includes("10.0.") ||
+          hostname.includes("10.1.")
+        ) {
+          document.getElementById("links-local").style.display = "block";
+        } else {
+          document.getElementById("links-unk").style.display = "block";
+        }
+      });
+    </script>
+  </body>
 </html>

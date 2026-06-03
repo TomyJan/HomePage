@@ -69,7 +69,9 @@ function setupBideoInstance() {
 
         // Create `source` for video
         this.opt.src.forEach(function (srcOb) {
-          var key, val, source = document.createElement("source");
+          var key,
+            val,
+            source = document.createElement("source");
 
           // Set all the attribute key=val supplied in `src` option
           for (key in srcOb) {
@@ -96,13 +98,13 @@ function setupBideoInstance() {
             function () {
               if (self.videoEl.muted) {
                 self.videoEl.muted = false;
-                this.querySelector('i').className = 'fa-solid fa-volume-high';
+                this.querySelector("i").className = "fa-solid fa-volume-high";
               } else {
                 self.videoEl.muted = true;
-                this.querySelector('i').className = 'fa-solid fa-volume-xmark';
+                this.querySelector("i").className = "fa-solid fa-volume-xmark";
               }
             },
-            false
+            false,
           );
         }
 
@@ -117,7 +119,8 @@ function setupBideoInstance() {
         if ("object-fit" in document.body.style) return;
 
         // Video's intrinsic dimensions
-        var w = this.videoEl.videoWidth, h = this.videoEl.videoHeight;
+        var w = this.videoEl.videoWidth,
+          h = this.videoEl.videoHeight;
 
         // Intrinsic ratio
         // Will be more than 1 if W > H and less if H > W
@@ -127,11 +130,17 @@ function setupBideoInstance() {
         //
         // Also calculate the min dimensions required (this will be
         // the container dimensions)
-        var container = this.opt.container, containerStyles = global.getComputedStyle(container), minW = parseInt(containerStyles.getPropertyValue("width")), minH = parseInt(containerStyles.getPropertyValue("height"));
+        var container = this.opt.container,
+          containerStyles = global.getComputedStyle(container),
+          minW = parseInt(containerStyles.getPropertyValue("width")),
+          minH = parseInt(containerStyles.getPropertyValue("height"));
 
         // If !border-box then add paddings to width and height
         if (containerStyles.getPropertyValue("box-sizing") !== "border-box") {
-          var paddingTop = containerStyles.getPropertyValue("padding-top"), paddingBottom = containerStyles.getPropertyValue("padding-bottom"), paddingLeft = containerStyles.getPropertyValue("padding-left"), paddingRight = containerStyles.getPropertyValue("padding-right");
+          var paddingTop = containerStyles.getPropertyValue("padding-top"),
+            paddingBottom = containerStyles.getPropertyValue("padding-bottom"),
+            paddingLeft = containerStyles.getPropertyValue("padding-left"),
+            paddingRight = containerStyles.getPropertyValue("padding-right");
 
           paddingTop = parseInt(paddingTop);
           paddingBottom = parseInt(paddingBottom);
@@ -174,4 +183,3 @@ function setupBideoInstance() {
     };
   })(window);
 }
-

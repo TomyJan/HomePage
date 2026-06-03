@@ -1,14 +1,12 @@
 # 一个漂亮的个人主页
 
-Demo: [www.tomys.top](https://www.tomys.top) 
-
-
+Demo: [www.tomys.top](https://www.tomys.top)
 
 ## Intro
 
- - [x] 随机视频背景
- - [x] 获取 wp 最新文章
- - [ ] 折叠内容专心看视频背景
+- [x] 随机视频背景
+- [x] 获取 wp 最新文章
+- [ ] 折叠内容专心看视频背景
 
 ## About
 
