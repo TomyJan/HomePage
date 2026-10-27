@@ -136,11 +136,12 @@ export function initMedia(
   ['play', 'pause', 'volumechange'].forEach((event) =>
     video.addEventListener(event, refreshMedia),
   );
-  video.addEventListener('canplay', () => {
+  video.addEventListener('playing', () => {
     video.classList.add('is-ready');
     refreshMedia();
   });
   video.addEventListener('error', () => {
+    video.classList.remove('is-ready');
     const note = $('#media-note');
     note.textContent = '背景视频暂时不可用';
     note.hidden = false;

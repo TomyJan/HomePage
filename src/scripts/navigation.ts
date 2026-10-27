@@ -190,6 +190,8 @@ export function initNavigation(maybeLoadPosts: () => void) {
   new ResizeObserver(updateScroll).observe(host);
   panelObserver.observe($('.nav'));
   window.addEventListener('resize', scheduleLayout);
+  document.fonts.ready.then(scheduleLayout);
+  document.fonts.addEventListener('loadingdone', scheduleLayout);
 
   return { sizeHost, scheduleLayout, isPosts: () => currentPage === 'posts' };
 }

@@ -1,7 +1,15 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "node_modules", "docs/design/prototypes"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "docs/design/prototypes",
+    "playwright-report",
+    "test-results",
+    "coverage",
+    ".codegraph"
+  ],
   "compilerOptions": {
     "types": ["node"],
     "noUnusedLocals": true,

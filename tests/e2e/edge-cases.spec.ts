@@ -6,7 +6,7 @@ async function atHost(page: Page, hostname: string, referrer?: string) {
     const url = new URL(route.request().url());
     await route.fulfill({
       response: await route.fetch({
-        url: `http://127.0.0.1:4321${url.pathname}${url.search}`,
+        url: `http://127.0.0.1:4371${url.pathname}${url.search}`,
       }),
     });
   });
@@ -180,3 +180,57 @@ test('legacy redirects and standalone static pages are present', async ({
   expect((await request.get('/ads.txt')).status()).toBe(200);
   expect((await request.get('/sitemap.txt')).status()).toBe(200);
 });
+
+test('late font metrics update the overflow indicator after initial entry', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  await expect(page.locator('#content-host')).not.toHaveClass(/has-scroll/);
+  await page.addStyleTag({
+    content: '#panel-home .legacy-bio{font-size:28px}',
+  });
+  await page.evaluate(() =>
+    document.fonts.dispatchEvent(new Event('loadingdone')),
+  );
+  await expect(page.locator('#content-host')).toHaveClass(/has-scroll/);
+});
+
+test('media errors restore the fallback underneath a previously playing video', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  await expect(page.locator('video')).toHaveCSS('opacity', '1');
+  await page.locator('video').evaluate((video: HTMLVideoElement) => {
+    video.pause();
+    video.dispatchEvent(new Event('error'));
+  });
+  await expect(page.locator('video')).toHaveCSS('opacity', '0');
+  await expect(page.locator('.fallback-image')).toHaveCSS('opacity', '1');
+});
+
+for (const height of [360, 390]) {
+  test(`landscape ${height}px keeps touch controls and footer in the viewport`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({
+      viewport: { width: 844, height },
+      isMobile: true,
+      hasTouch: true,
+    });
+    const page = await context.newPage();
+    await resources(page);
+    await ready(page);
+    for (const selector of ['.controls', '.footer-links']) {
+      const rect = await page.locator(selector).boundingBox();
+      expect(rect!.y).toBeGreaterThanOrEqual(0);
+      expect(rect!.y + rect!.height).toBeLessThanOrEqual(height);
+    }
+    await page.getByRole('button', { name: '隐藏界面', exact: true }).tap();
+    await expect(
+      page.getByRole('button', { name: '恢复界面（Esc）', exact: true }),
+    ).toBeVisible();
+    await context.close();
+  });
+}

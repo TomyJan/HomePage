@@ -1293,3 +1293,8 @@ summary:focus-visible {
   font-size: 12px;
   text-shadow: var(--shadow);
 }
+@media (max-height: 439px) {
+  .stage {
+    min-height: 0;
+  }
+}

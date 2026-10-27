@@ -195,6 +195,7 @@ test('reduced motion keeps the image, disables autoplay, and allows manual playb
     await page.locator('video').evaluate((v: HTMLVideoElement) => v.paused),
   ).toBe(true);
   await expect(page.locator('.fallback-image')).toBeVisible();
+  await expect(page.locator('video')).toHaveCSS('opacity', '0');
   await page.getByRole('button', { name: '播放背景视频', exact: true }).click();
   await expect
     .poll(() =>

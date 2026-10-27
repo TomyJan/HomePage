@@ -59,7 +59,7 @@ export function initBlog(isCurrent: () => boolean, onChange: () => void) {
         link.rel = 'noopener noreferrer';
         const time = document.createElement('time');
         time.dateTime = post.date;
-        time.textContent = post.date.slice(0, 10).replaceAll('-', ' / ');
+        time.textContent = post.date.slice(0, 10).replaceAll('-', '.');
         const title = document.createElement('span');
         title.className = 'post-title';
         const decoded = new DOMParser().parseFromString(
