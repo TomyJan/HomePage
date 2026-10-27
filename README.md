@@ -20,7 +20,7 @@ pnpm test:e2e     # 浏览器功能与定稿视觉对照
 pnpm preview     # 预览 dist/
 ```
 
-内容和资源地址在 `src/data/site.ts`，备案域名在 `src/lib/domains.ts`。页脚版本在开发服务启动或构建时注入，不在浏览器请求 GitHub。
+网页标题、描述、内容和资源地址在 `src/data/site.ts`，备案域名在 `src/lib/domains.ts`。页脚版本在开发服务启动或构建时注入，不在浏览器请求 GitHub。无 JavaScript 时仍可阅读首页介绍和访问静态链接。
 
 ## 设计与部署
 

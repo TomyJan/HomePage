@@ -3,6 +3,28 @@ import { resources, ready } from '../support/browser';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+test('without JavaScript the introduction and static links stay visible and usable', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.route('https://**/*', (route) => route.abort());
+  await page.goto('/');
+  await expect(page.locator('#boot')).toBeHidden();
+  await expect(page.locator('#ui-layer')).toHaveCSS('opacity', '1');
+  await expect(
+    page.getByRole('heading', { name: 'TomyJan', exact: true }),
+  ).toBeVisible();
+  const brand = page.getByRole('link', { name: '荼蘼 TomyJan', exact: true });
+  await brand.click();
+  await expect(page).toHaveURL(/#home$/);
+  await page.locator('.commit-link').focus();
+  await expect(page.locator('.commit-link')).toBeFocused();
+  await expect(page.locator('.noscript-links a')).toHaveCount(3);
+  await expect(page.locator('#stage')).toHaveAttribute('aria-busy', 'false');
+  await context.close();
+});
+
 test('the dark loader paints immediately and does not await failed media or fonts', async ({
   page,
 }) => {

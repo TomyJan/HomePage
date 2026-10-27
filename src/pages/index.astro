@@ -32,30 +32,29 @@ import '../styles/home.css';
     <title>{siteMetadata.title}</title>
     <noscript>
       <style>
-        .boot {
+        html .boot {
           display: none;
         }
-        .ui-layer,
-        .player-bar {
+        html .ui-layer,
+        html .player-bar {
           opacity: 1;
         }
-        .scene video,
-        .controls,
-        .nav {
+        html .scene video,
+        html .controls,
+        html .nav,
+        html .filing,
+        html .uptime {
           display: none;
         }
-        .stage {
+        html .stage {
           min-height: 100dvh;
-        }
-        .ui-layer[inert] {
-          pointer-events: auto;
         }
       </style>
     </noscript>
   </head>
   <body>
     <Icons />
-    <main class="stage" id="stage" aria-busy="true">
+    <main class="stage" id="stage" aria-busy="false">
       <div class="scene" aria-hidden="true">
         <div class="fallback">
           <img
@@ -81,7 +80,7 @@ import '../styles/home.css';
         ></video>
         <div class="scene-surface"></div>
       </div>
-      <div class="ui-layer" id="ui-layer" inert>
+      <div class="ui-layer" id="ui-layer">
         <a class="brand" href="#home" aria-label="荼蘼 TomyJan">
           <img src="/avatar.png" width="30" height="30" alt="" />
           <span>荼蘼 TomyJan</span>
@@ -99,6 +98,13 @@ import '../styles/home.css';
         <a href="https://github.com/TomyJan">GitHub</a>
       </nav>
     </noscript>
+    <script is:inline>
+      for (const id of ['ui-layer', 'player-bar']) {
+        const element = document.getElementById(id);
+        if (element) element.inert = true;
+      }
+      document.getElementById('stage')?.setAttribute('aria-busy', 'true');
+    </script>
     <script>
       import '../scripts/main';
     </script>
