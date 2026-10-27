@@ -104,10 +104,12 @@ import { services, contact } from '../data/site';
       inert
     >
       <div class="panel-scroll">
-        <div class="tiles panel-content">
-          {services.map((item) => (
-            <Tile {...item} />
-          ))}
+        <div class="panel-content">
+          <div class="tiles">
+            {services.map((item) => (
+              <Tile {...item} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -172,10 +174,12 @@ import { services, contact } from '../data/site';
       inert
     >
       <div class="panel-scroll">
-        <div class="tiles panel-content">
-          {contact.map((item) => (
-            <Tile {...item} />
-          ))}
+        <div class="panel-content">
+          <div class="tiles">
+            {contact.map((item) => (
+              <Tile {...item} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

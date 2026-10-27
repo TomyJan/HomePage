@@ -3,11 +3,13 @@
 本项目是 Astro + TypeScript 纯静态主页。旧站在 `legacy`，新站在 `master`，许可证保持 MPL-2.0。
 
 - 工具版本写在配置中：pnpm 由 `package.json#packageManager` 指定，Node 由 `.nvmrc` 与 `edgeone.json#nodeVersion` 对齐，兼容范围写在 `package.json#engines`。安装、构建命令不重复写版本号；升级前确认 EdgeOne 支持，并用实际部署版本验证 CI。
-- 开工先读 `docs/design/specification.md`；当前视觉基准为 `docs/design/prototypes/video-first-v2.html`。初次定稿保留作历史，废弃探索不保留在工作树中。
+- 开工先读 `docs/design/specification.md`；当前视觉基准为 `docs/design/prototypes/video-first-v3.html`。已确认旧版定稿保留作历史，废弃探索不保留在工作树中。
 - 冻结原型与其图片、校验和不得随正式代码修改。只在用户批准新版设计后另建快照。
 - 视频优先：不要扩大遮罩、移动布局、改写个人介绍或引入设计外功能。只保留一个视频元素；初始化随机一次，其后原视频循环，换页与隐藏 UI 不重置媒体。
 - 媒体等待、缓冲或没有原生 MediaError 的通知不能隐藏已经显示的画面。真实错误先停止音频，再对同一地址有限恢复，保留位置、静音和用户暂停意图。背景分层必须明确，资源未就绪时保持纯黑。
 - 所有文字使用 MiSans，三处头像保持 35% 大圆角矩形。保持渐变透明边缘、阴影留白、四行同高面板和导航底边对齐。
+- 子卡片阴影只用一层固定透明度与外缘渐隐遮罩，边界跟随实际卡片组；不得对卡片或整组轮廓做模糊叠影。常规页脚只保留文字阴影，整条底部渐变仅用于隐藏 UI 模式。
+- 背景视频不暴露原生控制栏、右键媒体菜单、画中画或远程播放入口；保留自定义控制与普通链接、内容区域的右键行为。
 - 加载壳必须先显示，最短 1200ms，字体最多等待 1800ms；视频、图片、文章 API、统计不能阻塞入场。兼顾减少动态效果、键盘、触屏和外部资源失败。
 - 备案分类和域名匹配集中于 `src/lib/domains.ts`，不能给其他域名借用备案号。版本在启动/构建时注入，不能在浏览器查 GitHub。
 - 内容及外部地址集中于 `src/data/site.ts`。新 UI 优先使用原生语义 HTML、CSS、Web Animations，保持静态输出，不添加 SSR 或 React/Vue 运行时。

@@ -163,7 +163,7 @@ for (const width of [1440, 390, 320]) {
     await page.route('**/__baseline', async (route) =>
       route.fulfill({
         body: await readFile(
-          'docs/design/prototypes/video-first-v2.html',
+          'docs/design/prototypes/video-first-v3.html',
           'utf8',
         ),
         contentType: 'text/html',
