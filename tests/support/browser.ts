@@ -1,7 +1,9 @@
 import { expect, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
 // External services are the only substitutes: tests exercise the real built UI.
 export async function resources(page: Page, posts = 21) {
+  const fixture = await readFile(resolve('tests/fixtures/loop.webm'));
   await page.route('https://**/*', async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname.includes('/wp-json/')) {
@@ -23,11 +25,27 @@ export async function resources(page: Page, posts = 21) {
         },
       });
     }
-    if (url.hostname.includes('myqcloud.com'))
+    if (url.hostname.includes('myqcloud.com')) {
+      const range = /^bytes=(\d+)-(\d*)$/.exec(
+        route.request().headers().range || '',
+      );
+      const start = range ? Number(range[1]) : 0;
+      const end =
+        range && range[2]
+          ? Math.min(Number(range[2]), fixture.length - 1)
+          : fixture.length - 1;
       return route.fulfill({
-        path: resolve('tests/fixtures/loop.webm'),
+        status: range ? 206 : 200,
+        body: fixture.subarray(start, end + 1),
         contentType: 'video/webm',
+        headers: {
+          'Accept-Ranges': 'bytes',
+          ...(range
+            ? { 'Content-Range': `bytes ${start}-${end}/${fixture.length}` }
+            : {}),
+        },
       });
+    }
     if (url.pathname.endsWith('.css'))
       return route.fulfill({ body: '', contentType: 'text/css' });
     if (url.pathname.includes('acgimg'))

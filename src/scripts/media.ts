@@ -1,5 +1,6 @@
 import { $ } from './dom';
 import { icon } from './icon';
+import { initVideo } from './video';
 import type { initFooter } from './footer';
 import type { initOrigin } from './origin';
 export function initMedia(
@@ -16,6 +17,18 @@ export function initMedia(
   let viewing = false,
     pointerInBar = false,
     hideTimer = 0;
+  let noteTimer = 0;
+  const playback = initVideo(video, refreshMedia, (message) => {
+    const note = $('#media-note');
+    clearTimeout(noteTimer);
+    note.hidden = !message;
+    if (message) {
+      note.textContent = message;
+      noteTimer = window.setTimeout(() => {
+        note.hidden = true;
+      }, 4500);
+    }
+  });
   function keyboardFocusInBar() {
     return (
       bar.contains(document.activeElement) &&
@@ -107,25 +120,18 @@ export function initMedia(
     }
   });
   function refreshMedia() {
-    icon(playButton, video.paused ? 'play' : 'pause');
+    icon(playButton, playback.isPaused() ? 'play' : 'pause');
     playButton.setAttribute(
       'aria-label',
-      video.paused ? '播放背景视频' : '暂停背景视频',
+      playback.isPaused() ? '播放背景视频' : '暂停背景视频',
     );
     icon(soundButton, video.muted ? 'muted' : 'volume');
     soundButton.setAttribute('aria-label', video.muted ? '取消静音' : '静音');
     soundButton.setAttribute('aria-pressed', String(!video.muted));
   }
-  async function play() {
-    try {
-      await video.play();
-    } catch (_) {
-      refreshMedia();
-    }
-  }
   playButton.addEventListener('click', () => {
-    if (video.paused) play();
-    else video.pause();
+    if (playback.isPaused()) void playback.play();
+    else playback.pause();
     wakeControls();
   });
   soundButton.addEventListener('click', () => {
@@ -133,21 +139,5 @@ export function initMedia(
     refreshMedia();
     wakeControls();
   });
-  ['play', 'pause', 'volumechange'].forEach((event) =>
-    video.addEventListener(event, refreshMedia),
-  );
-  video.addEventListener('playing', () => {
-    video.classList.add('is-ready');
-    refreshMedia();
-  });
-  video.addEventListener('error', () => {
-    video.classList.remove('is-ready');
-    const note = $('#media-note');
-    note.textContent = '背景视频暂时不可用';
-    note.hidden = false;
-    setTimeout(() => (note.hidden = true), 4500);
-    refreshMedia();
-  });
-
-  return { play, refreshMedia };
+  return { play: playback.play, refreshMedia };
 }

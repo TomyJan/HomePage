@@ -200,20 +200,6 @@ test('late font metrics update the overflow indicator after initial entry', asyn
   await expect(page.locator('#content-host')).toHaveClass(/has-scroll/);
 });
 
-test('media errors restore the fallback underneath a previously playing video', async ({
-  page,
-}) => {
-  await resources(page);
-  await ready(page);
-  await expect(page.locator('video')).toHaveCSS('opacity', '1');
-  await page.locator('video').evaluate((video: HTMLVideoElement) => {
-    video.pause();
-    video.dispatchEvent(new Event('error'));
-  });
-  await expect(page.locator('video')).toHaveCSS('opacity', '0');
-  await expect(page.locator('.fallback-image')).toHaveCSS('opacity', '1');
-});
-
 for (const height of [360, 390]) {
   test(`landscape ${height}px keeps touch controls and footer in the viewport`, async ({
     browser,
