@@ -25,6 +25,10 @@ test('filing popup uses actual domain, animates near its trigger, and closes wit
   await page.locator('#filing-trigger').click();
   await expect(page.locator('[data-filing-type]')).toHaveCount(3);
   await expect(page.locator('#filing-card')).toHaveClass(/is-open/);
+  await expect(page.locator('#filing-card')).toHaveCSS(
+    'transform',
+    'matrix(1, 0, 0, 1, 0, 0)',
+  );
   await expect(page.locator('#filing-trigger')).toHaveAttribute(
     'aria-expanded',
     'true',
