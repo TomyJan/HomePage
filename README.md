@@ -26,6 +26,7 @@ pnpm preview     # 预览 dist/
 
 - [最终规格](docs/design/specification.md) · [冻结原型](docs/design/README.md)
 - [开发与验证](docs/development.md) · [EdgeOne Makers 部署](docs/deployment.md)
+- [重写验收记录](docs/verification.md)
 - [迁移与实施计划](docs/superpowers/plans/2026-10-27-homepage-rewrite.md)
 
 EdgeOne Makers 导入仓库后选择 `master`，根目录 `edgeone.json` 已定义构建和旧地址跳转，发布目录为 `dist/`。实际发布状态以平台为准。
