@@ -5,11 +5,11 @@
 本项目只发布 `dist/` 静态文件，不需要适配器、云函数、服务端环境或部署密钥。
 
 1. 在 EdgeOne Makers 导入 `TomyJan/HomePage`，选择生产分支 `master`，根目录为仓库根。
-2. 根目录 `edgeone.json` 指定 Node.js 24.22.1、pnpm 冻结安装、构建命令和输出 `dist`。平台需能安装指定 Node 版本。
+2. 根目录 `edgeone.json` 指定平台已提供的 Node.js 24.18.0、pnpm 冻结安装、构建命令和输出 `dist`。`.nvmrc` 与该版本一致，CI 验证同一部署版本。
 3. 配置正式域名并检查部署日志。构建来自 Git checkout 时自动携带提交版本；源码压缩包没有 `.git` 时必须设置 `SITE_REVISION` 为源提交完整 SHA。
 4. 预览域名通常属于未知域名，将展示未知域名提示；正式备案按浏览器实际域名独立匹配，见最终规格。
 
-安装命令通过 `npx` 引导已固定版本的 pnpm，依赖安装仍由 pnpm 执行，不生成 npm 锁文件。这样不依赖平台预装的 pnpm 版本。构建命令同样明确使用该版本。若升级 pnpm，核对 `packageManager`、锁文件与平台命令。
+安装和构建分别使用 `corepack pnpm install --frozen-lockfile`、`corepack pnpm build`，由 Corepack 读取 `package.json#packageManager` 选择 pnpm，不依赖平台预装的 pnpm 版本，也不在命令中重复版本号。Node.js 24.18.0 自带的 Corepack 0.35.0 已验证可用。升级 pnpm 时更新 `packageManager` 与锁文件；升级 Node 时同时更新 `.nvmrc` 和 `nodeVersion`，并先确认平台支持。
 
 配置字段依据 [EdgeOne Makers edgeone.json 文档](https://pages.edgeone.ai/document/edgeone-json)。源配置声明了旧地址跳转和指纹资源缓存，未配置所有路径回退到主页，未知路径应返回真正的 404。
 

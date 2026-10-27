@@ -1,9 +1,9 @@
 {
   "name": "tomyjan-homepage",
-  "installCommand": "npx --yes pnpm@12.15.0 install --frozen-lockfile",
-  "buildCommand": "npx --yes pnpm@12.15.0 build",
+  "installCommand": "corepack pnpm install --frozen-lockfile",
+  "buildCommand": "corepack pnpm build",
   "outputDirectory": "dist",
-  "nodeVersion": "24.22.1",
+  "nodeVersion": "24.18.0",
   "redirects": [
     {
       "source": "/pay.php*",

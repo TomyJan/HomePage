@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MPL-2.0",
   "engines": {
-    "node": ">=24 <25",
+    "node": ">=24.18.0 <25",
     "pnpm": ">=12 <13"
   },
   "scripts": {

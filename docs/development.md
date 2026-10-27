@@ -2,7 +2,7 @@
 
 ## 工具链
 
-使用 Node.js 24 LTS 和 `package.json` 指定的 pnpm 12，提交 `pnpm-lock.yaml`，不混用 npm/yarn 锁文件。Astro、检查工具、Playwright、Vitest 和格式工具采用当前稳定版本；TypeScript 使用 Astro 检查工具支持的最新 6.0.3，待上游支持后再升 7。`@types/node` 与 Node 24 基线一致。
+使用 `.nvmrc` 指定的 Node.js 版本（与 EdgeOne 支持的部署版本一致）和 `package.json#packageManager` 指定的 pnpm，提交 `pnpm-lock.yaml`，不混用 npm/yarn 锁文件。`package.json#engines` 声明兼容范围，命令中不重复指定版本。Astro、检查工具、Playwright、Vitest 和格式工具采用当前稳定版本；TypeScript 使用 Astro 检查工具支持的最新 6.0.3，待上游支持后再升 7。`@types/node` 与 Node 24 基线一致。
 
 ```sh
 corepack enable
@@ -10,7 +10,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-若系统不带 Corepack，先通过 pnpm 官方安装方式安装 `packageManager` 对应版本。不要为了本项目修改其他项目的工具链。
+Node.js 24.18.0 附带 Corepack 0.35.0。若系统不带 Corepack，先通过 pnpm 官方安装方式安装 `packageManager` 对应版本。不要为了本项目修改其他项目的工具链。
 
 ## 代码地图
 

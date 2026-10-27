@@ -39,4 +39,10 @@
 
 远端检查入口：[Code checks](https://github.com/TomyJan/HomePage/actions/workflows/code-check.yml)。本地验收与远端运行状态分别判断，远端结果以目标提交为准。
 
-本次完成 EdgeOne Makers 配置，未操作平台发布。实际托管 Node 版本安装、重定向、404、缓存头与统计事件需平台构建日志和正式域名响应验证；若平台构建环境不支持当前 Node 版本，需要调整其构建环境。
+本次完成 EdgeOne Makers 配置，未操作平台发布。实际托管重定向、404、缓存头与统计事件需平台构建日志和正式域名响应验证。
+
+## 部署工具链修正
+
+用户提供的部署日志确认 EdgeOne 无法切换到原配置的 Node.js 24.22.1，平台支持的最高版本为 24.18.0。现将 `edgeone.json#nodeVersion` 与 `.nvmrc` 同步为该版本，CI 也使用它；`package.json#engines` 保留兼容范围。
+
+pnpm 的精确版本只由 `package.json#packageManager` 指定，安装和构建命令改用 `corepack pnpm`，移除命令内重复版本。使用 Node.js 24.18.0 配套的 Corepack 0.35.0 验证，确认选择 pnpm 12.15.0，冻结安装、完整 `verify` 及 21 个浏览器测试全部通过。
