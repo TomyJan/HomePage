@@ -1,6 +1,33 @@
 import { test, expect, type Page } from '@playwright/test';
 import { resources, ready } from '../support/browser';
 
+test('background video suppresses native menus while regular links keep their context menu', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  const video = page.locator('video');
+  const menuAllowed = (element: Element) =>
+    element.dispatchEvent(
+      new MouseEvent('contextmenu', { bubbles: true, cancelable: true }),
+    );
+  expect(await video.evaluate(menuAllowed)).toBe(false);
+  expect(await page.locator('#ui-layer').evaluate(menuAllowed)).toBe(false);
+  expect(await page.locator('.commit-link').evaluate(menuAllowed)).toBe(true);
+  expect(await page.locator('#uptime').evaluate(menuAllowed)).toBe(true);
+  await page.getByRole('button', { name: '备案信息', exact: true }).click();
+  expect(await page.locator('.filing-note').evaluate(menuAllowed)).toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(video).toHaveJSProperty('controls', false);
+  await expect(video).toHaveJSProperty('disablePictureInPicture', true);
+  await expect(video).toHaveJSProperty('disableRemotePlayback', true);
+  await page.getByRole('button', { name: '隐藏界面', exact: true }).click();
+  expect(await page.locator('#stage').evaluate(menuAllowed)).toBe(false);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: '暂停背景视频', exact: true }).click();
+  await expect(video).toHaveJSProperty('paused', true);
+});
+
 async function interruptVideo(page: Page) {
   await page.locator('video').evaluate((v: HTMLVideoElement) => {
     Object.defineProperty(v, 'error', {
