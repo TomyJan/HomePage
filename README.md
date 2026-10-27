@@ -16,7 +16,7 @@ pnpm dev
 ```sh
 pnpm verify       # 格式、类型、单元测试、构建、产物检查
 pnpm exec playwright install chromium
-ppnpm test:e2e     # 浏览器功能与定稿视觉对照
+pnpm test:e2e     # 浏览器功能与定稿视觉对照
 pnpm preview     # 预览 dist/
 ```
 
