@@ -32,37 +32,37 @@
 - [x] 备份旧站 Git bundle、文档和关键静态资源到工作区外。
 - [x] 远端 GitHub 原生 rename master → legacy，本地跟随；建立 orphan master。
 - [x] 根提交仅 LICENSE，随后提交冻结 HTML、图片、探索与校验和。
-- [ ] 提交 AGENTS、精简 README、最终规格与计划。
+- [x] 提交 AGENTS、精简 README、最终规格与计划。
 
 ### 2. 可验证静态基础与规则
 
 文件：`package.json`、`astro.config.mjs`、`tsconfig.json`、`src/data/site.ts`、`src/lib/{domains,footer-layout,version,uptime,posts}.ts`、`tests/unit/`。
 
-- [ ] 配置锁定依赖、格式工具、类型检查、Vitest、版本注入；读取本地 Git 或 CI 提交，拒绝无效 SHA。
-- [ ] 为真子域/伪后缀、独立备案、IDN、本地来源、两级收纳、固定版本和分页异常先写失败测试。
-- [ ] 迁移并实现最少规则，跑单元套件到全绿。
-- [ ] 提交静态基础和规则。
+- [x] 配置锁定依赖、格式工具、类型检查、Vitest、版本注入；读取本地 Git 或 CI 提交，拒绝无效 SHA。
+- [x] 为真子域/伪后缀、独立备案、IDN、本地来源、两级收纳、固定版本和分页异常先写失败测试。
+- [x] 迁移并实现最少规则，跑单元套件到全绿。
+- [x] 提交静态基础和规则。
 
 ### 3. 定稿页面与交互
 
 文件：`src/pages/index.astro`、`src/components/`、`src/styles/`、`src/scripts/`、`public/`、`tests/e2e/`。
 
-- [ ] 先写浏览器行为测试，验证当前没有页面时失败。
-- [ ] 按区域拆分原型 HTML 与原样 CSS；头像使用同一资产，内容数据集中管理。
-- [ ] 迁移导航/滚动、备案 popup、HostLoc dialog、播放器、暗色加载与分页；只选择一次视频。
-- [ ] 异步随机兜底图，资源失败不阻塞入场；尊重减少动态效果，保留手动控制。
-- [ ] 跑功能与三尺寸视觉对照，实测底边、指示条、阴影与 popup 动画。
-- [ ] 提交正式主页交付物。
+- [x] 先写浏览器行为测试，验证当前没有页面时失败。
+- [x] 按区域拆分原型 HTML 与原样 CSS；头像使用同一资产，内容数据集中管理。
+- [x] 迁移导航/滚动、备案 popup、HostLoc dialog、播放器、暗色加载与分页；只选择一次视频。
+- [x] 异步随机兜底图，资源失败不阻塞入场；尊重减少动态效果，保留手动控制。
+- [x] 跑功能与三尺寸视觉对照，实测底边、指示条、阴影与 popup 动画。
+- [x] 提交正式主页交付物。
 
 ### 4. 迁移兼容与交付流水线
 
 文件：`src/pages/{404,pay}.astro`、`public/{ads.txt,sitemap.txt,robots.txt}`、`edgeone.json`、`.github/`、`scripts/verify-build.mjs`、`docs/{development,deployment}.md`。
 
-- [ ] 保留旧付款地址与 feed 跳转、404、ads 与 sitemap，新增必要的爬虫入口。
-- [ ] EdgeOne 明确安装/构建/输出/Node 版本、缓存与必要响应头；避免 SPA 全路径回退。
-- [ ] CI 最小权限、锁文件安装、格式/类型/单元/构建/产物/E2E、报告和依赖更新。
-- [ ] 验证 `pnpm verify`、`ppnpm test:e2e`；审查冻结资产完整性和许可证相同。
-- [ ] 提交兼容、部署、CI 和运维文档。
+- [x] 保留旧付款地址与 feed 跳转、404、ads 与 sitemap，新增必要的爬虫入口。
+- [x] EdgeOne 明确安装/构建/输出/Node 版本、缓存与必要响应头；避免 SPA 全路径回退。
+- [x] CI 最小权限、锁文件安装、格式/类型/单元/构建/产物/E2E、报告和依赖更新。
+- [x] 验证 `pnpm verify`、`ppnpm test:e2e`；审查冻结资产完整性和许可证相同。
+- [x] 提交兼容、部署、CI 和运维文档。
 
 ### 5. 最终审查与远端同步
 
@@ -76,3 +76,6 @@
 - 分支迁移：旧站完整保留于 legacy，原 SHA `58bfb88d87ec7eb1eaa5f24e0afca0a9634af8e4`。新 master 根提交 `194e99c` 只含 LICENSE，设计冻结提交 `2a14f30`。
 - 开发直接在用户指定的新 master 执行，未额外创建工作树；旧站已通过分支和外部 bundle 隔离保存。
 - 本机全局 Node 22.21 不满足当前 Astro 要求，使用工作区外安装的 Node 24.22.1，不修改用户全局版本。
+
+- 本地验证：32 个单元测试、14 个生产静态产物浏览器用例通过；主页内容在三个尺寸与冻结原型逐像素一致。客户端脚本 7219 B gzip。pnpm 生产依赖审计未发现已知漏洞。
+- TypeScript 7 与最新 Astro 检查工具的 peer 范围不兼容，因此使用受支持的最新 6.0.3；其余主要工具使用安装时稳定最新版。

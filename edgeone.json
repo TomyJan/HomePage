@@ -1,7 +1,7 @@
 {
   "name": "tomyjan-homepage",
   "installCommand": "npx --yes pnpm@12.15.0 install --frozen-lockfile",
-  "buildCommand": "pnpm build",
+  "buildCommand": "npx --yes pnpm@12.15.0 build",
   "outputDirectory": "dist",
   "nodeVersion": "24.22.1",
   "redirects": [
@@ -20,8 +20,14 @@
     {
       "source": "/*",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     },
     {

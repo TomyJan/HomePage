@@ -1,0 +1,33 @@
+version: 2
+updates:
+  # Dependabot uses the npm ecosystem for pnpm projects too.
+  - package-ecosystem: npm
+    directory: /
+    target-branch: master
+    schedule:
+      interval: daily
+      time: '04:00'
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 10
+    groups:
+      astro-tooling:
+        patterns: ['astro', '@astrojs/*', 'typescript']
+      testing:
+        patterns: ['@playwright/*', 'vitest', '@vitest/*']
+      formatting:
+        patterns: ['prettier', 'prettier-plugin-*']
+    commit-message:
+      prefix: 'chore(deps)'
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: master
+    schedule:
+      interval: weekly
+      day: monday
+      time: '04:00'
+      timezone: Asia/Shanghai
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: 'ci(deps)'

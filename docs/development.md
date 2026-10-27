@@ -1,0 +1,55 @@
+# 开发与验证
+
+## 工具链
+
+使用 Node.js 24 LTS 和 `package.json` 指定的 pnpm 12，提交 `pnpm-lock.yaml`，不混用 npm/yarn 锁文件。Astro、检查工具、Playwright、Vitest 和格式工具采用当前稳定版本；TypeScript 使用 Astro 检查工具支持的最新 6.0.3，待上游支持后再升 7。`@types/node` 与 Node 24 基线一致。
+
+```sh
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+若系统不带 Corepack，先通过 pnpm 官方安装方式安装 `packageManager` 对应版本。不要为了本项目修改其他项目的工具链。
+
+## 代码地图
+
+| 路径                        | 职责                                             |
+| --------------------------- | ------------------------------------------------ |
+| `src/pages/index.astro`     | 构建完整主页 HTML；仅加载一个客户端模块入口      |
+| `src/components/`           | 图标、导航面板、子卡片、页脚、媒体栏与加载壳     |
+| `src/data/site.ts`          | 服务、联系、三视频池和外部资源地址               |
+| `src/styles/home.css`       | 复用定稿的全局样式、响应式和动画                 |
+| `src/scripts/navigation.ts` | 面板过渡、尺寸与滚动指示                         |
+| `src/scripts/blog.ts`       | 懒加载、分页、重试、固定底部链接                 |
+| `src/scripts/footer.ts`     | 域名备案渲染、popup 与动态收纳                   |
+| `src/scripts/media.ts`      | 媒体状态与隐藏模式，始终操作同一 video           |
+| `src/scripts/boot.ts`       | 首次绘制后加载资源、有限字体等待与 UI 入场       |
+| `src/scripts/origin.ts`     | HostLoc 自定义提示                               |
+| `src/lib/`                  | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
+| `public/`                   | 原样复制到静态输出的图片、爬虫与兼容资源         |
+| `docs/design/`              | 最终规格、冻结设计和历史探索                     |
+
+版本在 Astro 配置首次执行时读取 checkout 的完整 SHA，Vite 注入页面构建。Git 不可用时依次接受 `SITE_REVISION`、`GITHUB_SHA`、`CI_COMMIT_SHA`、`COMMIT_SHA`，均要求完整 40 位十六进制。没有有效版本就明确拒绝构建，避免发布指向错误提交的链接。开发中提交代码后重启开发服务更新版本。
+
+## 门禁
+
+```sh
+pnpm verify
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+`verify` 依次执行 Prettier、Astro/TypeScript 检查、单元测试、静态构建和产物检查。产物检查校验冻结设计摘要、版本、三条静态页面、旧跳转、单视频元素与客户端脚本 gzip 预算（25 kB）。CSS 内联以保证加载壳立即绘制；主页客户端脚本应保持轻量。
+
+浏览器测试先构建真实 `dist/`，用测试专用静态服务验证。CI 仅替换外部网络：使用自制 1 秒纯色 WebM、受控文章 API 和图片，阻止真实统计。无运行时测试开关或生产调试接口。测试工具不进入 `dist/`。
+
+视觉测试在同一浏览器进程、同一视口和字体回退条件下加载冻结原型与正式页面，消除鼠标悬停和随机视频差异后比较截图；避免把不同操作系统的字体光栅化误认为改版。测试覆盖 1440、390、320px，对齐、透明边缘、滚动、控制栏与 popup 还使用真实 DOM 几何检查。
+
+确定性 CI 不能替代真实外部资源检查。发布前用不拦截网络的浏览器确认三个视频、MiSans、随机兜底图和文章 API；外部服务故障应与页面故障分别记录。
+
+## 更新与回归
+
+Dependabot 参考同级 `MoeURL`、`UptimePage`：npm 生态（包括 pnpm）每日检查，Actions 每周检查；Astro/TypeScript、测试、格式工具分别分组。安全更新和普通更新都必须经过 CI，不自动合并。锁文件变化后运行冻结安装和完整门禁。
+
+改 UI 先对照最终规格，改规则先添加能捕获真实破坏的测试。冻结原型不能随实现一并改动，否则视觉对照失去意义。新增设计须得到用户明确要求并保存新版本。
