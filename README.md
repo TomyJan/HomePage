@@ -6,18 +6,18 @@
 
 ## 开发
 
-使用 Node.js 24 LTS（见 `.nvmrc`）和 npm：
+使用 Node.js 24 LTS（见 `.nvmrc`）和 pnpm：
 
 ```sh
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 ```sh
-npm run verify       # 格式、类型、单元测试、构建、产物检查
-npx playwright install chromium
-npm run test:e2e     # 浏览器功能与定稿视觉对照
-npm run preview     # 预览 dist/
+pnpm verify       # 格式、类型、单元测试、构建、产物检查
+pnpm exec playwright install chromium
+ppnpm test:e2e     # 浏览器功能与定稿视觉对照
+pnpm preview     # 预览 dist/
 ```
 
 内容和资源地址在 `src/data/site.ts`，备案域名在 `src/lib/domains.ts`。页脚版本在开发服务启动或构建时注入，不在浏览器请求 GitHub。

@@ -22,16 +22,16 @@
 
 服务按行排序：
 
-| 网站名称 | 描述 | 地址 |
-| --- | --- | --- |
-| 博客 | 114514年没更新 | https://blog.tomys.top/ |
-| MoeAuth | 统一身份认证服务 | https://auth.amoe.cc/ |
-| 镜像站 | 软件镜像下载加速 | https://mirror.tomys.top/ |
-| 荼蘼云盘 | 不限速的直链网盘 | https://pan.tomys.top/ |
-| MoeAI | 大模型聚合网关 | https://ai.amoe.cc/ |
-| Moe 图床 | 全球CDN加速图床 | https://img.amoe.cc/ |
-| Zi5短链 | 新版绝赞监修中... | https://zi5.cc/ |
-| TomyJan API | 公共免费API服务 | https://api.tomys.top/ |
+| 网站名称    | 描述              | 地址                      |
+| ----------- | ----------------- | ------------------------- |
+| 博客        | 114514年没更新    | https://blog.tomys.top/   |
+| MoeAuth     | 统一身份认证服务  | https://auth.amoe.cc/     |
+| 镜像站      | 软件镜像下载加速  | https://mirror.tomys.top/ |
+| 荼蘼云盘    | 不限速的直链网盘  | https://pan.tomys.top/    |
+| MoeAI       | 大模型聚合网关    | https://ai.amoe.cc/       |
+| Moe 图床    | 全球CDN加速图床   | https://img.amoe.cc/      |
+| Zi5短链     | 新版绝赞监修中... | https://zi5.cc/           |
+| TomyJan API | 公共免费API服务   | https://api.tomys.top/    |
 
 联系顺序：GitHub `https://github.com/TomyJan`、支持小站 `https://donate.tomys.top/`、Telegram `https://t.me/tomyjan/`、QQ 群 `https://qun.tomys.top/`。
 
@@ -67,14 +67,14 @@
 
 每一类备案独立配置域名，只匹配根域或以点分隔的真实子域；归一化大小写、末尾点、IDN。iframe 优先可访问顶层 hostname，跨域时取 referrer，再退到自身。
 
-| 域名及其子域 | 展示 |
-| --- | --- |
-| tomys.top | 萌ICP备20210101号、陇ICP备20002637号-1、甘公网安备62082502000107号 |
-| amoe.cc | 鲁ICP备2021003464号-1 |
-| tomyjan.com | 鲁ICP备2021003464号-10 |
-| vov.moe, misaka.site, ctx.cm, tu.edu.kg, tomy.pp.ua, tomyjan.pp.ua, 喵.cf, 喵.tk, tomyjan.cf, tomyjan.gq, tomyjan.tk, 荼蘼.gq, 荼蘼.tk, tomyjan.me | 不展示备案 |
-| localhost 及子域、127.*.*.*、10.0.*.*、10.1.*.*、IPv6 loopback | 本地开发提示 |
-| 未知域名 | 旧未知域名提示，链接回正式站，不借用备案号 |
+| 域名及其子域                                                                                                                                       | 展示                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| tomys.top                                                                                                                                          | 萌ICP备20210101号、陇ICP备20002637号-1、甘公网安备62082502000107号 |
+| amoe.cc                                                                                                                                            | 鲁ICP备2021003464号-1                                              |
+| tomyjan.com                                                                                                                                        | 鲁ICP备2021003464号-10                                             |
+| vov.moe, misaka.site, ctx.cm, tu.edu.kg, tomy.pp.ua, tomyjan.pp.ua, 喵.cf, 喵.tk, tomyjan.cf, tomyjan.gq, tomyjan.tk, 荼蘼.gq, 荼蘼.tk, tomyjan.me | 不展示备案                                                         |
+| localhost 及子域、127._._._、10.0._._、10.1._.*、IPv6 loopback                                                                                     | 本地开发提示                                                       |
+| 未知域名                                                                                                                                           | 旧未知域名提示，链接回正式站，不借用备案号                         |
 
 HostLoc 仅匹配 hostloc.com 或其真实子域来源；原声明文案保留在自定义深色 dialog，加载后展示，支持确认、关闭、背景点击与 Esc；不使用 alert，不暂停视频。
 
