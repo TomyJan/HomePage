@@ -12,6 +12,7 @@ export function initVideo(
   let attempts = 0;
   let generation = 0;
   let stableTimer = 0;
+  let recoveryPosition: number | null = null;
 
   function stopForFallback() {
     generation++;
@@ -81,7 +82,8 @@ export function initVideo(
 
   async function recover() {
     if (recovering) return;
-    const position = video.currentTime;
+    const position = recoveryPosition ?? video.currentTime;
+    recoveryPosition = position;
     recovering = true;
     failed = false;
     stopForFallback();
@@ -92,6 +94,7 @@ export function initVideo(
         attempts++;
         try {
           await reloadAt(position);
+          recoveryPosition = null;
           if (wantsPlayback) await start();
           return;
         } catch {

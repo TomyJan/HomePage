@@ -65,6 +65,52 @@ async function interruptVideo(page: Page) {
   });
 }
 
+test('manual retry after failed reloads resumes from the position before the outage', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  const video = page.locator('video');
+  const src = await video.getAttribute('src');
+  await page.getByRole('button', { name: '暂停背景视频', exact: true }).click();
+  await video.evaluate((v: HTMLVideoElement) => (v.currentTime = 0.7));
+  await expect
+    .poll(() => video.evaluate((v: HTMLVideoElement) => v.seeking))
+    .toBe(false);
+  let offline = true;
+  let failures = 0;
+  await page.route('https://**/*', (route) => {
+    if (offline && route.request().url().includes('myqcloud.com')) {
+      failures++;
+      return route.abort('failed');
+    }
+    return route.fallback();
+  });
+  await interruptVideo(page);
+  await expect(page.locator('#media-note')).toHaveText(
+    '背景视频暂时不可用，点击播放重试',
+  );
+  expect(failures).toBe(2);
+  offline = false;
+  await video.evaluate((v: HTMLVideoElement) =>
+    v.addEventListener(
+      'playing',
+      () => {
+        v.dataset.retryPosition = String(v.currentTime);
+      },
+      { once: true },
+    ),
+  );
+  await page.getByRole('button', { name: '播放背景视频', exact: true }).click();
+  await expect(video).toHaveAttribute('data-retry-position');
+  expect(Number(await video.getAttribute('data-retry-position'))).toBeCloseTo(
+    0.7,
+    1,
+  );
+  await expect(video).toHaveAttribute('src', src!);
+  await expect(video).toHaveJSProperty('paused', false);
+});
+
 test('an interrupted first play cannot cancel recovery of the selected video', async ({
   page,
 }) => {
