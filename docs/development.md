@@ -23,12 +23,13 @@ Node.js 24.18.0 附带 Corepack 0.35.0。若系统不带 Corepack，先通过 pn
 | `src/scripts/navigation.ts` | 面板过渡、尺寸与滚动指示                         |
 | `src/scripts/blog.ts`       | 懒加载、分页、重试、固定底部链接                 |
 | `src/scripts/footer.ts`     | 域名备案渲染、popup 与动态收纳                   |
-| `src/scripts/media.ts`      | 媒体状态与隐藏模式，始终操作同一 video           |
+| `src/scripts/media.ts`      | 媒体按钮状态与隐藏 UI 模式                       |
+| `src/scripts/video.ts`      | 单视频播放意图、实际帧显示与有限错误恢复         |
 | `src/scripts/boot.ts`       | 首次绘制后加载资源、有限字体等待与 UI 入场       |
 | `src/scripts/origin.ts`     | HostLoc 自定义提示                               |
 | `src/lib/`                  | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
 | `public/`                   | 原样复制到静态输出的图片、爬虫与兼容资源         |
-| `docs/design/`              | 最终规格、冻结设计和历史探索                     |
+| `docs/design/`              | 最终规格与已确认设计快照                         |
 
 版本在 Astro 配置首次执行时读取 checkout 的完整 SHA，Vite 注入页面构建。Git 不可用时依次接受 `SITE_REVISION`、`GITHUB_SHA`、`CI_COMMIT_SHA`、`COMMIT_SHA`，均要求完整 40 位十六进制。没有有效版本就明确拒绝构建，避免发布指向错误提交的链接。开发中提交代码后重启开发服务更新版本。
 
@@ -55,3 +56,5 @@ pnpm test:e2e
 Dependabot 参考同级 `MoeURL`、`UptimePage`：npm 生态（包括 pnpm）每日检查，Actions 每周检查；Astro/TypeScript、测试、格式工具分别分组。安全更新和普通更新都必须经过 CI，不自动合并。锁文件变化后运行冻结安装和完整门禁。
 
 改 UI 先对照最终规格，改规则先添加能捕获真实破坏的测试。冻结原型不能随实现一并改动，否则视觉对照失去意义。新增设计须得到用户明确要求并保存新版本。
+
+媒体回归使用支持 HTTP Range 的真实视频夹具，验证画面帧、同源重载、播放位置和暂停意图。派发错误事件不等同于原生媒体故障，只有原生 MediaError 才触发恢复；不通过无条件隐藏视频来处理缓冲。
