@@ -55,7 +55,6 @@ export function initMedia(
     );
     icon(viewButton, viewing ? 'eye' : 'eye-off');
     footer.setFiling(false);
-    pointerInBar = bar.matches(':hover');
     wakeControls();
   }
   viewButton.addEventListener('click', () => setViewing(!viewing));
@@ -89,9 +88,9 @@ export function initMedia(
     { passive: true },
   );
   bar.addEventListener('pointerenter', (event) => {
-    if (viewing && event.pointerType !== 'touch') {
+    if (event.pointerType !== 'touch') {
       pointerInBar = true;
-      wakeControls();
+      if (viewing) wakeControls();
     }
   });
   bar.addEventListener('pointerleave', () => {

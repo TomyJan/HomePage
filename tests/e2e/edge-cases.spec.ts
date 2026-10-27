@@ -41,6 +41,27 @@ test('filing popup uses actual domain, animates near its trigger, and closes wit
   await expect(page.locator('#filing-trigger')).toBeFocused();
 });
 
+test('the first touch entering hidden UI lets the toolbar sleep without another tap', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
+  const page = await context.newPage();
+  await resources(page);
+  await ready(page);
+  await page.locator('#view-button').tap();
+  await expect(page.locator('#stage')).toHaveClass(/is-viewing/);
+  await expect(page.locator('#stage')).toHaveClass(/controls-asleep/, {
+    timeout: 2500,
+  });
+  await page.locator('#stage').tap({ position: { x: 170, y: 200 } });
+  await expect(page.locator('#stage')).not.toHaveClass(/controls-asleep/);
+  await context.close();
+});
+
 test('narrow touch footer shares the more popup and never folds the version or media buttons', async ({
   browser,
 }) => {
