@@ -18,18 +18,6 @@ export function initMedia(
     pointerInBar = false,
     hideTimer = 0;
   let noteTimer = 0;
-  stage.addEventListener('contextmenu', (event) => {
-    const target = event.target;
-    // Background surfaces expose no native media menu; links and content keep theirs.
-    if (
-      target instanceof Element &&
-      target.closest(
-        'a, button, [role="region"], dialog, .uptime, .filing-card, .media-note',
-      )
-    )
-      return;
-    event.preventDefault();
-  });
   const playback = initVideo(video, refreshMedia, (message) => {
     const note = $('#media-note');
     clearTimeout(noteTimer);
