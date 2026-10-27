@@ -1,3 +1,9 @@
+export const siteMetadata = {
+  title: '荼蘼 TomyJan - 个人主页与官方网站',
+  description:
+    'TomyJan 的个人主页与官方网站，提供博客文章、服务导航及联系信息。',
+};
+
 export const videoSources = [
   'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/e208855e3270835015471114876/iAbeVyX87O8A.mp4?bili-avid=95473051',
   'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/9e4c871a3270835015446138405/A2whnUfubTgA.mp4?bili-avid=802039278',

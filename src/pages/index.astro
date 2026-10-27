@@ -4,6 +4,7 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import Loader from '../components/Loader.astro';
+import { siteMetadata } from '../data/site';
 import '../styles/home.css';
 ---
 
@@ -16,14 +17,19 @@ import '../styles/home.css';
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#101519" />
-    <meta name="description" content="荼蘼 TomyJan 的小小据点。" />
+    <meta name="description" content={siteMetadata.description} />
+    <link rel="canonical" href={Astro.site} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={siteMetadata.title} />
+    <meta property="og:description" content={siteMetadata.description} />
+    <meta property="og:url" content={Astro.site?.href} />
     <link
       rel="icon"
       type="image/png"
       sizes="96x96"
       href="/avatar-favicon.png"
     />
-    <title>荼蘼 TomyJan</title>
+    <title>{siteMetadata.title}</title>
     <noscript>
       <style>
         .boot {
