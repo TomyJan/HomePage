@@ -8,7 +8,7 @@
 
 **技术栈：** Node.js 24 LTS、Astro 7、TypeScript、原生 CSS/Web Animations、Vitest、Playwright、Prettier。
 
-**规格：** `docs/design/specification.md` 与 `docs/design/prototypes/video-first.html`。
+**规格：** `docs/design/specification.md` 与 `docs/design/prototypes/video-first-v2.html`。初次迁移已完成；v2 记录正式开发后的用户视觉修订，初次定稿保留为历史。
 
 ## 全局约束
 

@@ -2,7 +2,6 @@ node_modules/
 dist/
 .astro/
 docs/design/prototypes/
-docs/design/2026-10-27-homepage-exploration.md
 docs/design/frozen-sha256.json
 package-lock.json
 LICENSE

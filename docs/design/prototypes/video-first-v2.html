@@ -1,0 +1,1766 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101519">
+<meta name="description" content="荼蘼 TomyJan 的小小据点。">
+<link rel="icon" type="image/png" sizes="96x96" href="./avatar-favicon.png">
+<title>荼蘼 TomyJan · 侧舷</title>
+<style>
+:root {
+  color-scheme: dark;
+  font-family: MiSans, sans-serif;
+  background: #101519;
+  color: #f3f5f3;
+  --ease: cubic-bezier(0.22, 0.75, 0.26, 1);
+  --shadow: 0 1px 2px #000d, 0 4px 18px #0009;
+  --edge: 24px;
+  --footer-bottom: calc(var(--edge) - 3px + env(safe-area-inset-bottom, 0px));
+  --dock-bottom: 124px;
+  --tile-height: 58px;
+  --tile-gap: 10px;
+  --content-height: min(
+    calc(4 * var(--tile-height) + 3 * var(--tile-gap) + 48px),
+    max(150px, calc(100dvh - var(--dock-bottom) - 110px))
+  );
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #c1e3dd;
+  outline-offset: 5px;
+}
+[hidden] {
+  display: none !important;
+}
+.icon-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+.stage {
+  position: relative;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 440px;
+  isolation: isolate;
+  overflow: hidden;
+  background: #000;
+}
+.scene,
+.scene video,
+.fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.scene {
+  z-index: 0;
+  pointer-events: none;
+}
+.scene video {
+  z-index: 1;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.scene video.is-ready {
+  opacity: 1;
+}
+.fallback {
+  z-index: 0;
+  background: #000;
+}
+.ui-layer {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  opacity: 0;
+  transition:
+    opacity 0.38s var(--ease),
+    visibility 0.38s;
+  pointer-events: none;
+}
+.is-ready .ui-layer {
+  opacity: 1;
+}
+.ui-layer > * {
+  pointer-events: auto;
+}
+.brand {
+  position: absolute;
+  top: var(--edge);
+  left: var(--edge);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: var(--shadow);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.brand img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 35%;
+  filter: drop-shadow(0 2px 7px #0005);
+}
+.dock {
+  position: absolute;
+  left: var(--edge);
+  bottom: var(--dock-bottom);
+  display: flex;
+  align-items: flex-end;
+  gap: 30px;
+}
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: none;
+}
+.entry {
+  width: 56px;
+  height: 54px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #151d22b8;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px #0002;
+  color: #e8efed;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    transform 0.25s var(--ease),
+    box-shadow 0.2s;
+}
+.entry .icon {
+  width: 19px;
+  height: 19px;
+}
+.entry span {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.entry:hover {
+  background: #24343bd9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px #0003;
+}
+.entry[aria-pressed='true'] {
+  background: #edf1ed;
+  color: #283633;
+  box-shadow: 0 4px 22px #0003;
+}
+.content-host {
+  position: relative;
+  width: 402px;
+  height: 210px;
+  flex: none;
+  container-type: inline-size;
+  transition: height 0.32s var(--ease);
+}
+.panel-scroll {
+  width: calc(100% + 48px);
+  margin-left: -24px;
+  height: var(--content-height);
+  max-height: var(--content-height);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: 24px 30px;
+  --fade-top: 0px;
+  --fade-bottom: 0px;
+  --clip-top: 0px;
+  --clip-bottom: 0px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent var(--clip-top),
+    #000 calc(var(--clip-top) + var(--fade-top)),
+    #000 calc(100% - var(--clip-bottom) - var(--fade-bottom)),
+    transparent calc(100% - var(--clip-bottom)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent var(--clip-top),
+    #000 calc(var(--clip-top) + var(--fade-top)),
+    #000 calc(100% - var(--clip-bottom) - var(--fade-bottom)),
+    transparent calc(100% - var(--clip-bottom)),
+    transparent 100%
+  );
+}
+.panel-scroll::-webkit-scrollbar {
+  display: none;
+}
+.panel-content {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.panel-content > * {
+  flex-shrink: 0;
+}
+.panel-scroll:focus-visible {
+  outline: 1px solid #d4e9e066;
+  outline-offset: 4px;
+}
+.scroll-indicator {
+  position: absolute;
+  left: -14px;
+  top: 0;
+  height: 0;
+  width: 2px;
+  background: transparent;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.has-scroll > .scroll-indicator {
+  opacity: 1;
+}
+.scroll-thumb {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  min-height: 18px;
+  border-radius: 2px;
+  background: #e5eee0b3;
+  transition: height 0.15s;
+  pointer-events: none;
+}
+.panel {
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  width: 100%;
+  isolation: isolate;
+  background: none;
+  border: 0;
+  color: #f4f6f1;
+}
+.panel.text-panel {
+  text-shadow: var(--shadow);
+}
+.text-panel:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  inset: -60px -76px -55px -68px;
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    #09131bc4 0%,
+    #09131b9c 42%,
+    #09131b45 72%,
+    #09131b00 100%
+  );
+}
+.panel h1 {
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  margin: 0 0 17px;
+  line-height: 1.45;
+}
+.panel p {
+  font-size: 13px;
+  line-height: 1.95;
+  margin: 0 0 13px;
+  color: #e3eae7;
+}
+.panel .welcome {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: #d5e2de;
+  margin-bottom: 12px;
+}
+.panel .legacy-bio {
+  font-size: 13px;
+  line-height: 1.95;
+  margin-bottom: 0;
+}
+.legacy-bio del {
+  opacity: 0.63;
+  text-decoration-thickness: 1px;
+}
+.panel .quote {
+  font-size: 11px;
+  color: #d4dfda;
+  margin: 23px 0 0;
+  letter-spacing: 0.015em;
+}
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #d6e7e2;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.about-link .icon {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.2s;
+}
+.about-link:hover {
+  color: #fff;
+}
+.about-link:hover .icon {
+  transform: translate(2px, -2px);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: var(--tile-height);
+  align-content: end;
+  gap: var(--tile-gap);
+  filter: drop-shadow(0 5px 10px rgb(0 0 0 / 28%));
+}
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: var(--tile-height);
+  padding: 9px 12px;
+  background: #162127cc;
+  border: 0;
+  border-radius: 10px;
+  color: #f0f4f1;
+  transition:
+    background 0.2s,
+    transform 0.25s var(--ease);
+}
+.tile > .icon {
+  width: 20px;
+  height: 20px;
+  color: #c7dcd6;
+}
+.tile .tile-label {
+  min-width: 0;
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.tile small {
+  display: block;
+  color: #afc2bd;
+  font-size: 10px;
+  letter-spacing: 0;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.tile .tile-arrow {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+}
+.tile:hover {
+  background: #273b42ed;
+  transform: translateY(-3px);
+}
+.tile:hover .tile-arrow {
+  opacity: 1;
+}
+.post {
+  display: block;
+  padding: 12px 0;
+  position: relative;
+  transition: translate 0.22s var(--ease);
+}
+.post + .post:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 84%;
+  height: 1px;
+  background: linear-gradient(90deg, #cbdcd133, transparent);
+}
+.post time {
+  display: block;
+  font:
+    10px MiSans,
+    sans-serif;
+  color: #c0d1c8;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.post .post-title {
+  display: block;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #f1f4ec;
+}
+.post:hover {
+  translate: 3px 0;
+}
+.post:hover .post-title {
+  color: #c8ebe1;
+}
+.posts-layout {
+  width: calc(100% + 48px);
+  margin-left: -24px;
+  height: var(--content-height);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding-bottom: 24px;
+}
+.posts-layout > .panel-scroll {
+  width: 100%;
+  margin-left: 0;
+  height: 100%;
+  min-height: 0;
+  padding-bottom: 10px;
+}
+.posts-more {
+  margin: 0 30px;
+  padding: 6px 0 0;
+  line-height: 1.8;
+}
+.posts-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  min-height: 43px;
+  padding: 12px 0 5px;
+  font-size: 11px;
+  color: #ccdbd5;
+  text-align: left;
+  line-height: 1.6;
+}
+.posts-spinner {
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid #d4e7e133;
+  border-top-color: #e2f0e9;
+  border-radius: 50%;
+  animation: posts-spin 0.8s linear infinite;
+  flex: none;
+}
+.posts-retry {
+  padding: 3px 7px;
+  background: #e5efe60f;
+  border: 1px solid #c8e4d533;
+  border-radius: 4px;
+  font-size: 10px;
+}
+.post-sentinel {
+  height: 1px;
+  pointer-events: none;
+}
+.commit-link {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+.footer {
+  position: absolute;
+  left: var(--edge);
+  bottom: var(--footer-bottom);
+  width: calc(100% - 230px);
+  max-width: calc(100% - 2 * var(--edge));
+  font-size: 11px;
+  line-height: 1.6;
+  text-shadow: var(--shadow);
+  isolation: isolate;
+}
+.footer:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -40px -75px -30px -55px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    #09131b9c 0%,
+    #09131b61 45%,
+    #09131b00 100%
+  );
+}
+.uptime {
+  width: max-content;
+  max-width: calc(100vw - 2 * var(--edge));
+  color: #dbe4df;
+  white-space: nowrap;
+  margin-bottom: 10px;
+  font-size: 11px;
+  letter-spacing: 0.015em;
+}
+.uptime time {
+  color: #f2f4ed;
+}
+.footer-links {
+  --footer-gap: 9px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
+  height: 24px;
+  white-space: nowrap;
+  color: #d2ded6;
+}
+.footer-item {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+.footer-links > .footer-item.has-separator:before {
+  content: '/';
+  font:
+    9px MiSans,
+    sans-serif;
+  opacity: 0.4;
+  margin: 0 var(--footer-gap);
+}
+.footer-measure {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: max-content;
+  height: auto;
+  visibility: hidden;
+  pointer-events: none;
+}
+.footer-measure > * {
+  flex: none;
+}
+.footer-links > a,
+.filing-trigger {
+  transition: color 0.2s;
+  padding: 2px 0;
+}
+.footer-links > a:hover,
+.filing-trigger:hover {
+  color: #fff;
+}
+.footer-links .sep {
+  opacity: 0.4;
+  font-size: 9px;
+}
+.filing {
+  position: relative;
+}
+.filing-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.6;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-shadow: inherit;
+  padding: 2px 0;
+}
+.filing-trigger .icon {
+  width: 12px;
+  height: 12px;
+  transition: rotate 0.22s var(--ease);
+}
+.filing-trigger[aria-expanded='true'] .icon {
+  rotate: 180deg;
+}
+.filing.is-overflow .filing-trigger {
+  justify-content: center;
+  height: 24px;
+  border-radius: 5px;
+}
+.filing.is-overflow .filing-trigger:hover,
+.filing.is-overflow .filing-trigger[aria-expanded='true'] {
+  background: #d7e4de14;
+}
+.filing-card {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  z-index: 8;
+  width: 305px;
+  max-width: calc(100vw - 2 * var(--edge));
+  padding: 8px 15px;
+  background: #151f25f5;
+  border: 1px solid #d5e6df26;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px #0005;
+  text-shadow: none;
+  opacity: 0;
+  transform: translateY(5px) scale(0.98);
+  transform-origin: var(--anchor-x, 85%) bottom;
+  transition:
+    opacity 0.2s var(--ease),
+    transform 0.2s var(--ease);
+  pointer-events: none;
+}
+.filing-card.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.filing-card:after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: var(--anchor-x, 50%);
+  width: 8px;
+  height: 8px;
+  rotate: 45deg;
+  background: #151f25;
+  border-right: 1px solid #d5e6df26;
+  border-bottom: 1px solid #d5e6df26;
+}
+.filing-card a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  color: #e2ebe5;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.filing-card a + a {
+  border-top: 1px solid #e3efe20f;
+}
+.filing-card .icon {
+  width: 12px;
+  height: 12px;
+  opacity: 0.55;
+}
+.filing-card a:hover {
+  color: #fff;
+}
+.footer-folded-links > .footer-item {
+  display: flex;
+  width: 100%;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.footer-folded-links:not(:empty) + .filing-records:not([hidden]) {
+  border-top: 1px solid #e3efe20f;
+  margin-top: 4px;
+  padding-top: 4px;
+}
+.filing-note {
+  margin: 0;
+  padding: 12px 0;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #c9d9d2;
+  overflow-wrap: anywhere;
+}
+.player-bar {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 110px;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    translate 0.3s var(--ease);
+}
+.is-ready .player-bar {
+  opacity: 1;
+}
+.player-bar:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0000 0%, #0002 35%, #0009 100%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.controls {
+  position: absolute;
+  right: calc(var(--edge) - 6px);
+  bottom: calc(var(--edge) - 6px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  pointer-events: auto;
+}
+.media-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.control {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #f5f6f1;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.control > .icon {
+  width: 17px;
+  height: 17px;
+  filter: drop-shadow(0 1px 2px #000) drop-shadow(0 3px 7px #000c);
+  transform-origin: center;
+}
+.control:hover {
+  background: #d7e4de12;
+  transform: translateY(-1px);
+}
+.control:after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: calc(100% + 9px);
+  right: -8px;
+  white-space: nowrap;
+  font-size: 10px;
+  padding: 7px 9px;
+  background: #101a20ed;
+  border-radius: 5px;
+  opacity: 0;
+  translate: 0 3px;
+  transition:
+    opacity 0.18s,
+    translate 0.18s;
+  pointer-events: none;
+}
+.control:hover:after,
+.control:focus-visible:after {
+  opacity: 1;
+  translate: 0 0;
+}
+.is-viewing .ui-layer {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.is-viewing .player-bar {
+  pointer-events: auto;
+}
+.is-viewing .player-bar:before {
+  inset: auto 0 0;
+  height: clamp(160px, 30dvh, 260px);
+  background: linear-gradient(180deg, #0000, #0003 30%, #0009 62%, #000e);
+  opacity: 1;
+}
+.is-viewing.controls-asleep {
+  cursor: none;
+}
+.is-viewing.controls-asleep .player-bar {
+  opacity: 0;
+  translate: 0 7px;
+  pointer-events: none;
+}
+.is-viewing.controls-asleep .controls {
+  pointer-events: none;
+}
+.media-note {
+  position: absolute;
+  right: var(--edge);
+  bottom: 80px;
+  font-size: 11px;
+  color: #e6efea;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #152029e8;
+  z-index: 6;
+}
+.origin-dialog {
+  width: min(420px, calc(100vw - 36px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  margin: auto;
+  padding: 28px;
+  border: 1px solid #c8dfd326;
+  border-radius: 17px;
+  background: #142027f5;
+  color: #edf3ed;
+  box-shadow: 0 22px 80px #0005;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 0.24s var(--ease),
+    transform 0.24s var(--ease);
+}
+.origin-dialog.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.origin-dialog::backdrop {
+  background: #030a0e88;
+  opacity: 0;
+  transition: opacity 0.24s var(--ease);
+}
+.origin-dialog.is-open::backdrop {
+  opacity: 1;
+}
+.origin-kicker {
+  font:
+    10px MiSans,
+    sans-serif;
+  letter-spacing: 0.15em;
+  color: #a5c7bd;
+  margin: 0 0 15px;
+}
+.origin-dialog h2 {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0 24px 17px 0;
+}
+.origin-dialog p:not(.origin-kicker) {
+  font-size: 12px;
+  line-height: 1.95;
+  margin: 0 0 14px;
+  color: #cbd9d2;
+}
+.origin-close {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #b9cdc3;
+}
+.origin-close .icon {
+  width: 16px;
+  height: 16px;
+}
+.origin-close:hover {
+  background: #d5e6dd12;
+  color: #fff;
+}
+.origin-confirm {
+  display: block;
+  margin: 23px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #bedace26;
+  border-radius: 7px;
+  background: #bfd9ce14;
+  color: #e0eee5;
+  font-size: 11px;
+  transition: background 0.2s;
+}
+.origin-confirm:hover {
+  background: #bfd9ce26;
+}
+.boot {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: #101519;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 22px;
+  color: #e6ece8;
+  transition:
+    opacity 0.52s var(--ease),
+    visibility 0.52s;
+}
+.boot-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.boot-logo img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 35%;
+}
+.boot-logo span {
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+.boot-logo small {
+  font:
+    11px MiSans,
+    sans-serif;
+  display: block;
+  letter-spacing: 0.16em;
+  color: #a4b5b2;
+  margin-top: 8px;
+}
+.boot-track {
+  height: 1px;
+  width: 176px;
+  background: #aabfb11c;
+  overflow: hidden;
+  position: relative;
+  margin-top: 8px;
+}
+.boot-track:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, #d1e4dc, transparent);
+  animation: boot-drift 1.35s ease-in-out infinite;
+}
+.boot-caption {
+  font-size: 10px;
+  letter-spacing: 0.21em;
+  color: #879b98;
+}
+.boot.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@keyframes boot-drift {
+  0% {
+    translate: -110% 0;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    translate: 110% 0;
+    opacity: 0.3;
+  }
+}
+@keyframes filing-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes posts-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@media (max-width: 700px) {
+  :root {
+    --edge: 22px;
+  }
+  .brand {
+    top: 24px;
+    font-size: 14px;
+  }
+  .content-host {
+    width: min(402px, calc(100vw - 140px));
+  }
+  .tile {
+    padding: 9px 10px;
+    gap: 9px;
+  }
+  .tile > .icon {
+    width: 18px;
+    height: 18px;
+  }
+  .tile .tile-arrow {
+    display: none;
+  }
+  .footer-links {
+    --footer-gap: 7px;
+  }
+}
+@media (max-width: 520px) {
+  :root {
+    --edge: 18px;
+    --dock-bottom: 100px;
+    --tile-height: 56px;
+    --tile-gap: 8px;
+  }
+  .brand {
+    top: 22px;
+    gap: 9px;
+    font-size: 14px;
+  }
+  .brand img {
+    width: 27px;
+    height: 27px;
+  }
+  .nav {
+    gap: 8px;
+  }
+  .entry {
+    width: 47px;
+    height: 50px;
+    border-radius: 9px;
+    gap: 5px;
+  }
+  .entry .icon {
+    width: 18px;
+    height: 18px;
+  }
+  .entry span {
+    font-size: 9px;
+  }
+  .content-host {
+    width: min(402px, calc(100vw - 113px));
+  }
+  .panel h1 {
+    font-size: 22px;
+    margin-bottom: 13px;
+  }
+  .panel p {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+  .panel .welcome {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .panel .quote {
+    font-size: 10px;
+    line-height: 1.9;
+    margin-top: 19px;
+  }
+  .text-panel:before {
+    inset: -48px -40px -45px -42px;
+  }
+  .tile {
+    padding: 8px 9px;
+    gap: 8px;
+  }
+  .tile > .icon {
+    width: 17px;
+    height: 17px;
+  }
+  .tile .tile-label {
+    font-size: 11px;
+  }
+  .tile small {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+  .footer {
+    max-width: calc(100% - 36px);
+  }
+  .footer:before {
+    inset: -28px -28px -23px -28px;
+  }
+  .uptime {
+    font-size: 10px;
+    letter-spacing: 0;
+    margin-bottom: 10px;
+  }
+  .footer-links {
+    --footer-gap: 7px;
+    font-size: 10px;
+  }
+  .filing-trigger {
+    font-size: 10px;
+  }
+  .filing-card {
+    width: 284px;
+    padding: 7px 13px;
+    max-width: calc(100vw - 2 * var(--edge));
+  }
+  .filing-card a {
+    font-size: 10px;
+  }
+  .controls {
+    gap: 3px;
+  }
+  .control {
+    width: 30px;
+    height: 30px;
+  }
+  .control > .icon {
+    width: 17px;
+    height: 17px;
+  }
+  .player-bar {
+    height: 104px;
+  }
+  .post {
+    padding: 10px 0;
+  }
+  .post time {
+    font-size: 9px;
+    margin-bottom: 5px;
+  }
+  .post .post-title {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+  .about-link {
+    font-size: 10px;
+  }
+  .boot-logo span {
+    font-size: 18px;
+  }
+}
+@media (max-height: 570px) {
+  :root {
+    --dock-bottom: 104px;
+  }
+  .brand {
+    top: 18px;
+  }
+  .entry {
+    height: 43px;
+  }
+  .nav {
+    gap: 6px;
+  }
+  .panel h1 {
+    font-size: 21px;
+  }
+  .panel p {
+    font-size: 11px;
+  }
+  .panel .quote {
+    margin-top: 12px;
+  }
+  .uptime {
+    margin-bottom: 10px;
+  }
+}
+@media (max-width: 520px) and (max-height: 570px) {
+  :root {
+    --dock-bottom: 100px;
+  }
+}
+@container (max-width:270px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (pointer: coarse) {
+  .control {
+    width: 44px;
+    height: 44px;
+  }
+  .controls,
+  .media-actions {
+    gap: 0;
+  }
+  .controls {
+    right: calc(var(--edge) - 13px);
+    bottom: calc(var(--edge) - 13px + env(safe-area-inset-bottom, 0px));
+  }
+  .control > .icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+@media (max-width: 520px) {
+  .controls {
+    --control-size: 36px;
+    gap: 0;
+    right: calc(var(--edge) - 9px);
+    bottom: calc(var(--edge) - 9px + env(safe-area-inset-bottom, 0px));
+  }
+  .control {
+    width: var(--control-size);
+    height: var(--control-size);
+  }
+  .control > .icon {
+    width: 16px;
+    height: 16px;
+  }
+  .media-actions {
+    gap: 0;
+  }
+  .control:after {
+    display: none;
+  }
+}
+@media (max-width: 520px) and (pointer: coarse) {
+  .controls {
+    --control-size: 44px;
+    right: calc(var(--edge) - 13px);
+    bottom: calc(var(--edge) - 13px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Asynchronous legacy fallback image, underneath the single video. */
+.fallback-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.fallback-image.is-ready {
+  opacity: 1;
+}
+.noscript-links {
+  position: fixed;
+  right: 24px;
+  top: 24px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  text-shadow: var(--shadow);
+}
+@media (max-height: 439px) {
+  .stage {
+    min-height: 0;
+  }
+}
+</style>
+<noscript><style>.boot{display:none}.ui-layer,.player-bar{opacity:1}.scene video{display:none}</style></noscript>
+</head>
+<body>
+<svg class="icon-defs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.3"/><rect x="14" y="3" width="7" height="7" rx="1.3"/><rect x="3" y="14" width="7" height="7" rx="1.3"/><rect x="14" y="14" width="7" height="7" rx="1.3"/></symbol>
+  <symbol id="i-posts" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8ZM14 2v6h6M8 13h8M8 17h6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+  <symbol id="i-drive" viewBox="0 0 24 24"><path d="m5 4-3 9v6a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-6l-3-9ZM2 13h20M6 17h.01M10 17h.01"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m16 8-2.5 5.5L8 16l2.5-5.5Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M2 12h5l3-9 4 18 3-9h5"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M12 16v5M8 21h8M7 10h2l2-4 2 7 2-3h2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8Z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="2.5"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 5-5 4H3v6h3l5 4ZM15 8a5 5 0 0 1 0 8M18 5a9 9 0 0 1 0 14"/></symbol>
+  <symbol id="i-muted" viewBox="0 0 24 24"><path d="m11 5-5 4H3v6h3l5 4ZM16 9l5 6M21 9l-5 6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 5.1 12 5c6.4 0 10 7 10 7a18 18 0 0 1-3 3.7M6.4 6.4A21 21 0 0 0 2 12s3.6 7 10 7a11 11 0 0 0 5.6-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 14 5-5 5 5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="9" r="5"/><path d="m12 13 8 8m-4-4 3-3m-7-1 3-3"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 16l-2 2a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m2 1 2-2a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0" transform="translate(1 1) scale(.92)"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+ </defs>
+</svg>
+<main class="stage" id="stage" aria-busy="true">
+ <div class="scene" aria-hidden="true"><div class="fallback"></div><video id="scene-video" autoplay muted loop playsinline preload="none"></video></div>
+ <div class="ui-layer" id="ui-layer" inert>
+  <a class="brand" href="#home" aria-label="荼蘼 TomyJan"><img src="./avatar.png" width="30" height="30" alt=""><span>荼蘼 TomyJan</span></a>
+  <div class="dock" id="dock">
+   <nav class="nav" aria-label="功能导航">
+    <button class="entry" type="button" data-page="home" aria-pressed="true" aria-expanded="true" aria-controls="panel-home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>首页</span></button>
+    <button class="entry" type="button" data-page="services" aria-pressed="false" aria-expanded="false" aria-controls="panel-services"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>服务导航</span></button>
+    <button class="entry" type="button" data-page="posts" aria-pressed="false" aria-expanded="false" aria-controls="panel-posts"><svg class="icon" aria-hidden="true"><use href="#i-posts"/></svg><span>博客文章</span></button>
+    <button class="entry" type="button" data-page="contact" aria-pressed="false" aria-expanded="false" aria-controls="panel-contact"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>联系支持</span></button>
+   </nav>
+   <div class="content-host" id="content-host">
+    <div class="scroll-indicator" id="scroll-indicator" aria-hidden="true"><span class="scroll-thumb" id="scroll-thumb"></span></div>
+    <section class="panel text-panel" id="panel-home" data-panel="home" aria-label="首页介绍">
+     <div class="panel-scroll"><div class="panel-content"><h1>TomyJan</h1><p class="legacy-bio">我，荼蘼 TomyJan ，是一只菜狗<br>前彭家坪皇家理工学生 / 全沾工程师 / 西北老汉<br><del>没啥特长</del>特长吃粑睡 / 宅 / <del>变态</del>loli控 / 2.5次元 / 萌物( ? ? )<br>米猴 / 库孝子 / 收集癖 / 强迫症 / 拖延症<br>刘慈欣 / PKD / 艺画鸽天 / 京阿尼 / <a class="about-link" href="https://blog.tomys.top/about" target="_blank" rel="noopener noreferrer" aria-label="更多关于荼蘼的介绍">...</a></p><p class="quote">『 人生即是到来、相遇、陪伴、离开 』</p></div></div>
+    </section>
+    <section class="panel" id="panel-services" data-panel="services" aria-label="服务导航" hidden inert>
+     <div class="panel-scroll"><div class="tiles panel-content">
+      <a class="tile" href="https://blog.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-posts"/></svg><span class="tile-label">博客<small>114514年没更新</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://auth.amoe.cc/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span class="tile-label">MoeAuth<small>统一身份认证服务</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://mirror.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span class="tile-label">镜像站<small>软件镜像下载加速</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://pan.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-drive"/></svg><span class="tile-label">荼蘼云盘<small>不限速的直链网盘</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://ai.amoe.cc/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span class="tile-label">MoeAI<small>大模型聚合网关</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://img.amoe.cc/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-image"/></svg><span class="tile-label">Moe 图床<small>全球CDN加速图床</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://zi5.cc/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg><span class="tile-label">Zi5短链<small>新版绝赞监修中...</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://api.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg><span class="tile-label">TomyJan API<small>公共免费API服务</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+     </div></div>
+    </section>
+    <section class="panel text-panel" id="panel-posts" data-panel="posts" aria-label="博客文章" hidden inert>
+     <div class="posts-layout"><div class="panel-scroll" id="posts-scroll"><div class="panel-content">
+      <div id="posts-feed" aria-busy="false"></div>
+      <div class="post-sentinel" id="post-sentinel" aria-hidden="true"></div>
+      <div class="posts-status" id="posts-status" role="status" aria-live="polite"><span class="posts-spinner" id="posts-spinner" hidden aria-hidden="true"></span><span id="posts-status-text">向下看看，最近写了什么。</span><button type="button" class="posts-retry" id="posts-retry" hidden>重试</button></div>
+     </div></div>
+      <a class="about-link posts-more" id="posts-more" href="https://blog.tomys.top/" target="_blank" rel="noopener noreferrer"><span id="posts-more-label" aria-live="polite">去博客读更多</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+     </div>
+    </section>
+    <section class="panel" id="panel-contact" data-panel="contact" aria-label="联系与支持" hidden inert>
+     <div class="panel-scroll"><div class="tiles panel-content">
+      <a class="tile" href="https://github.com/TomyJan" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg><span class="tile-label">GitHub<small>@TomyJan</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://donate.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="tile-label">支持小站<small>谢谢你的喜欢</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://t.me/tomyjan/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span class="tile-label">Telegram<small>@tomyjan</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="tile" href="https://qun.tomys.top/" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg><span class="tile-label">QQ 群<small>来聊一会儿</small></span><svg class="icon tile-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+     </div></div>
+    </section>
+   </div>
+  </div>
+  <footer class="footer" aria-label="小站信息">
+   <div class="uptime">在风雨中度过 <time id="uptime">6年…</time></div>
+   <div class="footer-links" id="footer-links">
+    <!-- 原型暂固定为设计开始时的 HEAD；正式版在开发服务启动/生产构建时注入短 SHA 与完整 SHA。 -->
+    <a class="footer-item commit-link" data-footer-item="commit" href="https://github.com/TomyJan/HomePage/commit/58bfb88d87ec7eb1eaa5f24e0afca0a9634af8e4" target="_blank" rel="noopener noreferrer" aria-label="查看版本 58bfb88 的提交">58bfb88</a>
+    <a class="footer-item" data-footer-item="sitemap" href="https://www.tomys.top/sitemap.txt" target="_blank" rel="noopener noreferrer">站点地图</a>
+    <a class="footer-item" data-footer-item="status" href="https://status.tomys.top/" target="_blank" rel="noopener noreferrer">服务状态</a>
+    <div class="footer-item filing" id="filing"><button class="filing-trigger" id="filing-trigger" type="button" aria-label="备案信息" aria-expanded="false" aria-controls="filing-card"><span id="filing-trigger-label">备案信息</span><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button><div class="filing-card" id="filing-card" hidden inert><div class="footer-folded-links" id="footer-folded-links"></div><div class="filing-records" id="filing-records"></div></div></div>
+   </div>
+  </footer>
+ </div>
+ <div class="player-bar" id="player-bar" aria-label="视频工具栏" inert>
+  <div class="controls">
+   <div class="media-actions" id="media-actions">
+   <button class="control" type="button" id="play-button" aria-label="暂停背景视频"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg></button>
+   <button class="control" type="button" id="sound-button" aria-label="取消静音" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-muted"/></svg></button>
+   </div>
+   <button class="control" type="button" id="view-button" aria-label="隐藏界面" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
+  </div>
+ </div>
+ <div class="media-note" id="media-note" role="status" hidden></div>
+ <dialog class="origin-dialog" id="hostloc-dialog" aria-labelledby="hostloc-title" aria-describedby="hostloc-copy">
+  <button class="origin-close" id="hostloc-close" type="button" aria-label="关闭来源提示"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  <p class="origin-kicker">A NOTE FOR HOSTLOC VISITORS</p>
+  <h2 id="hostloc-title">来自 HostLoc 的朋友，你好</h2>
+  <div id="hostloc-copy"><p>看起来你是从 HostLoc 来到本站的?</p><p>如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长, 也并未和本站站长相识, 只是一个拙劣的抹黑!</p><p>不过感谢送来的流量喔~</p></div>
+  <button class="origin-confirm" id="hostloc-confirm" type="button" autofocus>我知道了，继续浏览</button>
+ </dialog>
+ <div class="boot" id="boot" data-min-duration="1200" aria-label="正在载入主页"><div class="boot-logo"><img src="./avatar.png" width="36" height="36" alt="" fetchpriority="high"><span>荼蘼<small>TOMYJAN</small></span></div><div class="boot-track" aria-hidden="true"></div><span class="boot-caption">正在抵达这个小小世界</span></div>
+</main>
+<script>
+(() => {
+ const stage=document.getElementById('stage');
+ const ui=document.getElementById('ui-layer');
+ const video=document.getElementById('scene-video');
+ const host=document.getElementById('content-host');
+ const panels=Array.from(document.querySelectorAll('[data-panel]'));
+ const entries=Array.from(document.querySelectorAll('.entry'));
+ const bar=document.getElementById('player-bar');
+ const viewButton=document.getElementById('view-button');
+ const playButton=document.getElementById('play-button');
+ const soundButton=document.getElementById('sound-button');
+ const controls=document.querySelector('.controls');
+ const footer=document.querySelector('.footer');
+ const footerLinks=document.getElementById('footer-links');
+ const footerItems=Array.from(footerLinks.querySelectorAll(':scope > [data-footer-item]'));
+ const footerFoldedLinks=document.getElementById('footer-folded-links');
+ const filingRecordsHost=document.getElementById('filing-records');
+ const filingTriggerLabel=document.getElementById('filing-trigger-label');
+ const originDialog=document.getElementById('hostloc-dialog');
+ const filing=document.getElementById('filing');
+ const filingTrigger=document.getElementById('filing-trigger');
+ const filingCard=document.getElementById('filing-card');
+ let filingOpen=false,filingCloseTimer=0,filingFrame=0;
+ const boot=document.getElementById('boot');
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const videoSources=[
+  'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/e208855e3270835015471114876/iAbeVyX87O8A.mp4?bili-avid=95473051',
+  'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/9e4c871a3270835015446138405/A2whnUfubTgA.mp4?bili-avid=802039278',
+  'https://1253934854.vod2.myqcloud.com/a89107cevodcq1253934854/ccf9295d3270835015467515037/khX5M4cLkukA.mp4?bili-avid=89474889'
+ ];
+ // 每次页面初始化只随机一次，随后交给同一个 video 元素单曲循环。
+ const source=videoSources[Math.floor(Math.random()*videoSources.length)];
+ let currentPage='home';
+ let transition=0;
+ let panelAnimations=[];
+ let viewing=false;
+ let pointerInBar=false;
+ let hideTimer=0;
+ let footerLayoutFrame=0,footerSignature='',hasFilingContent=true;
+ let originCloseTimer=0,originFrame=0,originFocus=null;
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ // Domain rules begin: ICP、网安、萌备分别配置域名，不借用其他域名的备案号。
+ const filingRecords=[
+  {type:'moe',domains:['tomys.top'],label:'萌ICP备20210101号',href:'https://icp.gov.moe/?keyword=20210101'},
+  {type:'icp',domains:['tomys.top'],label:'陇ICP备20002637号-1',href:'https://beian.miit.gov.cn/'},
+  {type:'security',domains:['tomys.top'],label:'甘公网安备62082502000107号',href:'https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=62082502000107'},
+  {type:'icp',domains:['amoe.cc'],label:'鲁ICP备2021003464号-1',href:'https://beian.miit.gov.cn/'},
+  {type:'icp',domains:['tomyjan.com'],label:'鲁ICP备2021003464号-10',href:'https://beian.miit.gov.cn/'}
+ ];
+ function normalizeHostname(value){
+  const hostname=String(value||'').trim().toLowerCase().replace(/\.$/,'');
+  try{return new URL('https://'+hostname).hostname;}catch(_){return hostname;}
+ }
+ function matchesDomain(hostname,domain){return hostname===domain||hostname.endsWith('.'+domain);}
+ const noFilingDomains=['vov.moe','misaka.site','ctx.cm','tu.edu.kg','tomy.pp.ua','tomyjan.pp.ua','喵.cf','喵.tk','tomyjan.cf','tomyjan.gq','tomyjan.tk','荼蘼.gq','荼蘼.tk','tomyjan.me'].map(normalizeHostname);
+ function getSiteHostname(){
+  let hostname=window.location.hostname;
+  try{if(window.self!==window.top)hostname=window.top.location.hostname;}
+  catch(_){if(document.referrer){try{hostname=new URL(document.referrer).hostname;}catch(_){}}}
+  return normalizeHostname(hostname);
+ }
+ function getFilingState(value){
+  const hostname=normalizeHostname(value);
+  const records=filingRecords.filter(record=>record.domains.some(domain=>matchesDomain(hostname,normalizeHostname(domain))));
+  if(records.length)return {hostname,kind:'records',records};
+  if(noFilingDomains.some(domain=>matchesDomain(hostname,domain)))return {hostname,kind:'empty',records};
+  if(hostname==='localhost'||hostname.endsWith('.localhost')||hostname==='[::1]'||/^127\.\d+\.\d+\.\d+$/.test(hostname)||/^10\.(?:0|1)\.\d+\.\d+$/.test(hostname))return {hostname,kind:'local',records};
+  return {hostname,kind:'unknown',records};
+ }
+ function isHostlocReferrer(value){
+  try{return matchesDomain(normalizeHostname(new URL(value).hostname),'hostloc.com');}catch(_){return false;}
+ }
+ // Domain rules end.
+ const iconAnimations=new WeakMap();
+ function icon(button,name){
+  const svg=button.querySelector('.icon'),use=svg.querySelector('use'),href='#i-'+name;
+  if(use.getAttribute('href')===href)return;
+  iconAnimations.get(button)?.cancel();use.setAttribute('href',href);
+  if(!reduced.matches&&stage.classList.contains('is-ready'))iconAnimations.set(button,svg.animate([{opacity:.2,transform:'scale(.72) rotate(-12deg)'},{opacity:1,transform:'scale(1) rotate(0)'}],{duration:230,easing:'cubic-bezier(.22,.75,.26,1)'}));
+ }
+ function panelHeight(panel){return panel?Math.ceil(panel.getBoundingClientRect().height):0;}
+ let layoutFrame=0;
+ function updateScroll(){
+  const panel=panels.find(panel=>panel.dataset.panel===currentPage);
+  const scroll=panel?.querySelector('.panel-scroll'),track=document.getElementById('scroll-indicator'),thumb=document.getElementById('scroll-thumb');
+  const overflow=!!scroll&&scroll.scrollHeight>scroll.clientHeight+1;
+  host.classList.toggle('has-scroll',overflow);
+  if(!scroll)return;
+  // 按实际矩形对齐导航的上下沿，避开整数高度和阴影留白造成的偏差。
+  const navBounds=document.querySelector('.nav').getBoundingClientRect(),hostBounds=host.getBoundingClientRect();
+  track.style.top=(navBounds.top-hostBounds.top)+'px';track.style.height=navBounds.height+'px';
+  const remaining=scroll.scrollHeight-scroll.clientHeight-scroll.scrollTop;
+  scroll.style.setProperty('--fade-top',scroll.scrollTop>1?'18px':'0px');
+  scroll.style.setProperty('--fade-bottom',remaining>1?'22px':'0px');
+  scroll.style.setProperty('--clip-top',scroll.scrollTop>1?'24px':'0px');
+  scroll.style.setProperty('--clip-bottom',remaining>1?getComputedStyle(scroll).paddingBottom:'0px');
+  if(overflow){
+   const height=Math.max(18,track.clientHeight*scroll.clientHeight/scroll.scrollHeight);
+   thumb.style.height=height+'px';
+   thumb.style.transform='translateY('+Math.max(0,Math.min(track.clientHeight-height,(track.clientHeight-height)*scroll.scrollTop/(scroll.scrollHeight-scroll.clientHeight)))+'px)';
+  }
+ }
+ function sizeHost(){host.style.height=panelHeight(panels.find(panel=>panel.dataset.panel===currentPage))+'px';updateScroll();}
+ function scheduleLayout(){cancelAnimationFrame(layoutFrame);layoutFrame=requestAnimationFrame(sizeHost);}
+ function markNavigation(){entries.forEach(button=>{const active=button.dataset.page===currentPage;button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-expanded',String(active));});}
+ async function switchPage(next){
+  const version=++transition;
+  const previous=panels.find(panel=>panel.dataset.panel===currentPage);
+  const outgoingStyle=previous&&!previous.hidden?{opacity:getComputedStyle(previous).opacity,transform:getComputedStyle(previous).transform}:null;
+  panelAnimations.forEach(animation=>animation.cancel());panelAnimations=[];
+  currentPage=next===currentPage?null:next;
+  const incoming=panels.find(panel=>panel.dataset.panel===currentPage);
+  panels.forEach(panel=>{if(panel!==previous&&panel!==incoming){panel.hidden=true;panel.inert=true;}});
+  if(incoming){incoming.hidden=false;incoming.inert=false;}
+  if(previous)previous.inert=true;
+  if(incoming)incoming.inert=false;
+  markNavigation();sizeHost();
+  if(currentPage==='posts')maybeLoadPosts();
+  if(reduced.matches){panels.forEach(panel=>{panel.hidden=panel!==incoming;panel.inert=panel!==incoming;});return;}
+  if(previous&&previous!==incoming&&!previous.hidden){panelAnimations.push(previous.animate([{opacity:outgoingStyle?.opacity||1,transform:outgoingStyle?.transform==='none'?'translateX(0)':outgoingStyle?.transform||'translateX(0)'},{opacity:0,transform:'translateX(-12px)'}],{duration:160,easing:'ease-out',fill:'both'}));}
+  if(incoming){panelAnimations.push(incoming.animate([{opacity:0,transform:'translateX(15px)'},{opacity:1,transform:'translateX(0)'}],{duration:290,delay:previous?80:0,easing:'cubic-bezier(.22,.75,.26,1)',fill:'both'}));}
+  await Promise.allSettled(panelAnimations.map(animation=>animation.finished));
+  if(version!==transition)return;
+  panels.forEach(panel=>{panel.hidden=panel!==incoming;panel.inert=panel!==incoming;});
+  panelAnimations.forEach(animation=>animation.cancel());panelAnimations=[];
+ }
+ entries.forEach(button=>button.addEventListener('click',()=>switchPage(button.dataset.page)));
+ document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();if(currentPage!=='home')switchPage('home');});
+ const panelObserver=new ResizeObserver(scheduleLayout);
+ panels.forEach(panel=>{const scroll=panel.querySelector('.panel-scroll');scroll.tabIndex=0;scroll.setAttribute('role','region');scroll.setAttribute('aria-label',panel.getAttribute('aria-label')+'内容');panelObserver.observe(scroll);scroll.addEventListener('scroll',()=>{if(panel.dataset.panel===currentPage)updateScroll();},{passive:true});});
+ new ResizeObserver(updateScroll).observe(host);
+ panelObserver.observe(document.querySelector('.nav'));
+ window.addEventListener('resize',scheduleLayout);
+ const postsScroll=document.getElementById('posts-scroll'),postsFeed=document.getElementById('posts-feed'),postsSpinner=document.getElementById('posts-spinner'),postsText=document.getElementById('posts-status-text'),postsRetry=document.getElementById('posts-retry');
+ const postsStatus=document.getElementById('posts-status'),postsMoreLabel=document.getElementById('posts-more-label');
+ const postIds=new Set();
+ let postsPage=1,postsBusy=false,postsEnded=false,postsFailed=false,postsTotal=null;
+ function maybeLoadPosts(){
+  if(currentPage!=='posts'||postsBusy||postsEnded||postsFailed)return;
+  if(!postIds.size||postsScroll.scrollHeight-postsScroll.scrollTop-postsScroll.clientHeight<100)loadPosts();
+ }
+ async function loadPosts(){
+  if(postsBusy||postsEnded)return;
+  postsBusy=true;postsFailed=false;postsStatus.hidden=false;postsSpinner.hidden=false;postsRetry.hidden=true;postsFeed.setAttribute('aria-busy','true');postsText.textContent=postIds.size?'正在加载更多文章…':'正在加载文章…';
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+   const [response]=await Promise.all([fetch('https://blog.tomys.top/wp-json/wp/v2/posts?per_page=10&page='+postsPage+'&_fields=id,date,title,link',{signal:controller.signal,credentials:'omit'}),delay(320)]);
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const posts=await response.json();
+   if(!Array.isArray(posts))throw new Error('Invalid posts response');
+   const total=response.headers.get('X-WP-Total'),pages=response.headers.get('X-WP-TotalPages');
+   if(total!==null&&Number.isFinite(Number(total)))postsTotal=Number(total);
+   const fragment=document.createDocumentFragment(),added=[];
+   posts.forEach(post=>{
+    if(postIds.has(post.id)||!post.id||typeof post.title?.rendered!=='string')return;
+    const url=new URL(post.link);if(url.protocol!=='https:')return;
+    const link=document.createElement('a');link.className='post';link.href=url.href;link.target='_blank';link.rel='noopener noreferrer';link.dataset.postId=String(post.id);
+    const time=document.createElement('time');time.dateTime=post.date;time.textContent=String(post.date).slice(0,10).replaceAll('-','.');
+    const title=document.createElement('span');title.className='post-title';title.textContent=new DOMParser().parseFromString(post.title.rendered,'text/html').body.textContent;
+    link.append(time,title);fragment.append(link);added.push(link);postIds.add(post.id);
+   });
+   postsFeed.append(fragment);
+   postsEnded=posts.length<10||(pages!==null&&postsPage>=Number(pages))||(postsTotal!==null&&postIds.size>=postsTotal);
+   postsPage++;
+   postsStatus.hidden=postsEnded;
+   postsText.textContent=postsEnded?'':'继续向下，加载更多文章';
+   postsMoreLabel.textContent=postsEnded?'已加载全部 '+postIds.size+' 篇, 去博客读':'去博客读更多';
+   if(!reduced.matches)added.forEach((link,index)=>link.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:320,delay:Math.min(index*28,170),easing:'ease-out',fill:'backwards'}));
+  }catch(_){postsFailed=true;postsText.textContent=postIds.size?'更多文章加载失败':'文章暂时加载失败';postsRetry.hidden=false;}
+  finally{clearTimeout(timeout);postsBusy=false;postsSpinner.hidden=true;postsFeed.setAttribute('aria-busy','false');sizeHost();requestAnimationFrame(maybeLoadPosts);}
+ }
+ postsRetry.addEventListener('click',()=>loadPosts());
+ postsScroll.addEventListener('scroll',maybeLoadPosts,{passive:true});
+ if('IntersectionObserver' in window)new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting))maybeLoadPosts();},{root:postsScroll,rootMargin:'100px'}).observe(document.getElementById('post-sentinel'));
+ function updateUptime(){
+  // 保留旧站的计时口径，实时计算而非写死示例时长。
+  let elapsed=Math.max(0,Math.floor(Date.now()/1000)+8*3600-1594836000);
+  const years=Math.floor(elapsed/31536000);elapsed%=31536000;
+  const days=Math.floor(elapsed/86400);elapsed%=86400;
+  const hours=Math.floor(elapsed/3600);elapsed%=3600;
+  const minutes=Math.floor(elapsed/60);const seconds=elapsed%60;
+  const value=document.getElementById('uptime');
+  value.textContent=years+'年'+days+'天'+hours+'时'+minutes+'分'+seconds+'秒';
+  value.dateTime='P'+years+'Y'+days+'DT'+hours+'H'+minutes+'M'+seconds+'S';
+ }
+ updateUptime();setInterval(updateUptime,1000);
+ function renderFilings(){
+  const state=getFilingState(getSiteHostname());
+  document.documentElement.dataset.siteHostname=state.hostname;document.documentElement.dataset.filingState=state.kind;
+  hasFilingContent=state.kind!=='empty';filingRecordsHost.hidden=!hasFilingContent;
+  filingRecordsHost.replaceChildren();
+  if(state.kind==='local'){
+   const note=document.createElement('p');note.className='filing-note';note.textContent='正如你所见，你正在本地进行开发～';filingRecordsHost.append(note);
+  }else{
+   const records=state.kind==='unknown'?[{type:'unknown',label:'天哪，这居然是个未知的域名？',href:'https://www.tomys.top/'}]:state.records;
+   records.forEach(record=>{
+    const link=document.createElement('a');link.href=record.href;link.target='_blank';link.rel='noopener noreferrer';link.dataset.filingType=record.type;link.textContent=record.label;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.classList.add('icon');svg.setAttribute('aria-hidden','true');
+    const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','#i-arrow');svg.append(use);link.append(svg);filingRecordsHost.append(link);
+   });
+  }
+  scheduleFooterLayout();
+ }
+ renderFilings();
+ function positionFiling(){
+  if(filingCard.hidden)return;
+  const trigger=filingTrigger.getBoundingClientRect(),parent=filing.getBoundingClientRect();
+  const width=filingCard.offsetWidth,edge=parseFloat(getComputedStyle(stage).getPropertyValue('--edge'))||18;
+  const left=Math.max(edge,Math.min(trigger.right-width,document.documentElement.clientWidth-edge-width));
+  filingCard.style.left=(left-parent.left)+'px';filingCard.style.right='auto';
+  filingCard.style.setProperty('--anchor-x',Math.max(12,Math.min(width-20,trigger.left+trigger.width/2-left-4))+'px');
+ }
+ function setFiling(next){
+  if(next===filingOpen)return;
+  filingOpen=next;clearTimeout(filingCloseTimer);cancelAnimationFrame(filingFrame);
+  filingTrigger.setAttribute('aria-expanded',String(next));filingCard.inert=!next;
+  if(next){
+   filingCard.hidden=false;positionFiling();
+   // 先建立闭合样式，再触发过渡；关闭时保留节点直到淡出完成。
+   void filingCard.offsetWidth;
+   filingFrame=requestAnimationFrame(()=>filingCard.classList.add('is-open'));
+  }else{
+   filingCard.classList.remove('is-open');
+   filingCloseTimer=setTimeout(()=>{if(!filingOpen)filingCard.hidden=true;},reduced.matches?0:220);
+  }
+ }
+ filingTrigger.addEventListener('click',()=>setFiling(!filingOpen));
+ filingCard.addEventListener('click',event=>{if(event.target.closest('a'))setFiling(false);});
+ document.addEventListener('click',event=>{if(!filing.contains(event.target))setFiling(false);});
+ document.addEventListener('focusin',event=>{if(filingOpen&&!filing.contains(event.target))setFiling(false);});
+ window.addEventListener('resize',positionFiling);
+ // Footer fit begin.
+ function footerFoldCount(widths,available,filingWidth,moreWidth,separatorWidth,showFilings){
+  if(!widths.length)return 0;
+  for(let folded=0;folded<widths.length;folded++){
+   const visible=[widths[0],...widths.slice(1+folded)],showTrigger=showFilings||folded>0;
+   const count=visible.length+(showTrigger?1:0);
+   const width=visible.reduce((sum,value)=>sum+value,0)+(showTrigger?(folded?moreWidth:filingWidth):0)+Math.max(0,count-1)*separatorWidth;
+   if(width<=available)return folded;
+  }
+  return widths.length-1;
+ }
+ // Footer fit end.
+ function measureFooter(eligible){
+  const measurer=document.createElement('div');measurer.className='footer-links footer-measure';measurer.setAttribute('aria-hidden','true');measurer.inert=true;measurer.style.font=getComputedStyle(footerLinks).font;
+  const clean=clone=>{clone.classList.remove('has-separator');clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));return clone;};
+  const clones=eligible.map(item=>{const clone=clean(item.cloneNode(true));measurer.append(clone);return clone;});
+  const normal=clean(filingTrigger.cloneNode(true));normal.querySelector('span').textContent='备案信息';measurer.append(normal);
+  const more=clean(filingTrigger.cloneNode(true));more.querySelector('span').textContent='更多';measurer.append(more);
+  const separator=document.createElement('span');separator.style.font='9px MiSans,sans-serif';separator.textContent='/';measurer.append(separator);
+  document.body.append(measurer);
+  const gap=parseFloat(getComputedStyle(footerLinks).getPropertyValue('--footer-gap'))||0;
+  const result={widths:clones.map(clone=>Math.ceil(clone.getBoundingClientRect().width)),filingWidth:Math.ceil(normal.getBoundingClientRect().width),moreWidth:Math.ceil(more.getBoundingClientRect().width),separatorWidth:separator.getBoundingClientRect().width+2*gap,separatorGlyphWidth:separator.getBoundingClientRect().width};
+  measurer.remove();return result;
+ }
+ function layoutFooter(){
+  const edge=parseFloat(getComputedStyle(stage).getPropertyValue('--edge'))||18;
+  const available=Math.max(24,Math.floor(controls.getBoundingClientRect().left-edge-12));
+  footer.style.width=available+'px';
+  footerLinks.style.removeProperty('--footer-gap');
+  const eligible=footerItems.filter(item=>!item.hidden),measure=measureFooter(eligible);
+  const count=footerFoldCount(measure.widths,available-2,measure.filingWidth,measure.moreWidth,measure.separatorWidth,hasFilingContent);
+  const folded=eligible.slice(1,1+count),signature=String(hasFilingContent)+'|'+folded.map(item=>item.dataset.footerItem).join(',');
+  if(signature!==footerSignature){
+   const active=document.activeElement,hadFocus=footer.contains(active);
+   setFiling(false);
+   footerItems.forEach(item=>{item.classList.remove('has-separator');footerLinks.insertBefore(item,filing);});
+   folded.forEach(item=>footerFoldedLinks.append(item));
+   footerSignature=signature;
+   if(hadFocus){const target=footerFoldedLinks.contains(active)?filingTrigger:active;if(target.isConnected&&!target.closest('[hidden]'))target.focus({preventScroll:true});}
+  }
+  filing.hidden=!hasFilingContent&&!folded.length;filing.classList.toggle('is-overflow',folded.length>0);
+  filingTriggerLabel.textContent=folded.length?'更多':'备案信息';
+  filingTrigger.setAttribute('aria-label',folded.length?'更多链接与备案信息':'备案信息');
+  if(count===eligible.length-1&&count>0){const gap=Math.max(0,Math.min(parseFloat(getComputedStyle(footerLinks).getPropertyValue('--footer-gap'))||0,(available-2-measure.widths[0]-measure.moreWidth-measure.separatorGlyphWidth)/2));footerLinks.style.setProperty('--footer-gap',gap+'px');}
+  const inline=Array.from(footerLinks.children).filter(item=>item.classList.contains('footer-item')&&!item.hidden);
+  inline.forEach((item,index)=>item.classList.toggle('has-separator',index>0));
+  footer.dataset.folded=folded.map(item=>item.dataset.footerItem).join(',');
+  if(filingOpen)positionFiling();
+ }
+ function scheduleFooterLayout(){cancelAnimationFrame(footerLayoutFrame);footerLayoutFrame=requestAnimationFrame(layoutFooter);}
+ const footerObserver=new ResizeObserver(scheduleFooterLayout);footerObserver.observe(stage);footerObserver.observe(controls);
+ window.addEventListener('resize',scheduleFooterLayout);document.fonts.ready.then(scheduleFooterLayout);document.fonts.addEventListener('loadingdone',scheduleFooterLayout);scheduleFooterLayout();
+ function closeOriginNotice(){
+  if(!originDialog.open)return;
+  clearTimeout(originCloseTimer);cancelAnimationFrame(originFrame);originDialog.classList.remove('is-open');
+  originCloseTimer=setTimeout(()=>{originDialog.close();if(originFocus?.isConnected)originFocus.focus({preventScroll:true});},reduced.matches?0:240);
+ }
+ function showOriginNotice(){
+  if(!isHostlocReferrer(document.referrer)||originDialog.open)return;
+  originFocus=document.activeElement;originDialog.showModal();void originDialog.offsetWidth;
+  originFrame=requestAnimationFrame(()=>originDialog.classList.add('is-open'));
+ }
+ document.getElementById('hostloc-close').addEventListener('click',closeOriginNotice);
+ document.getElementById('hostloc-confirm').addEventListener('click',closeOriginNotice);
+ originDialog.addEventListener('cancel',event=>{event.preventDefault();closeOriginNotice();});
+ originDialog.addEventListener('click',event=>{const bounds=originDialog.getBoundingClientRect();if(event.target===originDialog&&(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom))closeOriginNotice();});
+ function keyboardFocusInBar(){return bar.contains(document.activeElement)&&document.activeElement.matches(':focus-visible');}
+ function wakeControls(){
+  stage.classList.remove('controls-asleep');clearTimeout(hideTimer);
+  if(viewing&&!pointerInBar&&!keyboardFocusInBar())hideTimer=setTimeout(()=>{if(viewing&&!pointerInBar&&!keyboardFocusInBar())stage.classList.add('controls-asleep');},1000);
+ }
+ function setViewing(next){
+  viewing=next;stage.classList.toggle('is-viewing',viewing);ui.inert=viewing;
+  viewButton.setAttribute('aria-pressed',String(viewing));viewButton.setAttribute('aria-label',viewing?'恢复界面（Esc）':'隐藏界面');icon(viewButton,viewing?'eye':'eye-off');
+  setFiling(false);pointerInBar=bar.matches(':hover');wakeControls();
+ }
+ viewButton.addEventListener('click',()=>setViewing(!viewing));
+ stage.addEventListener('pointermove',event=>{
+  if(!viewing)return;
+  const bounds=bar.getBoundingClientRect();
+  pointerInBar=event.pointerType!=='touch'&&event.clientX>=bounds.left&&event.clientX<=bounds.right&&event.clientY>=bounds.top&&event.clientY<=bounds.bottom;
+  wakeControls();
+ },{passive:true});
+ stage.addEventListener('pointerleave',()=>{pointerInBar=false;if(viewing)wakeControls();});
+ stage.addEventListener('pointerdown',event=>{if(viewing&&event.pointerType==='touch'){pointerInBar=false;wakeControls();}},{passive:true});
+ bar.addEventListener('pointerenter',event=>{if(viewing&&event.pointerType!=='touch'){pointerInBar=true;wakeControls();}});
+ bar.addEventListener('pointerleave',()=>{pointerInBar=false;if(viewing)wakeControls();});
+ bar.addEventListener('focusin',()=>{if(viewing)wakeControls();});
+ bar.addEventListener('focusout',()=>queueMicrotask(()=>{if(viewing)wakeControls();}));
+ window.addEventListener('keydown',event=>{
+  if(originDialog.open)return;
+  if(viewing)wakeControls();
+  if(event.key==='Escape'){if(filingOpen){setFiling(false);filingTrigger.focus({preventScroll:true});}else if(viewing){setViewing(false);viewButton.focus({preventScroll:true});}}
+ });
+ function refreshMedia(){icon(playButton,video.paused?'play':'pause');playButton.setAttribute('aria-label',video.paused?'播放背景视频':'暂停背景视频');icon(soundButton,video.muted?'muted':'volume');soundButton.setAttribute('aria-label',video.muted?'取消静音':'静音');soundButton.setAttribute('aria-pressed',String(!video.muted));}
+ async function play(){try{await video.play();}catch(_){refreshMedia();}}
+ playButton.addEventListener('click',()=>{if(video.paused)play();else video.pause();wakeControls();});
+ soundButton.addEventListener('click',()=>{video.muted=!video.muted;refreshMedia();wakeControls();});
+ ['play','pause','volumechange'].forEach(event=>video.addEventListener(event,refreshMedia));
+ video.addEventListener('playing',()=>{video.classList.add('is-ready');refreshMedia();});
+ video.addEventListener('error',()=>{const note=document.getElementById('media-note');note.textContent='背景视频暂时不可用';note.hidden=false;setTimeout(()=>note.hidden=true,4500);refreshMedia();});
+ function loadMiSans(){
+  const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';stylesheet.href='https://cdn.amoe.cc/web-static/public/font/misans/misans.css';stylesheet.dataset.resource='misans';
+  const loaded=new Promise(resolve=>{stylesheet.onload=()=>document.fonts.load('400 13px MiSans','荼蘼 TomyJan 我是一只菜狗').then(resolve,resolve);stylesheet.onerror=resolve;});
+  document.head.append(stylesheet);
+  // CDN 或字体失败时及时以系统字体入场，成功后由 font-display:swap 接管。
+  return Promise.race([loaded,delay(1800)]);
+ }
+ function loadAnalytics(){
+  // 本地设计预览不记入正式站点统计。
+  if(['localhost','127.0.0.1','::1'].includes(location.hostname)){document.documentElement.dataset.analytics='preview-skipped';return;}
+  const script=document.createElement('script');script.async=true;script.src='https://umami.amoe.cc/script.js';script.dataset.websiteId='456b5804-762e-4747-a9b1-c6b82061a177';script.dataset.resource='umami';document.head.append(script);
+ }
+ sizeHost();
+ requestAnimationFrame(()=>requestAnimationFrame(async()=>{
+  const firstPaint=performance.now();
+  document.documentElement.dataset.bootPhase='minimum';
+  const readyFonts=loadMiSans();
+  video.src=source;
+  if(reduced.matches){video.autoplay=false;video.preload='metadata';video.load();refreshMedia();}
+  else{video.preload='auto';play();}
+  await Promise.all([delay(Number(boot.dataset.minDuration)),readyFonts]);
+  document.documentElement.dataset.bootElapsed=String(Math.round(performance.now()-firstPaint));
+  document.documentElement.dataset.bootPhase='transition';
+  boot.classList.add('is-done');stage.classList.add('is-ready');stage.setAttribute('aria-busy','false');ui.inert=false;bar.inert=false;
+  sizeHost();scheduleFooterLayout();
+  if('requestIdleCallback' in window)requestIdleCallback(loadAnalytics,{timeout:2000});else setTimeout(loadAnalytics,0);
+  if(!reduced.matches){
+   document.querySelector('.brand').animate([{opacity:0,transform:'translateY(-5px)'},{opacity:1,transform:'translateY(0)'}],{duration:600,easing:'ease-out'});
+   document.querySelector('.dock').animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:650,delay:90,easing:'cubic-bezier(.22,.75,.26,1)',fill:'both'});
+  }
+  await delay(reduced.matches?0:550);boot.hidden=true;document.documentElement.dataset.bootPhase='ready';showOriginNotice();
+ }));
+})();
+</script>
+</body>
+</html>

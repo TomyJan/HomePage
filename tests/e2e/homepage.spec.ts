@@ -162,7 +162,10 @@ for (const width of [1440, 390, 320]) {
     // Serve the immutable baseline through a test-only intercepted URL.
     await page.route('**/__baseline', async (route) =>
       route.fulfill({
-        body: await readFile('docs/design/prototypes/video-first.html', 'utf8'),
+        body: await readFile(
+          'docs/design/prototypes/video-first-v2.html',
+          'utf8',
+        ),
         contentType: 'text/html',
       }),
     );

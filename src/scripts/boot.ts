@@ -47,10 +47,7 @@ export function boot(
       document.documentElement.dataset.bootPhase = 'minimum';
       const fonts = loadMiSans();
       const image = $<HTMLImageElement>('.fallback-image');
-      image.onload = () => {
-        image.classList.add('is-ready');
-        $('.fallback').classList.add('has-image');
-      };
+      image.onload = () => image.classList.add('is-ready');
       image.src = resources.fallback;
       video.src = source;
       if (reduced.matches) {

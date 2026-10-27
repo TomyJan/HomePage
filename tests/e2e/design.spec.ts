@@ -14,7 +14,10 @@ for (const width of [1440, 390, 320]) {
     await resources(reference);
     await reference.route('**/__baseline', async (route) =>
       route.fulfill({
-        body: await readFile('docs/design/prototypes/video-first.html', 'utf8'),
+        body: await readFile(
+          'docs/design/prototypes/video-first-v2.html',
+          'utf8',
+        ),
         contentType: 'text/html',
       }),
     );
