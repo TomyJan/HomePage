@@ -1,0 +1,69 @@
+<div class="player-bar" id="player-bar" aria-label="视频工具栏" inert>
+  <div class="controls">
+    <div class="media-actions" id="media-actions">
+      <button
+        class="control"
+        type="button"
+        id="play-button"
+        aria-label="暂停背景视频"
+      >
+        <svg class="icon" aria-hidden="true">
+          <use href="#i-pause" />
+        </svg>
+      </button>
+      <button
+        class="control"
+        type="button"
+        id="sound-button"
+        aria-label="取消静音"
+        aria-pressed="false"
+      >
+        <svg class="icon" aria-hidden="true">
+          <use href="#i-muted" />
+        </svg>
+      </button>
+    </div>
+    <button
+      class="control"
+      type="button"
+      id="view-button"
+      aria-label="隐藏界面"
+      aria-pressed="false"
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-eye-off" />
+      </svg>
+    </button>
+  </div>
+</div>
+<div class="media-note" id="media-note" role="status" hidden></div>
+<dialog
+  class="origin-dialog"
+  id="hostloc-dialog"
+  aria-labelledby="hostloc-title"
+  aria-describedby="hostloc-copy"
+>
+  <button
+    class="origin-close"
+    id="hostloc-close"
+    type="button"
+    aria-label="关闭来源提示"
+  >
+    <svg class="icon" aria-hidden="true">
+      <use href="#i-close" />
+    </svg>
+  </button>
+  <p class="origin-kicker">A NOTE FOR HOSTLOC VISITORS</p>
+  <h2 id="hostloc-title">来自 HostLoc 的朋友，你好</h2>
+  <div id="hostloc-copy">
+    <p>看起来你是从 HostLoc 来到本站的?</p>
+    <p>
+      如果你是从一个名为 DMengbi 的东西的签名过来, 那么请知悉, 牠并不是本站站长,
+      也并未和本站站长相识, 只是一个拙劣的抹黑!
+    </p>
+    <p>不过感谢送来的流量喔~</p>
+  </div>
+  <button class="origin-confirm" id="hostloc-confirm" type="button" autofocus>
+    我知道了，继续浏览
+  </button>
+</dialog>

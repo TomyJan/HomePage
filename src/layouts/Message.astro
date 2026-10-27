@@ -1,0 +1,71 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101519" />
+    <meta name="robots" content="noindex" />
+    <title>{title} · 荼蘼 TomyJan</title>
+    <link rel="icon" type="image/png" href="/avatar-favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.amoe.cc/web-static/public/font/misans/misans.css"
+    />
+    <slot name="head" />
+    <style>
+      :root {
+        color-scheme: dark;
+        background: #101519;
+        color: #e6ece8;
+        font-family: MiSans, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+      }
+      main {
+        max-width: 440px;
+        padding: 32px;
+        line-height: 1.9;
+      }
+      img {
+        width: 48px;
+        height: 48px;
+        border-radius: 35%;
+      }
+      h1 {
+        font-size: 26px;
+        font-weight: 500;
+        margin: 24px 0 12px;
+      }
+      p {
+        font-size: 14px;
+        color: #b8c9c3;
+      }
+      a {
+        color: #d6e7e2;
+        text-underline-offset: 5px;
+      }
+      a:focus-visible {
+        outline: 2px solid #c1e3dd;
+        outline-offset: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/avatar.png" alt="" width="48" height="48" />
+      <h1>{title}</h1>
+      <slot />
+    </main>
+  </body>
+</html>

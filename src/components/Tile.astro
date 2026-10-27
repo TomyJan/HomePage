@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+}
+const { title, description, href, icon } = Astro.props;
+---
+
+<a class="tile" href={href} target="_blank" rel="noopener noreferrer">
+  <svg class="icon" aria-hidden="true">
+    <use href={`#i-${icon}`} />
+  </svg>
+  <span class="tile-label">
+    {title}
+    <small>{description}</small>
+  </span>
+  <svg class="icon tile-arrow" aria-hidden="true">
+    <use href="#i-arrow" />
+  </svg>
+</a>

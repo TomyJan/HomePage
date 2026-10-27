@@ -1,0 +1,183 @@
+---
+import Tile from './Tile.astro';
+import { services, contact } from '../data/site';
+---
+
+<div class="dock" id="dock">
+  <nav class="nav" aria-label="功能导航">
+    <button
+      class="entry"
+      type="button"
+      data-page="home"
+      aria-pressed="true"
+      aria-expanded="true"
+      aria-controls="panel-home"
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-home" />
+      </svg>
+      <span>首页</span>
+    </button>
+    <button
+      class="entry"
+      type="button"
+      data-page="services"
+      aria-pressed="false"
+      aria-expanded="false"
+      aria-controls="panel-services"
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-grid" />
+      </svg>
+      <span>服务导航</span>
+    </button>
+    <button
+      class="entry"
+      type="button"
+      data-page="posts"
+      aria-pressed="false"
+      aria-expanded="false"
+      aria-controls="panel-posts"
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-posts" />
+      </svg>
+      <span>博客文章</span>
+    </button>
+    <button
+      class="entry"
+      type="button"
+      data-page="contact"
+      aria-pressed="false"
+      aria-expanded="false"
+      aria-controls="panel-contact"
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-send" />
+      </svg>
+      <span>联系支持</span>
+    </button>
+  </nav>
+  <div class="content-host" id="content-host">
+    <div class="scroll-indicator" id="scroll-indicator" aria-hidden="true">
+      <span class="scroll-thumb" id="scroll-thumb"></span>
+    </div>
+    <section
+      class="panel text-panel"
+      id="panel-home"
+      data-panel="home"
+      aria-label="首页介绍"
+    >
+      <div class="panel-scroll">
+        <div class="panel-content">
+          <h1>TomyJan</h1>
+          <p class="legacy-bio">
+            我，荼蘼 TomyJan ，是一只菜狗
+            <br />
+            前彭家坪皇家理工学生 / 全沾工程师 / 西北老汉
+            <br />
+            <del>没啥特长</del>特长吃粑睡 / 宅 / <del>变态</del>loli控 / 2.5次元
+            / 萌物( ? ? )<br />
+            米猴 / 库孝子 / 收集癖 / 强迫症 / 拖延症
+            <br />
+            刘慈欣 / PKD / 艺画鸽天 / 京阿尼 /{' '}
+            <a
+              class="about-link"
+              href="https://blog.tomys.top/about"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="更多关于荼蘼的介绍"
+            >
+              ...
+            </a>
+          </p>
+          <p class="quote">『 人生即是到来、相遇、陪伴、离开 』</p>
+        </div>
+      </div>
+    </section>
+    <section
+      class="panel"
+      id="panel-services"
+      data-panel="services"
+      aria-label="服务导航"
+      hidden
+      inert
+    >
+      <div class="panel-scroll">
+        <div class="tiles panel-content">
+          {services.map((item) => (
+            <Tile {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+    <section
+      class="panel text-panel"
+      id="panel-posts"
+      data-panel="posts"
+      aria-label="博客文章"
+      hidden
+      inert
+    >
+      <div class="posts-layout">
+        <div class="panel-scroll" id="posts-scroll">
+          <div class="panel-content">
+            <div id="posts-feed" aria-busy="false"></div>
+            <div
+              class="post-sentinel"
+              id="post-sentinel"
+              aria-hidden="true"
+            ></div>
+            <div
+              class="posts-status"
+              id="posts-status"
+              role="status"
+              aria-live="polite"
+            >
+              <span
+                class="posts-spinner"
+                id="posts-spinner"
+                hidden
+                aria-hidden="true"
+              ></span>
+              <span id="posts-status-text">向下看看，最近写了什么。</span>
+              <button type="button" class="posts-retry" id="posts-retry" hidden>
+                重试
+              </button>
+            </div>
+          </div>
+        </div>
+        <a
+          class="about-link posts-more"
+          id="posts-more"
+          href="https://blog.tomys.top/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span id="posts-more-label" aria-live="polite">
+            去博客读更多
+          </span>
+          <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow" />
+          </svg>
+        </a>
+      </div>
+    </section>
+    <section
+      class="panel"
+      id="panel-contact"
+      data-panel="contact"
+      aria-label="联系与支持"
+      hidden
+      inert
+    >
+      <div class="panel-scroll">
+        <div class="tiles panel-content">
+          {contact.map((item) => (
+            <Tile {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

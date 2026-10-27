@@ -1,0 +1,60 @@
+---
+const sha = __SITE_REVISION__;
+const short = sha.slice(0, 7);
+const commitHref = `https://github.com/TomyJan/HomePage/commit/${sha}`;
+---
+
+<footer class="footer" aria-label="小站信息">
+  <div class="uptime">
+    在风雨中度过 <time id="uptime">6年…</time>
+  </div>
+  <div class="footer-links" id="footer-links">
+    <a
+      class="footer-item commit-link"
+      data-footer-item="commit"
+      href={commitHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`查看版本 ${short} 的提交`}
+    >
+      {short}
+    </a>
+    <a
+      class="footer-item"
+      data-footer-item="sitemap"
+      href="https://www.tomys.top/sitemap.txt"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      站点地图
+    </a>
+    <a
+      class="footer-item"
+      data-footer-item="status"
+      href="https://status.tomys.top/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      服务状态
+    </a>
+    <div class="footer-item filing" id="filing">
+      <button
+        class="filing-trigger"
+        id="filing-trigger"
+        type="button"
+        aria-label="备案信息"
+        aria-expanded="false"
+        aria-controls="filing-card"
+      >
+        <span id="filing-trigger-label">备案信息</span>
+        <svg class="icon" aria-hidden="true">
+          <use href="#i-chevron" />
+        </svg>
+      </button>
+      <div class="filing-card" id="filing-card" hidden inert>
+        <div class="footer-folded-links" id="footer-folded-links"></div>
+        <div class="filing-records" id="filing-records"></div>
+      </div>
+    </div>
+  </div>
+</footer>

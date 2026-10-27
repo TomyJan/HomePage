@@ -1,0 +1,13 @@
+---
+import Message from '../layouts/Message.astro';
+---
+
+<Message title="付款地址已更新">
+  <meta
+    slot="head"
+    http-equiv="refresh"
+    content="5;url=https://web-static.tomys.top/paycode/"
+  />
+  <p>当前地址已失效，5 秒后跳转到新的收款页面。</p>
+  <a href="https://web-static.tomys.top/paycode/">立即前往</a>
+</Message>
