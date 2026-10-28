@@ -3,6 +3,7 @@
 本项目是 Astro + TypeScript 纯静态主页。旧站在 `legacy`，新站在 `master`，许可证保持 MPL-2.0。
 
 - 工具版本写在配置中：pnpm 由 `package.json#packageManager` 指定，Node 由 `.nvmrc` 与 `edgeone.json#nodeVersion` 对齐，兼容范围写在 `package.json#engines`。安装、构建命令不重复写版本号；升级前确认 EdgeOne 支持，并用实际部署版本验证 CI。
+- `pnpm-lock.yaml` 由 pnpm/Dependabot 生成，不交给 Prettier 重排；CI 必须保留冻结安装。Dependabot 暂不升级 TypeScript 7+ 或 Node 25+ 类型定义，待 Astro 检查工具支持或部署运行时升级后同步放开。
 - 开工先读 `docs/design/specification.md`；当前视觉基准为 `docs/design/prototypes/video-first-v3.html`。已确认旧版定稿保留作历史，废弃探索不保留在工作树中。
 - 冻结原型与其图片、校验和不得随正式代码修改。只在用户批准新版设计后另建快照。
 - 视频优先：不要扩大遮罩、移动布局、改写个人介绍或引入设计外功能。只保留一个视频元素；初始化随机一次，其后原视频循环，换页与隐藏 UI 不重置媒体。

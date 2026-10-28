@@ -156,11 +156,21 @@ for (const interruption of ['pause', 'waiting'] as const) {
         .poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState))
         .toBeGreaterThanOrEqual(2);
     }
-    if (interruption === 'pause')
+    if (interruption === 'pause') {
+      await video.evaluate((v: HTMLVideoElement) =>
+        v.addEventListener(
+          'pause',
+          () => {
+            v.dataset.pauseObserved = 'true';
+          },
+          { once: true },
+        ),
+      );
       await page
         .getByRole('button', { name: '暂停背景视频', exact: true })
         .click();
-    else await video.dispatchEvent('waiting');
+      await expect(video).toHaveAttribute('data-pause-observed', 'true');
+    } else await video.dispatchEvent('waiting');
     await page.clock.runFor(30001);
     await interruptVideo(page);
     await expect(video).toHaveJSProperty('paused', true);
