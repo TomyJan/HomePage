@@ -14,24 +14,27 @@ Node.js 24.18.0 附带 Corepack 0.35.0。若系统不带 Corepack，先通过 pn
 
 ## 代码地图
 
-| 路径                        | 职责                                             |
-| --------------------------- | ------------------------------------------------ |
-| `src/pages/index.astro`     | 构建完整主页 HTML；仅加载一个客户端模块入口      |
-| `src/components/`           | 图标、导航面板、子卡片、页脚、媒体栏与加载壳     |
-| `src/data/site.ts`          | 服务、联系、三视频池和外部资源地址               |
-| `src/styles/home.css`       | 复用定稿的全局样式、响应式和动画                 |
-| `src/scripts/navigation.ts` | 面板过渡、尺寸与滚动指示                         |
-| `src/scripts/blog.ts`       | 懒加载、分页、重试、固定底部链接                 |
-| `src/scripts/footer.ts`     | 域名备案渲染、popup 与动态收纳                   |
-| `src/scripts/media.ts`      | 媒体按钮状态与隐藏 UI 模式                       |
-| `src/scripts/video.ts`      | 单视频播放意图、实际帧显示与有限错误恢复         |
-| `src/scripts/boot.ts`       | 首次绘制后加载资源、有限字体等待与 UI 入场       |
-| `src/scripts/origin.ts`     | HostLoc 自定义提示                               |
-| `src/lib/`                  | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
-| `public/`                   | 原样复制到静态输出的图片、爬虫与兼容资源         |
-| `docs/design/`              | 最终规格与已确认设计快照                         |
+| 路径                           | 职责                                             |
+| ------------------------------ | ------------------------------------------------ |
+| `src/pages/index.astro`        | 构建完整主页 HTML，加载主页交互模块              |
+| `src/components/Favicon.astro` | CDN 原图图标与非阻塞的浏览器圆角裁剪             |
+| `src/components/`              | 图标、导航面板、子卡片、页脚、媒体栏与加载壳     |
+| `src/data/site.ts`             | 服务、联系、三视频池和外部资源地址               |
+| `src/styles/home.css`          | 复用定稿的全局样式、响应式和动画                 |
+| `src/scripts/navigation.ts`    | 面板过渡、尺寸与滚动指示                         |
+| `src/scripts/blog.ts`          | 懒加载、分页、重试、固定底部链接                 |
+| `src/scripts/footer.ts`        | 域名备案渲染、popup 与动态收纳                   |
+| `src/scripts/media.ts`         | 媒体按钮状态与隐藏 UI 模式                       |
+| `src/scripts/video.ts`         | 单视频播放意图、实际帧显示与有限错误恢复         |
+| `src/scripts/boot.ts`          | 首次绘制后加载资源、有限字体等待与 UI 入场       |
+| `src/scripts/origin.ts`        | HostLoc 自定义提示                               |
+| `src/lib/`                     | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
+| `public/`                      | 原样复制到静态输出的爬虫与兼容资源               |
+| `docs/design/`                 | 最终规格与已确认设计快照                         |
 
 版本在 Astro 配置首次执行时读取 checkout 的完整 SHA，Vite 注入页面构建。Git 不可用时依次接受 `SITE_REVISION`、`GITHUB_SHA`、`CI_COMMIT_SHA`、`COMMIT_SHA`，均要求完整 40 位十六进制。没有有效版本就明确拒绝构建，避免发布指向错误提交的链接。开发中提交代码后重启开发服务更新版本。
+
+头像直接使用 `resources.avatar` 的旧版 public-cdn 地址，主页、加载壳、404 和付款跳转页统一引用。CDN 需保留 `Access-Control-Allow-Origin`，以便匿名跨域图片在载入后复用到 canvas，为 favicon 裁剪 35% 圆角；不另发图片请求，不加入加载门禁。裁剪不可用时保留原图图标，无脚本时也使用原图。`public/` 不保留头像文件，冻结设计与测试夹具中的历史图片保持不变。
 
 ## 门禁
 

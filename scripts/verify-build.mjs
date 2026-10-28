@@ -8,8 +8,6 @@ for (const file of [
   'index.html',
   '404.html',
   'pay.html',
-  'avatar.png',
-  'avatar-favicon.png',
   'ads.txt',
   'sitemap.txt',
   'robots.txt',

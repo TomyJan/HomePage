@@ -1,4 +1,7 @@
 ---
+import Favicon from '../components/Favicon.astro';
+import { resources } from '../data/site';
+
 interface Props {
   title: string;
 }
@@ -13,7 +16,7 @@ const { title } = Astro.props;
     <meta name="theme-color" content="#101519" />
     <meta name="robots" content="noindex" />
     <title>{title} · 荼蘼 TomyJan</title>
-    <link rel="icon" type="image/png" href="/avatar-favicon.png" />
+    <Favicon />
     <link
       rel="stylesheet"
       href="https://cdn.amoe.cc/web-static/public/font/misans/misans.css"
@@ -63,7 +66,15 @@ const { title } = Astro.props;
   </head>
   <body>
     <main>
-      <img src="/avatar.png" alt="" width="48" height="48" />
+      <img
+        src={resources.avatar}
+        crossorigin="anonymous"
+        data-avatar
+        alt=""
+        width="48"
+        height="48"
+        decoding="async"
+      />
       <h1>{title}</h1>
       <slot />
     </main>

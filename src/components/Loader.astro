@@ -1,6 +1,19 @@
+---
+import { resources } from '../data/site';
+---
+
 <div class="boot" id="boot" data-min-duration="1200" aria-label="正在载入主页">
   <div class="boot-logo">
-    <img src="/avatar.png" width="36" height="36" alt="" fetchpriority="high" />
+    <img
+      src={resources.avatar}
+      crossorigin="anonymous"
+      data-avatar
+      width="36"
+      height="36"
+      alt=""
+      decoding="async"
+      fetchpriority="high"
+    />
     <span>
       荼蘼<small>TOMYJAN</small>
     </span>

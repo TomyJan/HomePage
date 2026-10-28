@@ -8,7 +8,7 @@
 
 正式网页标题为“荼蘼 TomyJan - 个人主页与官方网站”，描述为“TomyJan 的个人主页与官方网站，提供博客文章、服务导航及联系信息。”。元信息集中在 `src/data/site.ts#siteMetadata`，Open Graph 使用同一标题和描述；canonical 与 Open Graph URL 指向 Astro 配置中的正式主域。冻结原型保留历史元信息，不作为 SEO 文案基准。
 
-左上为旧头像与“荼蘼 TomyJan”。favicon、加载壳和左上角同一头像，35% 大圆角矩形。原图来自 `https://public-cdn.tomys.top/head.png`，使用本地优化 PNG。
+左上为旧头像与“荼蘼 TomyJan”。favicon、加载壳和左上角同一头像，35% 大圆角矩形。正式站直接引用旧版 `https://public-cdn.tomys.top/head.png`，地址集中于 `resources.avatar`，不托管本地头像副本。页面头像用 CSS 圆角；favicon 复用载入的跨域原图，在浏览器异步裁剪为透明圆角 PNG，不阻塞入场；无脚本时保留 CDN 原图图标。冻结原型中的本地图片仅供历史设计对照，不随此改动更新。
 
 左上中英文使用同一字号、字重和字距，之间仅一个普通空格。页脚“备案信息/更多”继承同一文字阴影；右侧媒体图标使用单次、局部清晰的投影。正常页脚不绘制椭圆渐变或背景暗斑，底部整条渐变只在隐藏 UI 时出现。
 

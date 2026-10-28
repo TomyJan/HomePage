@@ -1,0 +1,31 @@
+---
+import { resources } from '../data/site';
+---
+
+<link rel="icon" type="image/png" href={resources.avatar} />
+
+<script>
+  const avatar = document.querySelector<HTMLImageElement>('[data-avatar]');
+  const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+
+  function roundFavicon() {
+    if (!avatar?.naturalWidth || !favicon) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 96;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    try {
+      context.beginPath();
+      context.roundRect(0, 0, 96, 96, 96 * 0.35);
+      context.clip();
+      context.drawImage(avatar, 0, 0, 96, 96);
+      favicon.href = canvas.toDataURL('image/png');
+      favicon.sizes.value = '96x96';
+    } catch {
+      // Keep the direct CDN icon if cross-origin canvas access is unavailable.
+    }
+  }
+
+  if (avatar?.complete) roundFavicon();
+  else avatar?.addEventListener('load', roundFavicon, { once: true });
+</script>

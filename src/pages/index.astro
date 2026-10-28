@@ -4,7 +4,8 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import Loader from '../components/Loader.astro';
-import { siteMetadata } from '../data/site';
+import Favicon from '../components/Favicon.astro';
+import { resources, siteMetadata } from '../data/site';
 import '../styles/home.css';
 ---
 
@@ -23,12 +24,7 @@ import '../styles/home.css';
     <meta property="og:title" content={siteMetadata.title} />
     <meta property="og:description" content={siteMetadata.description} />
     <meta property="og:url" content={Astro.site?.href} />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="/avatar-favicon.png"
-    />
+    <Favicon />
     <title>{siteMetadata.title}</title>
     <noscript>
       <style>
@@ -82,7 +78,15 @@ import '../styles/home.css';
       </div>
       <div class="ui-layer" id="ui-layer">
         <a class="brand" href="#home" aria-label="荼蘼 TomyJan">
-          <img src="/avatar.png" width="30" height="30" alt="" />
+          <img
+            src={resources.avatar}
+            crossorigin="anonymous"
+            data-avatar
+            width="30"
+            height="30"
+            alt=""
+            decoding="async"
+          />
           <span>荼蘼 TomyJan</span>
         </a>
         <Navigation />

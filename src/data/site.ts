@@ -86,6 +86,7 @@ export const contact = [
   },
 ];
 export const resources = {
+  avatar: 'https://public-cdn.tomys.top/head.png',
   font: 'https://cdn.amoe.cc/web-static/public/font/misans/misans.css',
   fallback: 'https://api.tomys.top/api/acgimg',
   posts: 'https://blog.tomys.top/wp-json/wp/v2/posts',

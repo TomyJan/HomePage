@@ -6,6 +6,12 @@ export async function resources(page: Page, posts = 21) {
   const fixture = await readFile(resolve('tests/fixtures/loop.webm'));
   await page.route('https://**/*', async (route) => {
     const url = new URL(route.request().url());
+    if (url.href === 'https://public-cdn.tomys.top/head.png')
+      return route.fulfill({
+        path: resolve('docs/design/prototypes/avatar.png'),
+        contentType: 'image/png',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      });
     if (url.pathname.includes('/wp-json/')) {
       const n = Number(url.searchParams.get('page')),
         start = (n - 1) * 10;
