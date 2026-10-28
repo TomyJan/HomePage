@@ -55,6 +55,8 @@ pnpm test:e2e
 
 Dependabot 参考同级 `MoeURL`、`UptimePage`：npm 生态（包括 pnpm）每日检查，Actions 每周检查；Astro/TypeScript、测试、格式工具分别分组。安全更新和普通更新都必须经过 CI，不自动合并。锁文件变化后运行冻结安装和完整门禁。
 
+`pnpm-lock.yaml` 是包管理器生成文件，pnpm 和 Dependabot 的 YAML 排版不必与 Prettier 一致，因此从格式检查中排除；冻结安装继续检查清单与锁文件的一致性，不通过手工重排或关闭冻结检查绕过失败。TypeScript 7 当前会被 `astro check` 明确拒绝，Dependabot 暂时忽略 7 及以上版本；`@types/node` 限于部署的 Node 24 主版本，忽略 25 及以上版本。升级 Astro 类型检查工具或 EdgeOne 运行时后，先验证兼容性，再同步调整这些规则。
+
 改 UI 先对照最终规格，改规则先添加能捕获真实破坏的测试。冻结原型不能随实现一并改动，否则视觉对照失去意义。新增设计须得到用户明确要求并保存新版本。
 
 媒体回归使用支持 HTTP Range 的真实视频夹具，验证画面帧、同源重载、播放位置和暂停意图。派发错误事件不等同于原生媒体故障，只有原生 MediaError 才触发恢复；不通过无条件隐藏视频来处理缓冲。

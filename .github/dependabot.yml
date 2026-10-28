@@ -9,6 +9,13 @@ updates:
       time: '04:00'
       timezone: Asia/Shanghai
     open-pull-requests-limit: 10
+    ignore:
+      # astro check currently requires TypeScript 6.
+      - dependency-name: typescript
+        versions: ['>=7']
+      # Match the Node 24 runtime used by EdgeOne and CI.
+      - dependency-name: '@types/node'
+        versions: ['>=25']
     groups:
       astro-tooling:
         patterns: ['astro', '@astrojs/*', 'typescript']
