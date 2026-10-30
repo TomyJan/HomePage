@@ -167,9 +167,9 @@
   position: absolute;
   z-index: 7;
   right: var(--edge);
-  bottom: 0;
+  bottom: 12px;
   width: min(720px, calc(100% - 2 * var(--edge)));
-  max-height: calc(100dvh - var(--edge));
+  max-height: calc(100dvh - var(--edge) - 12px);
   padding: 14px 18px calc(14px + var(--safe-bottom));
   display: flex;
   align-items: center;

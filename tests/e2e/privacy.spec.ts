@@ -52,7 +52,10 @@ for (const [width, height] of [
         'matrix(1, 0, 0, 1, 0, 0)',
       );
       const noticeBounds = await page.locator('#cookie-notice').boundingBox();
-      expect(noticeBounds!.y + noticeBounds!.height).toBeCloseTo(height, 1);
+      expect(noticeBounds!.y + noticeBounds!.height).toBeCloseTo(
+        height - 12,
+        1,
+      );
       const before = await page
         .locator('.brand, .nav, #content-host, .footer, .controls')
         .evaluateAll((elements) =>
@@ -254,7 +257,7 @@ for (const [width, height] of [
       expect(bounds!.y).toBeGreaterThanOrEqual(0);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
       expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
-      expect(bounds!.y + bounds!.height).toBeCloseTo(height, 1);
+      expect(bounds!.y + bounds!.height).toBeCloseTo(height - 12, 1);
       await notice.getByRole('button', { name: '知道了', exact: true }).click();
       await expect(notice).toBeHidden();
       await page.locator('#filing-trigger').click();
