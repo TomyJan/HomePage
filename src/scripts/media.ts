@@ -106,7 +106,8 @@ export function initMedia(
     }),
   );
   window.addEventListener('keydown', (event) => {
-    if (origin.isOpen()) return;
+    if (origin.isOpen() || document.querySelector('#privacy-dialog[open]'))
+      return;
     if (viewing) wakeControls();
     if (event.key === 'Escape') {
       if (footer.isOpen()) {

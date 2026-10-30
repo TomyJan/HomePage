@@ -66,4 +66,15 @@ export async function ready(page: Page) {
   await page.goto('/');
   await expect(page.locator('#stage')).toHaveClass(/is-ready/);
   await expect(page.locator('#boot')).toBeHidden();
+  await acknowledgeNotice(page);
+}
+export async function acknowledgeNotice(page: Page) {
+  const notice = page.locator('#cookie-notice');
+  if (await notice.isVisible()) {
+    const confirm = notice.getByRole('button', { name: '知道了', exact: true });
+    if (await page.evaluate(() => matchMedia('(pointer: coarse)').matches))
+      await confirm.tap();
+    else await confirm.click();
+    await expect(notice).toBeHidden();
+  }
 }

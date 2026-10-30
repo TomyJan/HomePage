@@ -5,8 +5,10 @@ import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import Loader from '../components/Loader.astro';
 import Favicon from '../components/Favicon.astro';
+import Privacy from '../components/Privacy.astro';
 import { resources, siteMetadata } from '../data/site';
 import '../styles/home.css';
+import '../styles/privacy.css';
 ---
 
 <!doctype html>
@@ -91,6 +93,7 @@ import '../styles/home.css';
         </a>
         <Navigation />
         <Footer />
+        <Privacy />
       </div>
       <Player />
       <Loader />

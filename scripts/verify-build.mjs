@@ -8,6 +8,7 @@ for (const file of [
   'index.html',
   '404.html',
   'pay.html',
+  'privacy.html',
   'ads.txt',
   'sitemap.txt',
   'robots.txt',

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { resources, ready } from '../support/browser';
+import { resources, ready, acknowledgeNotice } from '../support/browser';
 
 async function atHost(page: Page, hostname: string, referrer?: string) {
   await page.route(`http://${hostname}/**`, async (route) => {
@@ -15,6 +15,8 @@ async function atHost(page: Page, hostname: string, referrer?: string) {
     referrer ? { referer: referrer } : undefined,
   );
   await expect(page.locator('#boot')).toBeHidden();
+  if (!(await page.locator('#hostloc-dialog').isVisible()))
+    await acknowledgeNotice(page);
 }
 
 test('filing popup uses actual domain, animates near its trigger, and closes with Escape', async ({

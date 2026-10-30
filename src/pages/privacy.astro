@@ -1,0 +1,50 @@
+---
+import Favicon from '../components/Favicon.astro';
+import PrivacyContent from '../components/PrivacyContent.astro';
+import { privacyPolicy, resources } from '../data/site';
+import '../styles/privacy.css';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#101519" />
+    <meta
+      name="description"
+      content="TomyJan 个人主页隐私政策，说明网站访问、隐私提示及相关信息的使用与保护方式。"
+    />
+    <link rel="canonical" href={new URL('/privacy.html', Astro.site)} />
+    <link rel="stylesheet" href={resources.font} />
+    <Favicon />
+    <title>隐私政策 · 荼蘼 TomyJan</title>
+  </head>
+  <body class="privacy-page">
+    <main
+      class="privacy-sheet privacy-standalone"
+      aria-labelledby="privacy-page-title"
+    >
+      <div class="privacy-heading">
+        <div>
+          <p class="privacy-eyebrow">关于您的隐私</p>
+          <h1 id="privacy-page-title">隐私政策</h1>
+          <p class="privacy-date">更新于 {privacyPolicy.updated}</p>
+        </div>
+        <a class="privacy-home" href="/" aria-label="返回主页">
+          返回主页 ↗
+        </a>
+      </div>
+      <div class="privacy-scroll" tabindex="0" aria-label="隐私政策正文">
+        <PrivacyContent />
+      </div>
+      <div class="privacy-actions">
+        <span>荼蘼 TomyJan</span>
+        <a href="/">继续浏览主页</a>
+      </div>
+    </main>
+  </body>
+</html>

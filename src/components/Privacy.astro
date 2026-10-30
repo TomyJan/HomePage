@@ -1,0 +1,58 @@
+---
+import { privacyPolicy } from '../data/site';
+import PrivacyContent from './PrivacyContent.astro';
+---
+
+<section
+  class="cookie-notice"
+  id="cookie-notice"
+  aria-label="Cookie 与隐私提示"
+  hidden
+  inert
+>
+  <div class="cookie-copy">
+    <h2>Cookie 与隐私</h2>
+    <p>本站会记住本次提示确认，并使用基本访问统计了解浏览情况。</p>
+  </div>
+  <div class="cookie-actions">
+    <a href="/privacy.html" data-privacy-link>
+      隐私政策
+    </a>
+    <button class="privacy-action" id="cookie-confirm" type="button">
+      知道了
+    </button>
+  </div>
+</section>
+<dialog
+  class="privacy-sheet privacy-dialog"
+  id="privacy-dialog"
+  aria-labelledby="privacy-title"
+>
+  <div class="privacy-heading">
+    <div>
+      <p class="privacy-eyebrow">关于您的隐私</p>
+      <h2 id="privacy-title">隐私政策</h2>
+      <p class="privacy-date">更新于 {privacyPolicy.updated}</p>
+    </div>
+    <button
+      class="privacy-close"
+      type="button"
+      id="privacy-close"
+      aria-label="关闭隐私政策"
+      autofocus
+    >
+      <svg class="icon" aria-hidden="true">
+        <use href="#i-close" />
+      </svg>
+    </button>
+  </div>
+  <div class="privacy-scroll" tabindex="0" aria-label="隐私政策正文">
+    <PrivacyContent />
+  </div>
+  <div class="privacy-actions">
+    <span>仅适用于本个人主页</span>
+    <button class="privacy-action" id="privacy-done" type="button">
+      返回浏览
+    </button>
+  </div>
+</dialog>

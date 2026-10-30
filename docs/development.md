@@ -1,5 +1,11 @@
 # 开发与验证
 
+## 隐私与告知
+
+隐私政策与告知版本由 src/data/site.ts 统一提供；PrivacyContent.astro 共用正文，Privacy.astro 提供主页的原生弹窗与底部告知，privacy.astro 输出可独立访问的静态页面。确认记录只用于已读状态，不代表统计授权；统计初始化仍由原有 boot.ts 负责。不要把“知道了”改写成概括同意条款，也不要因提示未确认阻塞主页或媒体。
+
+浏览器存储失败时保留本次内存确认，重新访问可能再次显示；本地记录与政策版本不匹配时重新告知。页脚入口使用事件委托，移入“更多”后也能打开弹窗，关闭时把焦点送回可用的入口。底部空间通过告知实际高度计算；短屏使用单行告知，极短屏在提示期间暂隐藏运行时长，确认后恢复原布局。跨标签确认或清除记录要取消旧淡出计时器；恢复焦点只选择可见且非 inert 的入口。相关回归在 tests/e2e/privacy.spec.ts，既有测试通过真实“知道了”操作进入正常状态。
+
 ## 工具链
 
 使用 `.nvmrc` 指定的 Node.js 版本（与 EdgeOne 支持的部署版本一致）和 `package.json#packageManager` 指定的 pnpm，提交 `pnpm-lock.yaml`，不混用 npm/yarn 锁文件。`package.json#engines` 声明兼容范围，命令中不重复指定版本。Astro、检查工具、Playwright、Vitest 和格式工具采用当前稳定版本；TypeScript 使用 Astro 检查工具支持的最新 6.0.3，待上游支持后再升 7。`@types/node` 与 Node 24 基线一致。
@@ -27,6 +33,7 @@ Node.js 24.18.0 附带 Corepack 0.35.0。若系统不带 Corepack，先通过 pn
 | `src/scripts/media.ts`         | 媒体按钮状态与隐藏 UI 模式                       |
 | `src/scripts/video.ts`         | 单视频播放意图、实际帧显示与有限错误恢复         |
 | `src/scripts/boot.ts`          | 首次绘制后加载资源、有限字体等待与 UI 入场       |
+| `src/scripts/privacy.ts`       | 告知版本、跨标签同步和政策弹窗                   |
 | `src/scripts/origin.ts`        | HostLoc 自定义提示                               |
 | `src/lib/`                     | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
 | `public/`                      | 原样复制到静态输出的爬虫与兼容资源               |
@@ -44,7 +51,7 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
-`verify` 依次执行 Prettier、Astro/TypeScript 检查、单元测试、静态构建和产物检查。产物检查校验冻结设计摘要、版本、三条静态页面、旧跳转、单视频元素与客户端脚本 gzip 预算（25 kB）。CSS 内联以保证加载壳立即绘制；主页客户端脚本应保持轻量。
+`verify` 依次执行 Prettier、Astro/TypeScript 检查、单元测试、静态构建和产物检查。产物检查校验冻结设计摘要、版本、四个静态页面（首页、404、付款跳转与隐私政策）、旧跳转、单视频元素与客户端脚本 gzip 预算（25 kB）。CSS 内联以保证加载壳立即绘制；主页客户端脚本应保持轻量。
 
 浏览器测试先构建真实 `dist/`，用测试专用静态服务验证。CI 仅替换外部网络：使用自制 1 秒纯色 WebM、受控文章 API 和图片，阻止真实统计。无运行时测试开关或生产调试接口。测试工具不进入 `dist/`。
 

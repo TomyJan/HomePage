@@ -1,6 +1,6 @@
 # 荼蘼 TomyJan 的主页
 
-以视频为背景的个人主页，使用 Astro + TypeScript 构建，输出纯静态文件。包含服务导航、WordPress 文章、联系入口与播放器式沉浸模式。
+以视频为背景的个人主页，使用 Astro + TypeScript 构建，输出纯静态文件。包含服务导航、WordPress 文章、联系入口、播放器式沉浸模式，以及隐私政策与底部告知。
 
 正式站：[www.tomys.top](https://www.tomys.top/)。旧实现保留在 [`legacy`](https://github.com/TomyJan/HomePage/tree/legacy)，新实现使用 `master`。
 

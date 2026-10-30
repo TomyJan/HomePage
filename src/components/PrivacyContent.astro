@@ -1,0 +1,22 @@
+---
+import { contact, privacyPolicy } from '../data/site';
+const telegram = contact.find((item) => item.title === 'Telegram')!;
+---
+
+<div class="privacy-copy">
+  <p class="privacy-intro">{privacyPolicy.intro}</p>
+  {privacyPolicy.sections.map((section) => (
+    <section>
+      <h3>{section.title}</h3>
+      {section.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </section>
+  ))}
+  <p class="privacy-contact">
+    联系 TomyJan：
+    <a href={telegram.href} target="_blank" rel="noopener noreferrer">
+      Telegram
+    </a>
+  </p>
+</div>
