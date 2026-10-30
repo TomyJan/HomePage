@@ -26,12 +26,13 @@ for (const panel of [
         const bounds = tiles.map((tile) => tile.getBoundingClientRect());
         const gapX = (bounds[0].right + bounds[1].left) / 2;
         return [
-          [gapX, bounds[0].top + 4],
+          [gapX, bounds[0].top + bounds[0].height / 2],
           [gapX, bounds[2].top + bounds[2].height / 2],
-          [gapX, bounds.at(-1)!.bottom - 4],
+          [gapX, bounds.at(-1)!.bottom - bounds.at(-1)!.height / 2],
           [innerWidth / 2, innerHeight - 42],
           [gapX, bounds[0].top - 20],
           [gapX, bounds[0].top - 9],
+          [gapX, bounds[0].top + 4],
           ...Array.from(document.querySelectorAll('.entry'), (entry) => {
             const button = entry.getBoundingClientRect();
             return [button.right + 3, button.top + button.height / 2];
@@ -63,8 +64,11 @@ for (const panel of [
     expect(pixels[4]).toEqual([255, 255, 255, 255]);
     expect(pixels[5][0]).toBeGreaterThan(core[0]);
     expect(pixels[5][0]).toBeLessThan(255);
+    // The fade starts inside the card edge and has only a faint outer tail.
+    expect(pixels[5][0]).toBeGreaterThanOrEqual(248);
+    expect(pixels[6][0]).toBeGreaterThan(core[0] + 5);
     // The four navigation controls should cast subtler shadows than the cards.
-    for (const pixel of pixels.slice(6)) {
+    for (const pixel of pixels.slice(7)) {
       expect(pixel[0]).toBeGreaterThanOrEqual(245);
       expect(pixel[0]).toBeGreaterThan(core[0]);
     }

@@ -373,41 +373,15 @@ summary:focus-visible {
   gap: var(--tile-gap);
 }
 .tiles:before {
-  /* One bounded opacity field, independent of tile count and density. */
+  /* Soften one solid field, never the cards or their combined rendered alpha. */
   content: '';
   position: absolute;
   z-index: -1;
-  inset: -18px;
+  inset: 0;
   pointer-events: none;
   background: #0000001f;
-  mask-image:
-    linear-gradient(
-      90deg,
-      transparent,
-      #0001 4px,
-      #0008 9px,
-      #000e 14px,
-      #000 18px,
-      #000 calc(100% - 18px),
-      #000e calc(100% - 14px),
-      #0008 calc(100% - 9px),
-      #0001 calc(100% - 4px),
-      transparent
-    ),
-    linear-gradient(
-      0deg,
-      transparent,
-      #0001 4px,
-      #0008 9px,
-      #000e 14px,
-      #000 18px,
-      #000 calc(100% - 18px),
-      #000e calc(100% - 14px),
-      #0008 calc(100% - 9px),
-      #0001 calc(100% - 4px),
-      transparent
-    );
-  mask-composite: intersect;
+  border-radius: 10px;
+  filter: blur(8px);
 }
 .tile {
   display: flex;
