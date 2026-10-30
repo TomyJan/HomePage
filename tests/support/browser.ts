@@ -68,6 +68,13 @@ export async function ready(page: Page) {
   await expect(page.locator('#boot')).toBeHidden();
   await acknowledgeNotice(page);
 }
+// Approved text shadows have independent pixel coverage; the frozen layout stays immutable.
+export async function omitTextShadows(page: Page) {
+  await page.addStyleTag({
+    content:
+      '.text-panel::before,.text-surface::before,.posts-layout::before{display:none!important}.text-panel,.text-panel *{text-shadow:none!important}',
+  });
+}
 export async function acknowledgeNotice(page: Page) {
   const notice = page.locator('#cookie-notice');
   if (await notice.isVisible()) {

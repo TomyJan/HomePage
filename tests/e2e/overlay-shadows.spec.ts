@@ -123,7 +123,10 @@ for (const { name, selector } of surfaces) {
       },
     );
     const near = opacity.slice(0, 4);
-    for (const value of near) expect(value).toBeGreaterThan(0.16);
+    for (const value of near) {
+      expect(value).toBeGreaterThan(0.04);
+      expect(value).toBeLessThan(0.16);
+    }
     expect(Math.max(...near) - Math.min(...near)).toBeLessThan(0.09);
     for (let side = 0; side < 4; side++)
       expect(near[side]).toBeGreaterThan(opacity[side + 4]);

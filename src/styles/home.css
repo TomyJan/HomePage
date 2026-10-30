@@ -292,21 +292,39 @@ summary:focus-visible {
   color: #f4f6f1;
 }
 .panel.text-panel {
-  text-shadow: var(--shadow);
+  text-shadow: 0 1px 2px #0008;
 }
-.text-panel:before {
+.text-surface {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+}
+.text-surface:before,
+.posts-layout:before {
+  /* A single flat field: glyphs, lines and posts never add backdrop layers. */
   content: '';
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  inset: -60px -76px -55px -68px;
-  background: radial-gradient(
-    ellipse closest-side at 50% 50%,
-    #09131bc4 0%,
-    #09131b9c 42%,
-    #09131b45 72%,
-    #09131b00 100%
-  );
+  inset: -18px;
+  background: #00000024;
+  mask-image:
+    linear-gradient(
+      90deg,
+      transparent,
+      #000 18px,
+      #000 calc(100% - 18px),
+      transparent
+    ),
+    linear-gradient(
+      0deg,
+      transparent,
+      #000 18px,
+      #000 calc(100% - 18px),
+      transparent
+    );
+  mask-composite: intersect;
 }
 .panel h1 {
   font-size: 27px;
@@ -479,12 +497,18 @@ summary:focus-visible {
   color: #c8ebe1;
 }
 .posts-layout {
+  position: relative;
+  isolation: isolate;
   width: calc(100% + 48px);
   margin-left: -24px;
   height: var(--content-height);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   padding-bottom: 24px;
+}
+.posts-layout:before {
+  /* Keep the one backing field behind the viewport and its fixed footer. */
+  inset: 6px 12px;
 }
 .posts-layout > .panel-scroll {
   width: 100%;
@@ -1113,9 +1137,6 @@ summary:focus-visible {
     font-size: 10px;
     line-height: 1.9;
     margin-top: 19px;
-  }
-  .text-panel:before {
-    inset: -48px -40px -45px -42px;
   }
   .tile {
     padding: 8px 9px;
