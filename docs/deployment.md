@@ -6,10 +6,10 @@
 
 1. 在 EdgeOne Makers 导入 `TomyJan/HomePage`，选择生产分支 `master`，根目录为仓库根。
 2. 根目录 `edgeone.json` 指定平台已提供的 Node.js 24.18.0、pnpm 冻结安装、构建命令和输出 `dist`。`.nvmrc` 与该版本一致，CI 验证同一部署版本。
-3. 配置正式域名并检查部署日志。构建来自 Git checkout 时自动携带提交版本；源码压缩包没有 `.git` 时必须设置 `SITE_REVISION` 为源提交完整 SHA。
+3. 配置正式域名并检查部署日志。构建来自 Git checkout 时自动携带提交版本；源码压缩包没有 `.git` 时设置 `SITE_REVISION` 为源提交完整 SHA，并在构建和产物校验时使用同一环境变量。版本解析规则由 `src/lib/version.ts` 统一维护。
 4. 预览域名通常属于未知域名，将展示未知域名提示；正式备案按浏览器实际域名独立匹配，见最终规格。
 
-安装和构建分别使用 `corepack pnpm install --frozen-lockfile`、`corepack pnpm build`，由 Corepack 读取 `package.json#packageManager` 选择 pnpm，不依赖平台预装的 pnpm 版本，也不在命令中重复版本号。Node.js 24.18.0 自带的 Corepack 0.35.0 已验证可用。升级 pnpm 时更新 `packageManager` 与锁文件；升级 Node 时同时更新 `.nvmrc` 和 `nodeVersion`，并先确认平台支持。
+安装和构建分别使用 `corepack pnpm install --frozen-lockfile`、`corepack pnpm build`，由 Corepack 读取 `package.json#packageManager` 选择 pnpm，不依赖平台预装的 pnpm 版本，也不在命令中重复版本号。升级 pnpm 时更新 `packageManager` 与锁文件；升级 Node 时同时更新 `.nvmrc` 和 `nodeVersion`，并先确认平台支持。
 
 配置字段依据 [EdgeOne Makers edgeone.json 文档](https://pages.edgeone.ai/document/edgeone-json)。源配置声明了旧地址跳转和指纹资源缓存，未配置所有路径回退到主页，未知路径应返回真正的 404。
 
@@ -39,4 +39,4 @@ CI 不直接发布，也不创建部署凭据。EdgeOne 的 Git 集成可按平�
 
 发布后检查首屏加载、视频循环与手动暂停、声音、隐藏 UI、四页内容和文章分页；分别核对正式域名备案、窄屏页脚、404 与旧跳转。MiSans 和 Umami 在各自 CDN，随机图来自旧 API，均允许独立失败；视频和图片不阻塞 UI。
 
-需要回滚新实现时，在 EdgeOne 控制台回滚到已验证部署，或重新部署新 master 的已验证提交。需要恢复旧站时选择 `legacy` 的 `58bfb88d87ec7eb1eaa5f24e0afca0a9634af8e4`。两个分支历史独立，不通过 merge 旧站进行回滚，不重写已有历史。
+需要回滚时，在 EdgeOne 控制台恢复已验证部署，或重新部署 `master` 的已验证提交。旧站保留在 `legacy`，恢复前另行核对目标提交及平台构建配置。两个分支历史独立，不通过 merge 旧站进行回滚，不重写已有历史。
