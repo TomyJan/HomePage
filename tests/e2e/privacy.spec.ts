@@ -306,6 +306,61 @@ test('the standalone policy is readable without JavaScript', async ({
   await context.close();
 });
 
+for (const safeBottom of [0, 21]) {
+  test(
+    'folded footer menu stays within the viewport across short-screen boundaries with safe inset ' +
+      safeBottom,
+    async ({ browser }) => {
+      const context = await browser.newContext({
+        viewport: { width: 320, height: 274 },
+        hasTouch: true,
+        isMobile: true,
+      });
+      const page = await context.newPage();
+      await page.addInitScript((inset) => {
+        localStorage.setItem('tomyjan:privacy-notice', '2026-10-30');
+        document.addEventListener(
+          'DOMContentLoaded',
+          () => {
+            document.documentElement.style.setProperty(
+              '--safe-bottom',
+              inset + 'px',
+            );
+          },
+          { once: true },
+        );
+      }, safeBottom);
+      await enterHost(page, 'www.tomys.top');
+      for (const height of [274, 300, 320, 273, 240, 844]) {
+        await page.setViewportSize({ width: 320, height });
+        const trigger = page.locator('#filing-trigger');
+        if ((await trigger.getAttribute('aria-expanded')) === 'true') {
+          await trigger.tap();
+          await expect(page.locator('#filing-card')).toBeHidden();
+        }
+        await trigger.tap();
+        const popup = page.locator('#filing-card');
+        await expect(popup).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+        const bounds = await popup.boundingBox();
+        expect(
+          bounds!.y,
+          'menu top at height ' + height,
+        ).toBeGreaterThanOrEqual(0);
+        expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
+        const links = popup.locator('a');
+        await expect(links).toHaveCount(6);
+        for (const link of await links.all()) {
+          await link.scrollIntoViewIfNeeded();
+          await link.click({ trial: true });
+        }
+        await page.keyboard.press('Escape');
+        await expect(popup).toBeHidden();
+      }
+      await context.close();
+    },
+  );
+}
+
 test('an old acknowledgement is renewed and hidden UI keeps the video unobstructed', async ({
   page,
 }) => {

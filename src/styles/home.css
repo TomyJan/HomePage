@@ -644,6 +644,9 @@ summary:focus-visible {
   z-index: 8;
   width: 305px;
   max-width: calc(100vw - 2 * var(--edge));
+  max-height: var(--filing-max-height, calc(100dvh - 2 * var(--edge)));
+  display: flex;
+  flex-direction: column;
   padding: 8px 15px;
   background: #151f25f5;
   border: 1px solid #d5e6df26;
@@ -657,6 +660,10 @@ summary:focus-visible {
     opacity 0.2s var(--ease),
     transform 0.2s var(--ease);
   pointer-events: none;
+}
+.filing-scroll {
+  min-height: 0;
+  overflow-y: auto;
 }
 .filing-card.is-open {
   opacity: 1;
@@ -1255,10 +1262,6 @@ summary:focus-visible {
   }
   .uptime {
     margin-bottom: 0;
-  }
-  .filing-scroll {
-    max-height: calc(100dvh - var(--footer-bottom) - 58px);
-    overflow-y: auto;
   }
 }
 @container (max-width:270px) {

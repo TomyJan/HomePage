@@ -109,6 +109,10 @@ export function initFooter() {
     filingCard.style.left = left - parent.left + 'px';
     filingCard.style.right = 'auto';
     filingCard.style.setProperty(
+      '--filing-max-height',
+      Math.max(0, parent.top - 8 - edge) + 'px',
+    );
+    filingCard.style.setProperty(
       '--anchor-x',
       Math.max(
         12,
