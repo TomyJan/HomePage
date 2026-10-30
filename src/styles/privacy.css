@@ -1,3 +1,5 @@
+@import './elevation.css';
+
 .privacy-page {
   box-sizing: border-box;
   margin: 0;
@@ -35,7 +37,7 @@
   border-radius: 18px;
   background: #142027f5;
   color: #edf3ed;
-  box-shadow: 0 22px 80px #0005;
+  box-shadow: var(--overlay-shadow);
   overflow: hidden;
   font-family: MiSans, sans-serif;
 }
@@ -180,7 +182,7 @@
   border: 1px solid #c8dfd322;
   border-radius: 13px;
   background: #142027f5;
-  box-shadow: 0 8px 30px #0003;
+  box-shadow: var(--overlay-shadow);
   color: #edf3ed;
   opacity: 0;
   transform: translateY(8px);

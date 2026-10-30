@@ -29,6 +29,7 @@ corepack pnpm dev
 | `src/data/site.ts`                | SEO、服务、联系、视频池、外部运行资源与隐私数据  |
 | `src/styles/home.css`             | 复用定稿的全局样式、响应式和动画                 |
 | `src/styles/privacy.css`          | 政策弹窗、独立政策页与底部告知样式               |
+| `src/styles/elevation.css`        | 弹出式与悬浮表面共用的标准、紧凑四周阴影         |
 | `src/scripts/navigation.ts`       | 面板过渡、尺寸与滚动指示                         |
 | `src/scripts/blog.ts`             | 懒加载、分页、重试、固定底部链接                 |
 | `src/scripts/footer.ts`           | 域名备案渲染、popup 与动态收纳                   |
@@ -78,3 +79,5 @@ Dependabot 的 npm 生态（包括 pnpm）每日检查，Actions 每周检查；
 网页标题与描述由 `siteMetadata` 提供，并同步到 Open Graph。canonical 使用 `astro.config.mjs#site`；调整正式主域时一并核对元信息输出。冻结原型中的历史标题与描述不随 SEO 文案更新。
 
 阴影另有独立像素回归：在平坦白色场景中采样服务和联系卡片的上、中、下间隙，检查核心透明度一致、外缘渐隐到完全透明、正常页脚空白无暗斑。这样可避免仅复制视觉快照时把叠加问题一起复制。右键回归使用真实鼠标操作，确认普通模式、隐藏 UI 与控制栏休眠时的右键事件均未取消且不命中视频，同时验证媒体属性、自定义按钮、正文和普通链接菜单。
+
+浮层阴影由 `elevation.css` 提供零偏移的标准与紧凑档，主页与独立政策样式分别导入。`overlay-shadows.spec.ts` 在各表面四边采样实际像素，并与仅去掉该表面阴影的同页截图比较，验证阴影环绕、强度均衡且向外衰减；不要用全屏遮罩替代外缘阴影。
