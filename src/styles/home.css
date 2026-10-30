@@ -300,31 +300,14 @@ summary:focus-visible {
   display: flex;
   flex-direction: column;
 }
-.text-surface:before,
-.posts-layout:before {
-  /* A single flat field: glyphs, lines and posts never add backdrop layers. */
-  content: '';
+.text-effects {
   position: absolute;
-  z-index: -1;
   pointer-events: none;
-  inset: -18px;
-  background: #00000024;
-  mask-image:
-    linear-gradient(
-      90deg,
-      transparent,
-      #000 18px,
-      #000 calc(100% - 18px),
-      transparent
-    ),
-    linear-gradient(
-      0deg,
-      transparent,
-      #000 18px,
-      #000 calc(100% - 18px),
-      transparent
-    );
-  mask-composite: intersect;
+}
+.text-surface,
+.posts-layout {
+  /* One alpha silhouette for the group, never a background for its box. */
+  filter: url('#text-backdrop');
 }
 .panel h1 {
   font-size: 27px;
@@ -505,10 +488,6 @@ summary:focus-visible {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   padding-bottom: 24px;
-}
-.posts-layout:before {
-  /* Keep the one backing field behind the viewport and its fixed footer. */
-  inset: 6px 12px;
 }
 .posts-layout > .panel-scroll {
   width: 100%;

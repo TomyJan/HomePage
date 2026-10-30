@@ -1,18 +1,129 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { resources, ready } from '../support/browser';
+
+async function checkTextFootprint(page: Page, scope: string, anchor: string) {
+  await page.screenshot({ animations: 'disabled' });
+  const geometry = await page.locator(scope).evaluate((surface, anchor) => {
+    const range = document.createRange();
+    range.selectNodeContents(surface.querySelector(anchor)!);
+    const text = range.getBoundingClientRect();
+    const bounds = surface.getBoundingClientRect();
+    const separator = surface
+      .querySelector('.post + .post')
+      ?.getBoundingClientRect();
+    return {
+      decoration: separator
+        ? [separator.left + separator.width * 0.65, separator.top - 4]
+        : null,
+      blank: [32, 40].map((distance) => [
+        text.right + distance,
+        text.top + text.height / 2,
+      ]),
+      near: [3, 5, 7].flatMap((distance) =>
+        [0.25, 0.5, 0.75].map((y) => [
+          text.right + distance,
+          text.top + text.height * y,
+        ]),
+      ),
+      bounds: [
+        Math.max(0, bounds.left - 18),
+        Math.max(0, bounds.top - 18),
+        Math.min(innerWidth - 1, bounds.right + 18),
+        Math.min(innerHeight - 1, bounds.bottom + 18),
+      ],
+    };
+  }, anchor);
+  const actual = await page.screenshot({ animations: 'disabled' });
+  const override = await page.addStyleTag({
+    content: '.text-surface,.posts-layout{filter:none!important}',
+  });
+  const baseline = await page.screenshot({ animations: 'disabled' });
+  await override.evaluate((style) => {
+    style.parentNode?.removeChild(style);
+  });
+  const pixels = await page.evaluate(
+    async ({ actual, baseline, geometry }) => {
+      async function read(png: string) {
+        const image = new Image();
+        image.src = 'data:image/png;base64,' + png;
+        await image.decode();
+        const ctx = new OffscreenCanvas(image.width, image.height).getContext(
+          '2d',
+        )!;
+        ctx.drawImage(image, 0, 0);
+        return ctx.getImageData(0, 0, image.width, image.height);
+      }
+      const [painted, clean] = await Promise.all([
+        read(actual),
+        read(baseline),
+      ]);
+      const sample = (image: ImageData, [x, y]: number[]) =>
+        image.data[(Math.round(y) * image.width + Math.round(x)) * 4];
+      const darkening = (point: number[]) =>
+        (sample(clean, point) - sample(painted, point)) /
+        Math.max(1, sample(clean, point));
+      let maximum = 0;
+      let backgroundSamples = 0;
+      let peak: { point: number[]; painted: number; baseline: number } | null =
+        null;
+      const [left, top, right, bottom] = geometry.bounds;
+      for (let y = top; y <= bottom; y += 2)
+        for (let x = left; x <= right; x += 2) {
+          // Filtered glyph antialiasing can differ; measure backdrop on background.
+          if (sample(clean, [x, y]) < 250) continue;
+          backgroundSamples++;
+          const delta = darkening([x, y]);
+          if (delta > maximum) {
+            maximum = delta;
+            peak = {
+              point: [x, y],
+              painted: sample(painted, [x, y]),
+              baseline: sample(clean, [x, y]),
+            };
+          }
+        }
+      return {
+        peak,
+        backgroundSamples,
+        decorationDarkening: geometry.decoration
+          ? darkening(geometry.decoration)
+          : 0,
+        blank: geometry.blank.map((point) => sample(painted, point)),
+        near: geometry.near.map(darkening),
+        maximum,
+      };
+    },
+    {
+      actual: actual.toString('base64'),
+      baseline: baseline.toString('base64'),
+      geometry,
+    },
+  );
+  // A short line must not paint the empty remainder of its containing box.
+  for (const value of pixels.blank) expect(value).toBeGreaterThanOrEqual(254);
+  expect(Math.max(...pixels.near)).toBeGreaterThan(0.008);
+  // One common alpha mask caps opacity even where glyphs and lines are dense.
+  expect(pixels.backgroundSamples).toBeGreaterThan(100);
+  expect(pixels.maximum, JSON.stringify(pixels.peak)).toBeLessThan(0.16);
+  expect(pixels.decorationDarkening).toBeLessThan(0.002);
+}
 
 for (const width of [1440, 390, 320]) {
   for (const section of [
-    { name: '首页', id: 'panel-home' },
-    { name: '博客文章', id: 'panel-posts' },
+    { name: '首页', scope: '#panel-home .text-surface', anchor: 'h1' },
+    {
+      name: '博客文章',
+      scope: '#panel-posts .posts-layout',
+      anchor: '.post time',
+    },
   ]) {
-    test(`${section.name} has a light flat backdrop without accumulated text shadows at ${width}px`, async ({
+    test(`${section.name} backdrop follows text and leaves blank space transparent at ${width}px`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await resources(page);
       await ready(page);
-      if (section.id === 'panel-posts') {
+      if (section.name === '博客文章') {
         await page
           .getByRole('button', { name: section.name, exact: true })
           .click();
@@ -20,123 +131,19 @@ for (const width of [1440, 390, 320]) {
         await expect(page.locator('.panel:not([hidden])')).toHaveCount(1);
       }
       await page.mouse.move(width - 5, 5);
-      await page.screenshot({ animations: 'disabled' });
-      const geometry = await page
-        .locator('#' + section.id)
-        .evaluate((panel) => {
-          const scroll = panel.querySelector('.panel-scroll')!;
-          const viewport = scroll.getBoundingClientRect();
-          const style = getComputedStyle(scroll);
-          const heading = panel.querySelector('h1')?.getBoundingClientRect();
-          const ending = panel
-            .querySelector('.quote, .posts-more')!
-            .getBoundingClientRect();
-          const left = viewport.left + parseFloat(style.paddingLeft);
-          const right = viewport.right - parseFloat(style.paddingRight);
-          const top = Math.max(
-            heading?.top ?? viewport.top + parseFloat(style.paddingTop),
-            viewport.top + parseFloat(style.paddingTop),
-          );
-          const bottom = Math.min(
-            ending.bottom,
-            panel.id === 'panel-home'
-              ? viewport.bottom - parseFloat(style.paddingBottom)
-              : ending.bottom,
-          );
-          const textRects: number[][] = [];
-          const walker = document.createTreeWalker(panel, NodeFilter.SHOW_TEXT);
-          while (walker.nextNode()) {
-            if (!walker.currentNode.textContent?.trim()) continue;
-            const range = document.createRange();
-            range.selectNodeContents(walker.currentNode);
-            for (const rect of range.getClientRects())
-              textRects.push([
-                rect.left - 3,
-                rect.top - 3,
-                rect.right + 3,
-                rect.bottom + 3,
-              ]);
-          }
-          const core = [0.15, 0.5, 0.85].flatMap((x) =>
-            [0.25, 0.5, 0.75].map((y) => [
-              left + (right - left) * x,
-              top + (bottom - top) * y,
-            ]),
-          );
-          const gaps: number[][] = [];
-          for (let y = top + 12; y < bottom - 12; y += 3)
-            for (let x = left + 12; x < right - 12; x += 3)
-              if (
-                !textRects.some(
-                  ([l, t, r, b]) => x >= l && x <= r && y >= t && y <= b,
-                )
-              )
-                gaps.push([x, y]);
-          return {
-            core,
-            gaps,
-            edge: [
-              [right + 9, (top + bottom) / 2],
-              [right + 20, (top + bottom) / 2],
-            ],
-          };
+      await page.addStyleTag({
+        content: '.scene{visibility:hidden}.stage{background:white}',
+      });
+      await checkTextFootprint(page, section.scope, section.anchor);
+      // Reflow and new text must update the shape without keeping an old box.
+      await page
+        .locator(section.scope)
+        .locator(section.anchor)
+        .first()
+        .evaluate((element) => {
+          element.textContent = 'Hi';
         });
-      // Hide glyph ink without changing layout or their explicitly colored shadows.
-      await page.addStyleTag({
-        content:
-          '.scene{visibility:hidden}.stage{background:white}.text-panel,.text-panel *{color:transparent!important}.post::before{display:none}',
-      });
-      const withTextShadows = await page.screenshot({ animations: 'disabled' });
-      await page.addStyleTag({
-        content: '.text-panel,.text-panel *{text-shadow:none!important}',
-      });
-      const backdropOnly = await page.screenshot({ animations: 'disabled' });
-      const pixels = await page.evaluate(
-        async ({ actual, baseline, geometry }) => {
-          async function read(png: string) {
-            const image = new Image();
-            image.src = 'data:image/png;base64,' + png;
-            await image.decode();
-            const ctx = new OffscreenCanvas(
-              image.width,
-              image.height,
-            ).getContext('2d')!;
-            ctx.drawImage(image, 0, 0);
-            return ctx;
-          }
-          const [painted, clean] = await Promise.all([
-            read(actual),
-            read(baseline),
-          ]);
-          const sample = (
-            ctx: OffscreenCanvasRenderingContext2D,
-            [x, y]: number[],
-          ) => ctx.getImageData(Math.round(x), Math.round(y), 1, 1).data[0];
-          return {
-            core: geometry.core.map((point) => sample(clean, point)),
-            edge: geometry.edge.map((point) => sample(clean, point)),
-            gapDarkening: geometry.gaps.map((point) => {
-              const base = sample(clean, point);
-              return (base - sample(painted, point)) / Math.max(1, base);
-            }),
-          };
-        },
-        {
-          actual: withTextShadows.toString('base64'),
-          baseline: backdropOnly.toString('base64'),
-          geometry,
-        },
-      );
-      expect(Math.min(...pixels.core)).toBeGreaterThan(200);
-      expect(Math.max(...pixels.core)).toBeLessThan(240);
-      expect(
-        Math.max(...pixels.core) - Math.min(...pixels.core),
-      ).toBeLessThanOrEqual(2);
-      expect(pixels.edge[0]).toBeGreaterThan(Math.max(...pixels.core));
-      expect(pixels.edge[0]).toBeLessThan(255);
-      expect(pixels.edge[1]).toBe(255);
-      expect(pixels.gapDarkening.length).toBeGreaterThan(20);
-      expect(Math.max(...pixels.gapDarkening)).toBeLessThan(0.035);
+      await checkTextFootprint(page, section.scope, section.anchor);
     });
   }
 }

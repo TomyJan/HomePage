@@ -72,7 +72,7 @@ export async function ready(page: Page) {
 export async function omitTextShadows(page: Page) {
   await page.addStyleTag({
     content:
-      '.text-panel::before,.text-surface::before,.posts-layout::before{display:none!important}.text-panel,.text-panel *{text-shadow:none!important}',
+      '.text-panel::before,.text-surface::before,.posts-layout::before{display:none!important}.text-surface,.posts-layout{filter:none!important}.text-panel,.text-panel *{text-shadow:none!important}',
   });
 }
 export async function acknowledgeNotice(page: Page) {

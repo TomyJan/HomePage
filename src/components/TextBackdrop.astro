@@ -1,0 +1,43 @@
+<svg
+  class="text-effects"
+  xmlns="http://www.w3.org/2000/svg"
+  width="0"
+  height="0"
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <filter
+      id="text-backdrop"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+      color-interpolation-filters="sRGB"
+    >
+      <!-- Merge the rendered text alpha before softening and applying opacity once. -->
+      <feComponentTransfer in="SourceAlpha" result="text-alpha">
+        <!-- Exclude faint separators, control fills and borders from the backdrop. -->
+        <feFuncA type="discrete" tableValues="0 0 1 1" />
+      </feComponentTransfer>
+      <feMorphology
+        in="text-alpha"
+        operator="dilate"
+        radius="3"
+        result="outline"
+      />
+      <feGaussianBlur in="outline" stdDeviation="3" result="soft-outline" />
+      <feFlood flood-color="#000000" flood-opacity="0.14" result="shade" />
+      <feComposite
+        in="shade"
+        in2="soft-outline"
+        operator="in"
+        result="backdrop"
+      />
+      <feMerge>
+        <feMergeNode in="backdrop" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

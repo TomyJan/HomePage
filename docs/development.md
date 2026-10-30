@@ -19,28 +19,29 @@ corepack pnpm dev
 
 ## 代码地图
 
-| 路径                              | 职责                                             |
-| --------------------------------- | ------------------------------------------------ |
-| `src/pages/index.astro`           | 构建完整主页 HTML，加载主页交互模块              |
-| `src/components/Favicon.astro`    | CDN 原图图标与非阻塞的浏览器圆角裁剪             |
-| `src/components/Navigation.astro` | 首页介绍和四个内容面板的 HTML                    |
-| `src/components/Footer.astro`     | 版本、站点地图、服务状态和隐私入口               |
-| `src/components/`                 | 图标、子卡片、媒体栏、加载壳与共用政策正文       |
-| `src/data/site.ts`                | SEO、服务、联系、视频池、外部运行资源与隐私数据  |
-| `src/styles/home.css`             | 复用定稿的全局样式、响应式和动画                 |
-| `src/styles/privacy.css`          | 政策弹窗、独立政策页与底部告知样式               |
-| `src/styles/elevation.css`        | 弹出式与悬浮表面共用的标准、紧凑四周阴影         |
-| `src/scripts/navigation.ts`       | 面板过渡、尺寸与滚动指示                         |
-| `src/scripts/blog.ts`             | 懒加载、分页、重试、固定底部链接                 |
-| `src/scripts/footer.ts`           | 域名备案渲染、popup 与动态收纳                   |
-| `src/scripts/media.ts`            | 媒体按钮状态与隐藏 UI 模式                       |
-| `src/scripts/video.ts`            | 单视频播放意图、实际帧显示与有限错误恢复         |
-| `src/scripts/boot.ts`             | 首次绘制后启动字体、视频与兜底图，控制 UI 入场   |
-| `src/scripts/privacy.ts`          | 告知版本、跨标签同步和政策弹窗                   |
-| `src/scripts/origin.ts`           | HostLoc 自定义提示                               |
-| `src/lib/`                        | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
-| `public/`                         | 原样复制到静态输出的爬虫与兼容资源               |
-| `docs/design/`                    | 最终规格与已确认设计快照                         |
+| 路径                                | 职责                                             |
+| ----------------------------------- | ------------------------------------------------ |
+| `src/pages/index.astro`             | 构建完整主页 HTML，加载主页交互模块              |
+| `src/components/Favicon.astro`      | CDN 原图图标与非阻塞的浏览器圆角裁剪             |
+| `src/components/Navigation.astro`   | 首页介绍和四个内容面板的 HTML                    |
+| `src/components/TextBackdrop.astro` | 正文轮廓合并、柔化和单次着色的共用 SVG 滤镜      |
+| `src/components/Footer.astro`       | 版本、站点地图、服务状态和隐私入口               |
+| `src/components/`                   | 图标、子卡片、媒体栏、加载壳与共用政策正文       |
+| `src/data/site.ts`                  | SEO、服务、联系、视频池、外部运行资源与隐私数据  |
+| `src/styles/home.css`               | 复用定稿的全局样式、响应式和动画                 |
+| `src/styles/privacy.css`            | 政策弹窗、独立政策页与底部告知样式               |
+| `src/styles/elevation.css`          | 弹出式与悬浮表面共用的标准、紧凑四周阴影         |
+| `src/scripts/navigation.ts`         | 面板过渡、尺寸与滚动指示                         |
+| `src/scripts/blog.ts`               | 懒加载、分页、重试、固定底部链接                 |
+| `src/scripts/footer.ts`             | 域名备案渲染、popup 与动态收纳                   |
+| `src/scripts/media.ts`              | 媒体按钮状态与隐藏 UI 模式                       |
+| `src/scripts/video.ts`              | 单视频播放意图、实际帧显示与有限错误恢复         |
+| `src/scripts/boot.ts`               | 首次绘制后启动字体、视频与兜底图，控制 UI 入场   |
+| `src/scripts/privacy.ts`            | 告知版本、跨标签同步和政策弹窗                   |
+| `src/scripts/origin.ts`             | HostLoc 自定义提示                               |
+| `src/lib/`                          | 可独立测试的域名、收纳、时间、文章校验和版本规则 |
+| `public/`                           | 原样复制到静态输出的爬虫与兼容资源               |
+| `docs/design/`                      | 最终规格与已确认设计快照                         |
 
 版本由 `src/lib/version.ts#resolveRevision` 统一解析，Astro 配置在启动/构建时通过 Vite 注入，产物校验脚本复用同一规则：先取 checkout 的完整 SHA；Git 不可用时依次接受 `SITE_REVISION`、`GITHUB_SHA`、`CI_COMMIT_SHA`、`COMMIT_SHA`，均要求完整 40 位十六进制。没有有效版本就拒绝构建或校验；产物中的提交地址必须与解析结果一致。开发中提交代码后重启开发服务更新版本。
 
@@ -80,6 +81,6 @@ Dependabot 的 npm 生态（包括 pnpm）每日检查，Actions 每周检查；
 
 阴影另有独立像素回归：在平坦白色场景中采样服务和联系卡片的上、中、下间隙，检查核心透明度一致、外缘渐隐到完全透明、正常页脚空白无暗斑。这样可避免仅复制视觉快照时把叠加问题一起复制。右键回归使用真实鼠标操作，确认普通模式、隐藏 UI 与控制栏休眠时的右键事件均未取消且不命中视频，同时验证媒体属性、自定义按钮、正文和普通链接菜单。
 
-正文衬底只在首页的 `.text-surface` 或文章页的 `.posts-layout` 绘制一次，以核心恒定透明度和两向渐隐遮罩代替径向暗斑。文章衬底不挂在单篇文章或滚动内容上；字形投影保持紧凑。`text-shadows.spec.ts` 检查桌面与窄屏的核心深度一致、外缘透明，并采样字形范围之外的空隙，防止模糊文字阴影再次堆积。
+正文衬底在首页 `.text-surface` 与文章页 `.posts-layout` 各应用一次 `TextBackdrop.astro` 中的 SVG 滤镜。先取整组渲染结果的 `SourceAlpha`，用 alpha 阈值排除淡色分隔线、控件底色及边框，再扩张并柔化轮廓，以一次 `feFlood` / `feComposite` 将黑色透明度限制在 14% 内，最后合并原文字。阈值只影响衬底来源，原文字与装饰仍原样绘制。没有矩形底板，不逐行或逐篇投影；列表自身的滚动裁切与渐隐先参与轮廓，固定底部链接也包含在同一组内。不克隆文字，不用 JavaScript 逐帧测量，字体、内容和换行变化由浏览器重绘。`text-shadows.spec.ts` 检查桌面与窄屏的字边衬底、短句后方透明、文字缩短后无旧轮廓残留、分隔线不带阴影，并限制密集区的最大暗化。
 
 浮层阴影由 `elevation.css` 提供低透明度、零偏移的标准与紧凑档，主页与独立政策样式分别导入。`overlay-shadows.spec.ts` 在各表面四边采样实际像素，并与仅去掉该表面阴影的同页截图比较，验证阴影环绕、强度均衡、轻量且向外衰减；不要用全屏遮罩替代外缘阴影。
