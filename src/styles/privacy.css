@@ -73,16 +73,10 @@
 }
 .privacy-heading h1,
 .privacy-heading h2 {
-  margin: 5px 0 8px;
+  margin: 0 0 8px;
   font-size: 24px;
   font-weight: 500;
   letter-spacing: 0.025em;
-}
-.privacy-eyebrow {
-  margin: 0;
-  font-size: 10px;
-  color: #a5c7bd;
-  letter-spacing: 0.12em;
 }
 .privacy-date {
   margin: 0;
@@ -142,17 +136,6 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.privacy-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 28px 20px;
-  border-top: 1px solid #c8dfd312;
-  flex: none;
-  font-size: 11px;
-  color: #aabbb5;
-}
 .privacy-action {
   padding: 9px 17px;
   border: 1px solid #c8dfd326;
@@ -181,9 +164,9 @@
   position: absolute;
   z-index: 7;
   right: var(--edge);
-  bottom: calc(var(--footer-bottom) + 64px);
+  bottom: calc(var(--footer-bottom) + 44px);
   width: min(720px, calc(100% - 2 * var(--edge)));
-  max-height: calc(100dvh - var(--footer-bottom) - 64px - var(--edge));
+  max-height: calc(100dvh - var(--footer-bottom) - 44px - var(--edge));
   padding: 14px 18px;
   display: flex;
   align-items: center;
@@ -240,9 +223,6 @@
   .privacy-scroll {
     padding: 4px 20px 18px;
   }
-  .privacy-actions {
-    padding: 14px 20px 17px;
-  }
   .privacy-copy {
     font-size: 12px;
   }
@@ -257,10 +237,6 @@
   }
   .privacy-heading {
     padding-top: 14px;
-    padding-bottom: 12px;
-  }
-  .privacy-actions {
-    padding-top: 10px;
     padding-bottom: 12px;
   }
 }

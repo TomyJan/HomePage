@@ -12,11 +12,11 @@ import PrivacyContent from './PrivacyContent.astro';
 >
   <div class="cookie-copy">
     <p>
-      本站使用 Cookie 及类似技术保障基本功能。您可以查阅
+      本站使用 Cookie 及类似技术保障基本功能。详情请查阅
       <a href="/privacy.html" data-privacy-link>
         隐私政策
       </a>
-      ，了解访问统计及您的选择。
+      。
     </p>
   </div>
   <div class="cookie-actions">
@@ -32,7 +32,6 @@ import PrivacyContent from './PrivacyContent.astro';
 >
   <div class="privacy-heading">
     <div>
-      <p class="privacy-eyebrow">关于您的隐私</p>
       <h2 id="privacy-title">隐私政策</h2>
       <p class="privacy-date">更新于 {privacyPolicy.updated}</p>
     </div>
@@ -50,11 +49,5 @@ import PrivacyContent from './PrivacyContent.astro';
   </div>
   <div class="privacy-scroll" tabindex="0" aria-label="隐私政策正文">
     <PrivacyContent />
-  </div>
-  <div class="privacy-actions">
-    <span>仅适用于本个人主页</span>
-    <button class="privacy-action" id="privacy-done" type="button">
-      返回浏览
-    </button>
   </div>
 </dialog>

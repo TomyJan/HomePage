@@ -82,7 +82,6 @@ export function initPrivacy() {
     dialog.classList.add('is-open');
   });
   $('#privacy-close').addEventListener('click', closePolicy);
-  $('#privacy-done').addEventListener('click', closePolicy);
   dialog.addEventListener('cancel', (event) => {
     event.preventDefault();
     closePolicy();
