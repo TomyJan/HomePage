@@ -16,23 +16,12 @@ export function initPrivacy() {
     /* Browsing remains available when storage is restricted. */
   }
 
-  function sizeNotice() {
-    if (notice.hidden) return;
-    document.documentElement.style.setProperty(
-      '--privacy-notice-space',
-      notice.offsetHeight +
-        parseFloat(getComputedStyle(notice).getPropertyValue('--notice-gap')) +
-        'px',
-    );
-  }
   function showNotice() {
     ready = true;
     if (acknowledged) return;
     clearTimeout(noticeTimer);
     notice.hidden = false;
     notice.inert = false;
-    sizeNotice();
-    document.documentElement.classList.add('has-privacy-notice');
     void notice.offsetWidth;
     notice.classList.add('is-visible');
   }
@@ -43,8 +32,6 @@ export function initPrivacy() {
     noticeTimer = window.setTimeout(
       () => {
         notice.hidden = true;
-        document.documentElement.classList.remove('has-privacy-notice');
-        document.documentElement.style.removeProperty('--privacy-notice-space');
       },
       reduced.matches ? 0 : 220,
     );
@@ -127,6 +114,5 @@ export function initPrivacy() {
     if (acknowledged) hideNotice();
     else if (ready) showNotice();
   });
-  new ResizeObserver(sizeNotice).observe(notice);
   return { showNotice };
 }

@@ -69,7 +69,8 @@ summary:focus-visible {
   height: 100dvh;
   min-height: 440px;
   isolation: isolate;
-  overflow: hidden;
+  /* Keep focus and touch scrolling inside panels, never move the stage. */
+  overflow: clip;
   background: #000;
 }
 .scene,

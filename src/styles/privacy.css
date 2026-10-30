@@ -178,17 +178,18 @@
   padding-top: 5px;
 }
 .cookie-notice {
-  --notice-gap: 16px;
   position: absolute;
   z-index: 7;
-  left: var(--edge);
   right: var(--edge);
-  bottom: calc(var(--edge) + var(--safe-bottom));
-  padding: 16px 19px;
+  bottom: calc(var(--footer-bottom) + 64px);
+  width: min(720px, calc(100% - 2 * var(--edge)));
+  max-height: calc(100dvh - var(--footer-bottom) - 64px - var(--edge));
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 18px;
+  overflow-y: auto;
   border: 1px solid #c8dfd322;
   border-radius: 13px;
   background: #142027f5;
@@ -204,70 +205,34 @@
   opacity: 1;
   transform: translateY(0);
 }
-.cookie-copy h2 {
-  margin: 0 0 5px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
+.cookie-copy {
+  min-width: 0;
 }
 .cookie-copy p {
   margin: 0;
   font-size: 11px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: #becfc6;
 }
-.cookie-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex: none;
-  font-size: 11px;
-}
-.cookie-actions a {
+.cookie-copy a {
   color: #c1e3dd;
-  text-underline-offset: 4px;
-}
-.cookie-actions a:hover {
   text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
 }
-.has-privacy-notice .stage:not(.is-viewing) .footer {
-  bottom: calc(var(--footer-bottom) + var(--privacy-notice-space, 0px));
+.cookie-copy a:hover {
+  color: #edf3ed;
 }
-.has-privacy-notice .stage:not(.is-viewing) .player-bar {
-  bottom: var(--privacy-notice-space, 0px);
+.cookie-actions {
+  flex: none;
 }
-.has-privacy-notice .dock {
-  bottom: calc(var(--dock-bottom) + var(--privacy-notice-space, 0px));
-}
-.has-privacy-notice .filing-scroll {
-  max-height: max(
-    40px,
-    calc(
-      100dvh - var(--footer-bottom) - var(--privacy-notice-space, 0px) - 58px
-    )
-  );
-  overflow-y: auto;
-}
-.has-privacy-notice .stage {
-  --content-height: min(
-    calc(4 * var(--tile-height) + 3 * var(--tile-gap) + 48px),
-    max(
-      80px,
-      calc(
-        100dvh - var(--dock-bottom) - var(--privacy-notice-space, 0px) - 110px
-      )
-    )
-  );
+.footer:has(.filing-card:not([hidden])) {
+  z-index: 8;
 }
 @media (max-width: 520px) {
   .cookie-notice {
-    padding: 13px 15px;
-    flex-wrap: wrap;
-    gap: 11px;
-  }
-  .cookie-actions {
-    width: 100%;
-    justify-content: space-between;
+    padding: 12px;
+    gap: 14px;
   }
   .privacy-heading {
     padding: 21px 20px 17px;
@@ -284,34 +249,8 @@
 }
 @media (max-height: 570px) {
   .cookie-notice {
-    flex-wrap: nowrap;
     gap: 12px;
-    padding: 8px 12px;
-  }
-  .cookie-copy p {
-    display: none;
-  }
-  .cookie-copy h2 {
-    margin: 0;
-    white-space: nowrap;
-  }
-  .cookie-actions {
-    width: auto;
-    gap: 12px;
-  }
-  .has-privacy-notice .entry {
-    height: clamp(
-      24px,
-      calc(
-        (
-            100dvh - var(--dock-bottom) - var(--privacy-notice-space, 0px) -
-              74px
-          ) /
-          4
-      ),
-      43px
-    );
-    gap: 0;
+    padding: 10px 12px;
   }
   .privacy-sheet {
     max-height: calc(100dvh - 24px);
@@ -326,46 +265,12 @@
   }
 }
 @media (max-height: 400px) {
-  .has-privacy-notice .stage {
-    --dock-bottom: calc(var(--footer-bottom) + 36px);
-    --content-height: calc(
-      100dvh - var(--dock-bottom) - var(--privacy-notice-space, 0px) - 32px
-    );
-  }
-  .has-privacy-notice .uptime {
-    display: none;
-  }
-  .has-privacy-notice .nav {
-    gap: 1px;
-  }
-  .has-privacy-notice .entry {
-    height: clamp(
-      24px,
-      calc(
-        (
-            100dvh - var(--dock-bottom) - var(--privacy-notice-space, 0px) -
-              35px
-          ) /
-          4
-      ),
-      43px
-    );
-  }
-  .has-privacy-notice .brand {
-    top: 4px;
-    font-size: 12px;
-  }
-  .has-privacy-notice .brand img {
-    width: 18px;
-    height: 18px;
-  }
-  .cookie-notice {
-    --notice-gap: 4px;
-    bottom: calc(6px + var(--safe-bottom));
-    padding: 4px 10px;
+  .cookie-copy p {
+    font-size: 10px;
+    line-height: 1.65;
   }
   .cookie-actions .privacy-action {
-    padding: 4px 8px;
+    padding: 6px 9px;
     font-size: 11px;
     line-height: 1.4;
   }

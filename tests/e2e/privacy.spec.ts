@@ -25,12 +25,12 @@ for (const [width, height] of [
   [320, 240],
   [667, 270],
   [390, 256],
+  [1440, 900],
+  [390, 844],
+  [320, 640],
 ]) {
   test(
-    'first notice preserves navigation and popup access at ' +
-      width +
-      'x' +
-      height,
+    'floating notice leaves page layout unchanged at ' + width + 'x' + height,
     async ({ browser }) => {
       const context = await browser.newContext({
         viewport: { width, height },
@@ -38,8 +38,58 @@ for (const [width, height] of [
         isMobile: true,
       });
       const page = await context.newPage();
+      await page.addInitScript(() => {
+        document.addEventListener(
+          'DOMContentLoaded',
+          () =>
+            document.documentElement.style.setProperty('--safe-bottom', '21px'),
+          { once: true },
+        );
+      });
       await enterHost(page, 'www.tomys.top');
-      await page.addStyleTag({ content: ':root { --safe-bottom: 21px; }' });
+      const before = await page
+        .locator('.brand, .nav, #content-host, .footer, .controls')
+        .evaluateAll((elements) =>
+          elements.map((element) => {
+            const rect = element.getBoundingClientRect();
+            return {
+              stageScrollLeft: document.querySelector('#stage')!.scrollLeft,
+              stageScrollTop: document.querySelector('#stage')!.scrollTop,
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            };
+          }),
+        );
+      await page.locator('#cookie-confirm').tap();
+      await expect(page.locator('#cookie-notice')).toBeHidden();
+      const after = await page
+        .locator('.brand, .nav, #content-host, .footer, .controls')
+        .evaluateAll((elements) =>
+          elements.map((element) => {
+            const rect = element.getBoundingClientRect();
+            return {
+              stageScrollLeft: document.querySelector('#stage')!.scrollLeft,
+              stageScrollTop: document.querySelector('#stage')!.scrollTop,
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            };
+          }),
+        );
+      for (let i = 0; i < before.length; i++)
+        for (const key of ['x', 'y', 'width', 'height'] as const)
+          expect(
+            Math.abs(before[i][key] - after[i][key]),
+            'layout element ' +
+              i +
+              ' ' +
+              key +
+              ' ' +
+              JSON.stringify({ before: before[i], after: after[i] }),
+          ).toBeLessThan(0.1);
       const geometry = await page.evaluate(() => {
         const rect = (selector: string) =>
           document.querySelector(selector)!.getBoundingClientRect();
@@ -56,7 +106,6 @@ for (const [width, height] of [
       expect(geometry.navBottom + 12).toBeLessThanOrEqual(
         geometry.footer + 0.1,
       );
-      expect(geometry.controls).toBeLessThanOrEqual(geometry.notice);
       await page.getByRole('button', { name: '服务导航', exact: true }).tap();
       await expect(page.locator('#panel-services')).toBeVisible();
       await page.locator('#filing-trigger').tap();
@@ -69,8 +118,6 @@ for (const [width, height] of [
       await page.locator('[data-filing-type]').last().scrollIntoViewIfNeeded();
       await page.locator('[data-filing-type]').last().click({ trial: true });
       await page.keyboard.press('Escape');
-      await page.locator('#cookie-confirm').tap();
-      await expect(page.locator('#cookie-notice')).toBeHidden();
       await context.close();
     },
   );
@@ -109,6 +156,22 @@ test('clearing cross-tab acknowledgement during fade-out restores a usable notic
   await expect(page.locator('#cookie-notice')).toBeVisible();
   await page.locator('#cookie-confirm').click();
   await expect(page.locator('#cookie-notice')).toBeHidden();
+});
+
+test('the notice embeds its policy link in the explanation and keeps only confirmation on the right', async ({
+  page,
+}) => {
+  await enter(page);
+  await expect(page.locator('#cookie-notice .cookie-copy p')).toContainText(
+    'Cookie',
+  );
+  await expect(
+    page.locator('#cookie-notice .cookie-copy p [data-privacy-link]'),
+  ).toBeVisible();
+  await expect(page.locator('#cookie-notice .cookie-actions a')).toHaveCount(0);
+  await expect(page.locator('#cookie-notice')).not.toContainText(
+    '本站会记住本次提示确认',
+  );
 });
 
 test('the notice policy entry is not acknowledgement and confirmation survives reload', async ({
@@ -176,7 +239,7 @@ for (const [width, height] of [
     'notice and folded policy remain usable at ' + width + 'x' + height,
     async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await enter(page);
+      await enterHost(page, 'www.tomys.top');
       const notice = page.locator('#cookie-notice');
       await expect(notice).toBeVisible();
       const bounds = await notice.boundingBox();
@@ -185,7 +248,12 @@ for (const [width, height] of [
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
       expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
       const controls = await page.locator('.controls').boundingBox();
-      expect(controls!.y + controls!.height).toBeLessThanOrEqual(bounds!.y);
+      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(controls!.y);
+      await page.locator('#filing-trigger').click();
+      await expect(page.locator('#filing-card')).toBeVisible();
+      await page.locator('#filing-card a').first().click({ trial: true });
+      await expect(notice).toBeVisible();
+      await page.locator('#filing-trigger').click();
       await notice.getByRole('button', { name: '知道了', exact: true }).click();
       await expect(notice).toBeHidden();
       const entry = page.locator('[data-footer-item="privacy"]');
