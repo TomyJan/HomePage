@@ -331,8 +331,17 @@ for (const safeBottom of [0, 21]) {
         );
       }, safeBottom);
       await enterHost(page, 'www.tomys.top');
-      for (const height of [274, 300, 320, 273, 240, 844]) {
-        await page.setViewportSize({ width: 320, height });
+      for (const [width, height] of [
+        [320, 274],
+        [320, 300],
+        [320, 320],
+        [320, 273],
+        [320, 240],
+        [320, 844],
+        [360, 274],
+        [390, 274],
+      ]) {
+        await page.setViewportSize({ width, height });
         const trigger = page.locator('#filing-trigger');
         if ((await trigger.getAttribute('aria-expanded')) === 'true') {
           await trigger.tap();
@@ -344,15 +353,47 @@ for (const safeBottom of [0, 21]) {
         const bounds = await popup.boundingBox();
         expect(
           bounds!.y,
-          'menu top at height ' + height,
+          'menu top at ' + width + 'x' + height,
         ).toBeGreaterThanOrEqual(0);
         expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
+        const footer = page.locator('.footer');
+        for (const item of ['commit', 'sitemap', 'status', 'privacy'])
+          await expect(
+            footer.locator('[data-footer-item="' + item + '"]'),
+          ).toHaveCount(1);
+        await expect(footer.locator('a')).toHaveCount(7);
+        await expect(
+          page.locator('#footer-links > [data-footer-item="commit"]'),
+        ).toBeVisible();
+        const folded = await popup
+          .locator('#footer-folded-links > a')
+          .evaluateAll((elements) =>
+            elements.map(
+              (element) => (element as HTMLElement).dataset.footerItem,
+            ),
+          );
+        expect(folded).toEqual(
+          ['sitemap', 'status', 'privacy'].slice(0, folded.length),
+        );
+        await expect(popup.locator('[data-filing-type]')).toHaveCount(3);
+        expect(
+          await popup
+            .locator('[data-filing-type]')
+            .evaluateAll((elements) =>
+              elements.map(
+                (element) => (element as HTMLElement).dataset.filingType,
+              ),
+            ),
+        ).toEqual(['moe', 'icp', 'security']);
         const links = popup.locator('a');
-        await expect(links).toHaveCount(6);
+        // Folding depends on actual font and revision-label widths.
+        await expect(links).toHaveCount(3 + folded.length);
         for (const link of await links.all()) {
           await link.scrollIntoViewIfNeeded();
           await link.click({ trial: true });
         }
+        for (const link of await page.locator('#footer-links > a').all())
+          await link.click({ trial: true });
         await page.keyboard.press('Escape');
         await expect(popup).toBeHidden();
       }
