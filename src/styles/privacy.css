@@ -160,14 +160,17 @@
   white-space: nowrap;
   padding-top: 5px;
 }
+.ui-layer:has(.cookie-notice:not([hidden])) {
+  z-index: 6;
+}
 .cookie-notice {
   position: absolute;
   z-index: 7;
   right: var(--edge);
-  bottom: calc(var(--footer-bottom) + 44px);
+  bottom: 0;
   width: min(720px, calc(100% - 2 * var(--edge)));
-  max-height: calc(100dvh - var(--footer-bottom) - 44px - var(--edge));
-  padding: 14px 18px;
+  max-height: calc(100dvh - var(--edge));
+  padding: 14px 18px calc(14px + var(--safe-bottom));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -214,7 +217,7 @@
 }
 @media (max-width: 520px) {
   .cookie-notice {
-    padding: 12px;
+    padding: 12px 12px calc(12px + var(--safe-bottom));
     gap: 14px;
   }
   .privacy-heading {
@@ -230,7 +233,7 @@
 @media (max-height: 570px) {
   .cookie-notice {
     gap: 12px;
-    padding: 10px 12px;
+    padding: 10px 12px calc(10px + var(--safe-bottom));
   }
   .privacy-sheet {
     max-height: calc(100dvh - 24px);

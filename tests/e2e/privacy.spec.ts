@@ -47,6 +47,12 @@ for (const [width, height] of [
         );
       });
       await enterHost(page, 'www.tomys.top');
+      await expect(page.locator('#cookie-notice')).toHaveCSS(
+        'transform',
+        'matrix(1, 0, 0, 1, 0, 0)',
+      );
+      const noticeBounds = await page.locator('#cookie-notice').boundingBox();
+      expect(noticeBounds!.y + noticeBounds!.height).toBeCloseTo(height, 1);
       const before = await page
         .locator('.brand, .nav, #content-host, .footer, .controls')
         .evaluateAll((elements) =>
@@ -242,20 +248,19 @@ for (const [width, height] of [
       await enterHost(page, 'www.tomys.top');
       const notice = page.locator('#cookie-notice');
       await expect(notice).toBeVisible();
+      await expect(notice).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
       const bounds = await notice.boundingBox();
       expect(bounds!.x).toBeGreaterThanOrEqual(0);
       expect(bounds!.y).toBeGreaterThanOrEqual(0);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
       expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
-      const controls = await page.locator('.controls').boundingBox();
-      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(controls!.y);
+      expect(bounds!.y + bounds!.height).toBeCloseTo(height, 1);
+      await notice.getByRole('button', { name: '知道了', exact: true }).click();
+      await expect(notice).toBeHidden();
       await page.locator('#filing-trigger').click();
       await expect(page.locator('#filing-card')).toBeVisible();
       await page.locator('#filing-card a').first().click({ trial: true });
-      await expect(notice).toBeVisible();
       await page.locator('#filing-trigger').click();
-      await notice.getByRole('button', { name: '知道了', exact: true }).click();
-      await expect(notice).toBeHidden();
       const entry = page.locator('[data-footer-item="privacy"]');
       if (!(await entry.isVisible()))
         await page.locator('#filing-trigger').click();
@@ -307,9 +312,10 @@ test('an old acknowledgement is renewed and hidden UI keeps the video unobstruct
   await enter(page);
   const notice = page.locator('#cookie-notice');
   await expect(notice).toBeVisible();
-  await page.locator('#view-button').click();
+  // The bottom notice can cover pointer controls until it is dismissed.
+  await page.locator('#view-button').press('Enter');
   await expect(notice).toBeHidden();
-  await page.mouse.move(250, 150);
+  await page.mouse.click(250, 150);
   await expect(page.locator('#stage')).toHaveClass(/controls-asleep/);
   await page.keyboard.press('Escape');
   await expect(notice).toBeVisible();
