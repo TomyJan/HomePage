@@ -3,6 +3,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { gzipSync } from 'node:zlib';
+import { resolveRevision } from '../src/lib/version.ts';
 
 for (const file of [
   'index.html',
@@ -27,9 +28,9 @@ for (const [file, hash] of Object.entries(frozen)) {
     `Frozen design modified: ${file}`,
   );
 }
-const sha = execFileSync('git', ['rev-parse', 'HEAD'], {
-  encoding: 'utf8',
-}).trim();
+const sha = resolveRevision(process.env, () =>
+  execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }),
+);
 const html = await readFile('dist/index.html', 'utf8');
 assert(
   html.includes(`/HomePage/commit/${sha}`),
