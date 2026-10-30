@@ -6,7 +6,8 @@
   --ease: cubic-bezier(0.22, 0.75, 0.26, 1);
   --shadow: 0 1px 2px #000d, 0 4px 18px #0009;
   --edge: 24px;
-  --footer-bottom: calc(var(--edge) - 3px + env(safe-area-inset-bottom, 0px));
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --footer-bottom: calc(var(--edge) - 3px + var(--safe-bottom));
   --dock-bottom: 124px;
   --tile-height: 58px;
   --tile-gap: 10px;
@@ -741,7 +742,7 @@ summary:focus-visible {
 .controls {
   position: absolute;
   right: calc(var(--edge) - 6px);
-  bottom: calc(var(--edge) - 6px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--edge) - 6px + var(--safe-bottom));
   display: flex;
   align-items: center;
   gap: 3px;
@@ -1176,13 +1177,20 @@ summary:focus-visible {
 }
 @media (max-height: 570px) {
   :root {
-    --dock-bottom: 104px;
+    --dock-bottom: calc(104px + var(--safe-bottom));
+    --entry-height: clamp(
+      24px,
+      calc((100dvh - var(--dock-bottom) - 74px) / 4),
+      43px
+    );
   }
   .brand {
     top: 18px;
   }
   .entry {
-    height: 43px;
+    height: var(--entry-height);
+    padding: 1px 4px;
+    gap: clamp(0px, calc(var(--entry-height) - 37px), 5px);
   }
   .nav {
     gap: 6px;
@@ -1202,7 +1210,54 @@ summary:focus-visible {
 }
 @media (max-width: 520px) and (max-height: 570px) {
   :root {
-    --dock-bottom: 100px;
+    --dock-bottom: calc(100px + var(--safe-bottom));
+  }
+}
+@media (max-height: 349px) {
+  :root {
+    --dock-bottom: calc(68px + var(--edge) + var(--safe-bottom));
+    --content-height: calc(100dvh - var(--dock-bottom) - 56px);
+    --nav-top-space: 65px;
+    --entry-height: clamp(
+      24px,
+      calc((100dvh - var(--dock-bottom) - var(--nav-top-space)) / 4),
+      43px
+    );
+  }
+  .nav {
+    gap: 3px;
+  }
+  .entry {
+    /* Share the space between the brand and footer without clipping entries. */
+    gap: 0;
+  }
+  .entry span {
+    line-height: 1;
+  }
+  .entry .icon {
+    width: clamp(10px, calc((100dvh - 244px - var(--safe-bottom)) / 2), 19px);
+    height: clamp(10px, calc((100dvh - 244px - var(--safe-bottom)) / 2), 19px);
+  }
+}
+/* 56px brand reserve + 105px minimum nav + 92px dock + 21px safe area. */
+@media (max-height: 273px) {
+  :root {
+    --dock-bottom: calc(58px + var(--edge) + var(--safe-bottom));
+    --nav-top-space: 43px;
+    --content-height: calc(100dvh - var(--dock-bottom) - 16px);
+  }
+  .brand {
+    top: 6px;
+  }
+  .nav {
+    gap: 1px;
+  }
+  .uptime {
+    margin-bottom: 0;
+  }
+  .filing-scroll {
+    max-height: calc(100dvh - var(--footer-bottom) - 58px);
+    overflow-y: auto;
   }
 }
 @container (max-width:270px) {
@@ -1221,7 +1276,7 @@ summary:focus-visible {
   }
   .controls {
     right: calc(var(--edge) - 13px);
-    bottom: calc(var(--edge) - 13px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--edge) - 13px + var(--safe-bottom));
   }
   .control > .icon {
     width: 18px;
@@ -1233,7 +1288,7 @@ summary:focus-visible {
     --control-size: 36px;
     gap: 0;
     right: calc(var(--edge) - 9px);
-    bottom: calc(var(--edge) - 9px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--edge) - 9px + var(--safe-bottom));
   }
   .control {
     width: var(--control-size);
@@ -1254,7 +1309,7 @@ summary:focus-visible {
   .controls {
     --control-size: 44px;
     right: calc(var(--edge) - 13px);
-    bottom: calc(var(--edge) - 13px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--edge) - 13px + var(--safe-bottom));
   }
 }
 @media (prefers-reduced-motion: reduce) {

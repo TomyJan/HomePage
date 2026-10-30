@@ -245,3 +245,187 @@ for (const height of [360, 390]) {
     await context.close();
   });
 }
+
+for (const [width, height] of [
+  [667, 240],
+  [320, 240],
+  [667, 270],
+  [667, 320],
+  [667, 350],
+]) {
+  for (const safeBottom of [0, 21]) {
+    test(`short landscape ${width}x${height}px safe inset ${safeBottom}px keeps navigation clear of the brand and all controls usable`, async ({
+      browser,
+    }) => {
+      const context = await browser.newContext({
+        viewport: { width, height },
+        isMobile: true,
+        hasTouch: true,
+      });
+      const page = await context.newPage();
+      await resources(page);
+      await atHost(page, 'www.tomys.top');
+      if (safeBottom)
+        await page.addStyleTag({
+          content: `:root { --safe-bottom: ${safeBottom}px; }`,
+        });
+      const geometry = await page.evaluate(() => {
+        const brand = document.querySelector('.brand')!.getBoundingClientRect();
+        const nav = document.querySelector('.nav')!.getBoundingClientRect();
+        const footer = document
+          .querySelector('.footer')!
+          .getBoundingClientRect();
+        const links = document
+          .querySelector('.footer-links')!
+          .getBoundingClientRect();
+        const controls = document
+          .querySelector('.controls')!
+          .getBoundingClientRect();
+        return {
+          brandBottom: brand.bottom,
+          navTop: nav.top,
+          navBottom: nav.bottom,
+          footerTop: footer.top,
+          footerBottom: footer.bottom,
+          linksRight: links.right,
+          controlsLeft: controls.left,
+          controlsBottom: controls.bottom,
+          overflow: document.documentElement.scrollWidth > innerWidth,
+        };
+      });
+      expect(geometry.navTop).toBeGreaterThan(geometry.brandBottom);
+      expect(geometry.navBottom + 18).toBeLessThanOrEqual(geometry.footerTop);
+      expect(geometry.footerBottom).toBeLessThanOrEqual(height);
+      expect(geometry.controlsBottom).toBeLessThanOrEqual(height);
+      expect(geometry.linksRight).toBeLessThan(geometry.controlsLeft);
+      expect(geometry.overflow).toBe(false);
+      for (const [name, id] of [
+        ['服务导航', 'services'],
+        ['博客文章', 'posts'],
+        ['联系支持', 'contact'],
+        ['首页', 'home'],
+      ]) {
+        const button = page.getByRole('button', { name, exact: true });
+        if (id === 'posts' || id === 'home') {
+          await button.focus();
+          await page.keyboard.press('Enter');
+        } else await button.tap();
+        await expect(button).toHaveAttribute('aria-pressed', 'true');
+        await expect
+          .poll(() => page.locator('.panel:not([hidden])').count())
+          .toBe(1);
+        const scroll = page.locator(`#panel-${id} .panel-scroll`);
+        if (id === 'home') {
+          await scroll.focus();
+          await page.keyboard.press('End');
+          await expect
+            .poll(() =>
+              scroll.evaluate(
+                (el) => el.scrollHeight - el.clientHeight - el.scrollTop,
+              ),
+            )
+            .toBeLessThan(1);
+        } else
+          await scroll.evaluate((el) => {
+            el.scrollTop = el.scrollHeight;
+          });
+        if (id !== 'contact')
+          await expect
+            .poll(() => scroll.evaluate((el) => el.scrollTop))
+            .toBeGreaterThan(0);
+        const aligned = await page.evaluate((id) => {
+          const nav = document.querySelector('.nav')!.getBoundingClientRect();
+          const content = document
+            .querySelector(
+              id === 'posts' ? '#posts-more' : `#panel-${id} .panel-content`,
+            )!
+            .getBoundingClientRect();
+          return Math.abs(nav.bottom - content.bottom);
+        }, id);
+        expect(aligned).toBeLessThan(1);
+      }
+      await page.locator('#filing-trigger').tap();
+      await expect(page.locator('#filing-card')).toBeVisible();
+      await expect(page.locator('[data-filing-type]')).toHaveCount(3);
+      await expect(page.locator('#filing-card')).toHaveCSS(
+        'transform',
+        'matrix(1, 0, 0, 1, 0, 0)',
+      );
+      const popup = await page.locator('#filing-card').boundingBox();
+      const trigger = await page.locator('#filing-trigger').boundingBox();
+      expect(popup!.y).toBeGreaterThanOrEqual(0);
+      expect(popup!.y + popup!.height).toBeLessThan(height);
+      expect(Math.abs(trigger!.y - popup!.y - popup!.height - 8)).toBeLessThan(
+        1,
+      );
+      if (width === 320) {
+        await expect(
+          page.locator('#footer-folded-links [data-footer-item="sitemap"]'),
+        ).toBeVisible();
+        await page.locator('#filing-card a').first().click({ trial: true });
+      }
+      await page.locator('[data-filing-type]').last().click({ trial: true });
+      await page.keyboard.press('Escape');
+      await page
+        .getByRole('button', { name: '暂停背景视频', exact: true })
+        .tap();
+      await expect(page.locator('video')).toHaveJSProperty('paused', true);
+      await page.getByRole('button', { name: '取消静音', exact: true }).tap();
+      await expect(page.locator('video')).toHaveJSProperty('muted', false);
+      await page.getByRole('button', { name: '隐藏界面', exact: true }).tap();
+      await expect(page.locator('#stage')).toHaveClass(/is-viewing/);
+      await context.close();
+    });
+  }
+}
+
+test('short-height boundaries preserve brand clearance and shadow space while resizing', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 667, height: 390 },
+    hasTouch: true,
+    isMobile: true,
+  });
+  const page = await context.newPage();
+  await resources(page);
+  await atHost(page, 'www.tomys.top');
+  for (const width of [320, 667, 844]) {
+    for (const safeBottom of [0, 21]) {
+      await page.addStyleTag({
+        content: `:root { --safe-bottom: ${safeBottom}px; }`,
+      });
+      for (const height of [
+        240, 258, 259, 260, 269, 270, 271, 272, 273, 274, 275, 320, 348, 349,
+        350, 351, 360, 390,
+      ]) {
+        await page.setViewportSize({ width, height });
+        await expect
+          .poll(
+            () =>
+              page.evaluate(() => {
+                const nav = document
+                  .querySelector('.nav')!
+                  .getBoundingClientRect();
+                const brand = document
+                  .querySelector('.brand')!
+                  .getBoundingClientRect();
+                const footer = document
+                  .querySelector('.footer')!
+                  .getBoundingClientRect();
+                return (
+                  nav.top > brand.bottom &&
+                  nav.bottom + 18 <= footer.top &&
+                  Array.from(document.querySelectorAll('.entry')).every(
+                    (entry) => entry.getBoundingClientRect().height >= 24,
+                  )
+                );
+              }),
+            { message: `${width}x${height}px / ${safeBottom}px inset` },
+          )
+          .toBe(true);
+      }
+    }
+  }
+  await context.close();
+});
