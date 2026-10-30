@@ -361,6 +361,43 @@ for (const safeBottom of [0, 21]) {
   );
 }
 
+test('standalone policy keeps page scrolling inside its content', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.route('https://**/*', (route) => route.abort());
+  await page.goto('/privacy.html');
+  for (const [width, height] of [
+    [1280, 720],
+    [390, 844],
+    [320, 640],
+    [390, 571],
+    [390, 570],
+    [667, 390],
+    [667, 300],
+    [320, 240],
+  ]) {
+    await page.setViewportSize({ width, height });
+    const documentSize = await page.evaluate(() => ({
+      width: document.documentElement.scrollWidth,
+      height: document.documentElement.scrollHeight,
+    }));
+    expect(documentSize.height).toBeLessThanOrEqual(height);
+    expect(documentSize.width).toBeLessThanOrEqual(width);
+    const bounds = await page.locator('.privacy-sheet').boundingBox();
+    expect(bounds!.y).toBeGreaterThanOrEqual(0);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height);
+    const contact = page.getByRole('link', { name: 'Telegram', exact: true });
+    await contact.scrollIntoViewIfNeeded();
+    await contact.click({ trial: true });
+    expect(
+      await page.evaluate(() => document.scrollingElement!.scrollTop),
+    ).toBe(0);
+  }
+  await context.close();
+});
+
 test('an old acknowledgement is renewed and hidden UI keeps the video unobstructed', async ({
   page,
 }) => {
