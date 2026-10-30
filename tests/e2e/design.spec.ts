@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { resources, ready, omitTextShadows } from '../support/browser';
+import { resources, ready, omitApprovedShadows } from '../support/browser';
 
 for (const width of [1440, 390, 320]) {
   test(`service, contact and article panels match frozen design at ${width}px`, async ({
@@ -23,8 +23,8 @@ for (const width of [1440, 390, 320]) {
     );
     await reference.goto('/__baseline');
     await expect(reference.locator('#boot')).toBeHidden();
-    await omitTextShadows(page);
-    await omitTextShadows(reference);
+    await omitApprovedShadows(page);
+    await omitApprovedShadows(reference);
     for (const name of ['服务导航', '联系支持', '博客文章']) {
       for (const target of [page, reference]) {
         await target.getByRole('button', { name, exact: true }).click();

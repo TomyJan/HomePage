@@ -68,11 +68,11 @@ export async function ready(page: Page) {
   await expect(page.locator('#boot')).toBeHidden();
   await acknowledgeNotice(page);
 }
-// Approved text shadows have independent pixel coverage; the frozen layout stays immutable.
-export async function omitTextShadows(page: Page) {
+// Approved shadows have independent pixel coverage; the frozen layout stays immutable.
+export async function omitApprovedShadows(page: Page) {
   await page.addStyleTag({
     content:
-      '.text-panel::before,.text-surface::before,.posts-layout::before{display:none!important}.text-surface,.posts-layout{filter:none!important}.text-panel,.text-panel *{text-shadow:none!important}',
+      '.text-panel::before,.text-surface::before,.posts-layout::before,.tiles::before{display:none!important}.text-surface,.posts-layout{filter:none!important}.text-panel,.text-panel *{text-shadow:none!important}.entry{box-shadow:none!important}',
   });
 }
 export async function acknowledgeNotice(page: Page) {

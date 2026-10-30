@@ -32,6 +32,10 @@ for (const panel of [
           [innerWidth / 2, innerHeight - 42],
           [gapX, bounds[0].top - 20],
           [gapX, bounds[0].top - 9],
+          ...Array.from(document.querySelectorAll('.entry'), (entry) => {
+            const button = entry.getBoundingClientRect();
+            return [button.right + 3, button.top + button.height / 2];
+          }),
         ];
       });
     const screenshot = await page.screenshot({ animations: 'disabled' });
@@ -54,9 +58,15 @@ for (const panel of [
     const core = pixels.slice(0, 3).map((pixel) => pixel[0]);
     expect(Math.max(...core) - Math.min(...core)).toBeLessThanOrEqual(1);
     expect(core[0]).toBeLessThan(250);
+    expect(core[0]).toBeGreaterThanOrEqual(220);
     expect(pixels[3]).toEqual([255, 255, 255, 255]);
     expect(pixels[4]).toEqual([255, 255, 255, 255]);
     expect(pixels[5][0]).toBeGreaterThan(core[0]);
     expect(pixels[5][0]).toBeLessThan(255);
+    // The four navigation controls should cast subtler shadows than the cards.
+    for (const pixel of pixels.slice(6)) {
+      expect(pixel[0]).toBeGreaterThanOrEqual(245);
+      expect(pixel[0]).toBeGreaterThan(core[0]);
+    }
   });
 }

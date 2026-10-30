@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resources, ready, omitTextShadows } from '../support/browser';
+import { resources, ready, omitApprovedShadows } from '../support/browser';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -174,7 +174,7 @@ for (const width of [1440, 390, 320]) {
     await page
       .locator('#panel-home .panel-scroll')
       .evaluate((el) => (el.scrollTop = 0));
-    await omitTextShadows(page);
+    await omitApprovedShadows(page);
     const current = await page
       .locator('.dock')
       .screenshot({ animations: 'disabled' });
@@ -200,7 +200,7 @@ for (const width of [1440, 390, 320]) {
     );
     await page.goto('/__baseline');
     await expect(page.locator('#boot')).toBeHidden();
-    await omitTextShadows(page);
+    await omitApprovedShadows(page);
     const baseline = await page
       .locator('.dock')
       .screenshot({ animations: 'disabled' });

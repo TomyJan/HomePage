@@ -25,7 +25,7 @@ corepack pnpm test:e2e
 | 域名、版本、无 Git 产物校验、页脚收纳、运行时长、文章数据校验 | `tests/unit/`                       |
 | 无脚本降级、加载壳、导航、博客分页、隐藏 UI                   | `tests/e2e/homepage.spec.ts`        |
 | 桌面与窄屏的冻结原型对照                                      | `tests/e2e/design.spec.ts`          |
-| 卡片阴影核心透明度与外缘渐隐                                  | `tests/e2e/shadows.spec.ts`         |
+| 卡片阴影轻量一致、外缘渐隐及导航按钮投影更浅                  | `tests/e2e/shadows.spec.ts`         |
 | 正文字形衬底、短句后方透明、动态文字无残留及最大暗化限制      | `tests/e2e/text-shadows.spec.ts`    |
 | 弹窗、页脚弹层、告知与媒体提示的四周渐隐阴影                  | `tests/e2e/overlay-shadows.spec.ts` |
 | 媒体错误恢复、播放位置、暂停意图、原生右键                    | `tests/e2e/media-stability.spec.ts` |

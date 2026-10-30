@@ -170,7 +170,7 @@ summary:focus-visible {
   background: #151d22b8;
   border: 0;
   border-radius: 10px;
-  box-shadow: 0 4px 18px #0002;
+  box-shadow: 0 2px 14px #0000000d;
   color: #e8efed;
   transition:
     color 0.2s,
@@ -190,12 +190,12 @@ summary:focus-visible {
 .entry:hover {
   background: #24343bd9;
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px #0003;
+  box-shadow: 0 3px 18px #00000012;
 }
 .entry[aria-pressed='true'] {
   background: #edf1ed;
   color: #283633;
-  box-shadow: 0 4px 22px #0003;
+  box-shadow: 0 2px 16px #00000012;
 }
 .content-host {
   position: relative;
@@ -379,20 +379,32 @@ summary:focus-visible {
   z-index: -1;
   inset: -18px;
   pointer-events: none;
-  background: #0003;
+  background: #0000001f;
   mask-image:
     linear-gradient(
       90deg,
       transparent,
+      #0001 4px,
+      #0008 9px,
+      #000e 14px,
       #000 18px,
       #000 calc(100% - 18px),
+      #000e calc(100% - 14px),
+      #0008 calc(100% - 9px),
+      #0001 calc(100% - 4px),
       transparent
     ),
     linear-gradient(
       0deg,
       transparent,
+      #0001 4px,
+      #0008 9px,
+      #000e 14px,
       #000 18px,
       #000 calc(100% - 18px),
+      #000e calc(100% - 14px),
+      #0008 calc(100% - 9px),
+      #0001 calc(100% - 4px),
       transparent
     );
   mask-composite: intersect;
