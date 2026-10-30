@@ -65,6 +65,221 @@ async function interruptVideo(page: Page) {
   });
 }
 
+// The browser still loads/seeks/decodes the real fixture. Only the unstable
+// interval between loadeddata and play() settling has a controlled failure.
+async function pendingRecoveryPlay(page: Page, failures = 1) {
+  await page.locator('video').evaluate((v: HTMLVideoElement, failures) => {
+    const nativePlay = v.play.bind(v);
+    const nativeLoad = v.load.bind(v);
+    let error: MediaError | null = null;
+    Object.defineProperty(v, 'error', { configurable: true, get: () => error });
+    v.load = () => {
+      error = null;
+      nativeLoad();
+    };
+    v.play = () => {
+      if (failures-- <= 0) return nativePlay();
+      return new Promise<void>((_resolve, reject) => {
+        v.dataset.pendingPlay = 'true';
+        v.addEventListener(
+          'test-fail-play',
+          (event) => {
+            delete v.dataset.pendingPlay;
+            const detail = (
+              event as CustomEvent<{ name?: string; delayRejection?: boolean }>
+            ).detail;
+            const name = detail?.name ?? 'NotSupportedError';
+            if (name === 'NotSupportedError') {
+              error = {
+                code: 3,
+                message: 'Decoder failed during play',
+                MEDIA_ERR_ABORTED: 1,
+                MEDIA_ERR_NETWORK: 2,
+                MEDIA_ERR_DECODE: 3,
+                MEDIA_ERR_SRC_NOT_SUPPORTED: 4,
+              };
+              v.dispatchEvent(new Event('error'));
+            }
+            const fail = () =>
+              reject(new DOMException('Controlled play failure', name));
+            if (detail?.delayRejection)
+              v.addEventListener('test-reject-old-play', fail, { once: true });
+            else fail();
+          },
+          { once: true },
+        );
+      });
+    };
+    v.dataset.outagePosition = String(v.currentTime);
+    error = {
+      code: 2,
+      message: 'Network interrupted',
+      MEDIA_ERR_ABORTED: 1,
+      MEDIA_ERR_NETWORK: 2,
+      MEDIA_ERR_DECODE: 3,
+      MEDIA_ERR_SRC_NOT_SUPPORTED: 4,
+    };
+    v.dispatchEvent(new Event('error'));
+  }, failures);
+  await expect(page.locator('video')).toHaveAttribute(
+    'data-pending-play',
+    'true',
+  );
+}
+
+test('a decoder error while recovery play is pending uses the remaining same-source retry', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  const video = page.locator('video');
+  const src = await video.getAttribute('src');
+  await expect(video).toHaveCSS('opacity', '1');
+  await pendingRecoveryPlay(page);
+  await video.evaluate((v) =>
+    v.dispatchEvent(
+      new CustomEvent('test-fail-play', { detail: { delayRejection: true } }),
+    ),
+  );
+  await expect(video).toHaveJSProperty('paused', false);
+  await expect(video).toHaveCSS('opacity', '1');
+  await expect(video).toHaveAttribute('src', src!);
+  const frames = await video.evaluate(
+    (v: HTMLVideoElement) => v.getVideoPlaybackQuality().totalVideoFrames,
+  );
+  await expect
+    .poll(() =>
+      video.evaluate(
+        (v: HTMLVideoElement) => v.getVideoPlaybackQuality().totalVideoFrames,
+      ),
+    )
+    .toBeGreaterThan(frames);
+  await video.dispatchEvent('test-reject-old-play');
+  await expect(
+    page.getByRole('button', { name: '暂停背景视频', exact: true }),
+  ).toBeVisible();
+  await expect(video).toHaveJSProperty('paused', false);
+});
+
+for (const name of ['NotAllowedError', 'AbortError']) {
+  test(`${name} during recovery play does not consume a decoder retry`, async ({
+    page,
+  }) => {
+    await resources(page);
+    await ready(page);
+    const video = page.locator('video');
+    let reloads = 0;
+    page.on('request', (request) => {
+      if (request.url().includes('myqcloud.com')) reloads++;
+    });
+    await pendingRecoveryPlay(page);
+    // An error notification without MediaError must not cancel pending playback.
+    await video.dispatchEvent('error');
+    await expect(
+      page.getByRole('button', { name: '暂停背景视频', exact: true }),
+    ).toBeVisible();
+    if (name === 'AbortError')
+      await page
+        .getByRole('button', { name: '暂停背景视频', exact: true })
+        .click();
+    await video.evaluate(
+      (v, name) =>
+        v.dispatchEvent(
+          new CustomEvent('test-fail-play', { detail: { name } }),
+        ),
+      name,
+    );
+    await expect(
+      page.getByRole('button', { name: '播放背景视频', exact: true }),
+    ).toBeVisible();
+    await expect(video).toHaveJSProperty('paused', true);
+    expect(reloads).toBe(1);
+    await page
+      .getByRole('button', { name: '播放背景视频', exact: true })
+      .click();
+    await expect(video).toHaveJSProperty('paused', false);
+    await expect(video).toHaveCSS('opacity', '1');
+    expect(reloads).toBe(1);
+  });
+}
+
+test('exhausted recovery play errors retain the outage position for a manual retry', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  const video = page.locator('video');
+  const src = await video.getAttribute('src');
+  await video.evaluate((v: HTMLVideoElement) => {
+    v.currentTime = 0.7;
+    v.volume = 0.4;
+    v.muted = false;
+  });
+  await expect
+    .poll(() => video.evaluate((v: HTMLVideoElement) => v.seeking))
+    .toBe(false);
+  let reloads = 0;
+  page.on('request', (request) => {
+    if (request.url().includes('myqcloud.com')) reloads++;
+  });
+  await pendingRecoveryPlay(page, 2);
+  const position = Number(await video.getAttribute('data-outage-position'));
+  await video.dispatchEvent('test-fail-play');
+  await expect(video).toHaveAttribute('data-pending-play', 'true');
+  await video.dispatchEvent('test-fail-play');
+  await expect(page.locator('#media-note')).toHaveText(
+    '背景视频暂时不可用，点击播放重试',
+  );
+  await expect(video).toHaveJSProperty('paused', true);
+  await expect(video).toHaveCSS('opacity', '0');
+  expect(reloads).toBe(2);
+  await video.evaluate((v: HTMLVideoElement) =>
+    v.addEventListener(
+      'playing',
+      () => {
+        v.dataset.retryPosition = String(v.currentTime);
+      },
+      { once: true },
+    ),
+  );
+  await page.getByRole('button', { name: '播放背景视频', exact: true }).click();
+  await expect(video).toHaveAttribute('data-retry-position');
+  expect(Number(await video.getAttribute('data-retry-position'))).toBeCloseTo(
+    position,
+    1,
+  );
+  await expect(video).toHaveJSProperty('paused', false);
+  await expect(video).toHaveJSProperty('volume', 0.4);
+  await expect(video).toHaveJSProperty('muted', false);
+  await expect(video).toHaveAttribute('src', src!);
+});
+
+test('a user pause during pending recovery play survives a subsequent decoder retry', async ({
+  page,
+}) => {
+  await resources(page);
+  await ready(page);
+  const video = page.locator('video');
+  let reloads = 0;
+  page.on('request', (request) => {
+    if (request.url().includes('myqcloud.com')) reloads++;
+  });
+  await pendingRecoveryPlay(page);
+  await page.getByRole('button', { name: '暂停背景视频', exact: true }).click();
+  await video.dispatchEvent('test-fail-play');
+  await expect.poll(() => reloads).toBe(2);
+  await expect
+    .poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState))
+    .toBeGreaterThanOrEqual(2);
+  await expect(
+    page.getByRole('button', { name: '播放背景视频', exact: true }),
+  ).toBeVisible();
+  await expect(video).toHaveJSProperty('paused', true);
+  await page.getByRole('button', { name: '播放背景视频', exact: true }).click();
+  await expect(video).toHaveJSProperty('paused', false);
+  await expect(video).toHaveCSS('opacity', '1');
+});
+
 test('manual retry after failed reloads resumes from the position before the outage', async ({
   page,
 }) => {

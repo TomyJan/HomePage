@@ -66,18 +66,32 @@ export function initVideo(
     });
   }
 
-  async function start() {
+  async function start(recoverPlayback = false) {
     const current = generation;
+    let rejectFailure: () => void = () => {};
+    const failure = new Promise<never>((_resolve, reject) => {
+      rejectFailure = () => {
+        if (video.error) reject(new Error('Video playback failed'));
+      };
+    });
+    if (recoverPlayback) video.addEventListener('error', rejectFailure);
     try {
-      await video.play();
-    } catch {
+      const playing = video.play();
+      if (recoverPlayback) await Promise.race([playing, failure]);
+      else await playing;
+    } catch (error) {
+      // A decoder/network error belongs to the recovery attempt even if its
+      // error event paused the element before this play promise rejected.
+      if (recoverPlayback && video.error) throw error;
       // load() aborts an older play promise; it must not cancel the new intent.
       if (current === generation && wantsPlayback) {
         wantsPlayback = false;
         onMessage('点击播放继续背景视频');
       }
+    } finally {
+      if (recoverPlayback) video.removeEventListener('error', rejectFailure);
+      onState();
     }
-    onState();
   }
 
   async function recover() {
@@ -94,11 +108,12 @@ export function initVideo(
         attempts++;
         try {
           await reloadAt(position);
+          if (wantsPlayback) await start(true);
           recoveryPosition = null;
-          if (wantsPlayback) await start();
           return;
         } catch {
           /* Retry the same URL within the bounded recovery budget. */
+          stopForFallback();
         }
       }
       failed = true;
@@ -148,9 +163,13 @@ export function initVideo(
   video.addEventListener('error', () => {
     // waiting/stalled or an event without MediaError is not a failed decoder.
     const error = video.error;
-    if (!error || recovering) return;
+    if (!error) return;
     clearTimeout(stableTimer);
     stableTimer = 0;
+    if (recovering) {
+      stopForFallback();
+      return;
+    }
     if (error.code === 2 || error.code === 3) {
       void recover();
       return;
