@@ -3,7 +3,9 @@
 :root {
   color-scheme: dark;
   font-family: MiSans, sans-serif;
-  background: #101519;
+  background: #000;
+  min-height: 100%;
+  overscroll-behavior: none;
   color: #f3f5f3;
   --ease: cubic-bezier(0.22, 0.75, 0.26, 1);
   --shadow: 0 1px 2px #000d, 0 4px 18px #0009;
@@ -23,7 +25,10 @@
 }
 body {
   margin: 0;
+  min-height: 100svh;
+  min-height: 100dvh;
   overflow: hidden;
+  background: #000;
 }
 button,
 a {
@@ -75,7 +80,6 @@ summary:focus-visible {
   overflow: clip;
   background: #000;
 }
-.scene,
 .scene video,
 .scene-surface,
 .fallback {
@@ -85,6 +89,9 @@ summary:focus-visible {
   height: 100%;
 }
 .scene {
+  position: absolute;
+  /* Keep rasterized media edges outside the viewport, including fractional DPR. */
+  inset: -1px;
   z-index: 0;
   pointer-events: none;
 }
