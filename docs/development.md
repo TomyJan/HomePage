@@ -22,7 +22,7 @@ corepack pnpm dev
 | 路径                                | 职责                                             |
 | ----------------------------------- | ------------------------------------------------ |
 | `src/pages/index.astro`             | 构建完整主页 HTML，加载主页交互模块              |
-| `src/components/Favicon.astro`      | CDN 原图图标与非阻塞的浏览器圆角裁剪             |
+| `src/components/Favicon.astro`      | 直接引用 CDN 图片的静态 favicon 链接             |
 | `src/components/Navigation.astro`   | 首页介绍和四个内容面板的 HTML                    |
 | `src/components/TextBackdrop.astro` | 正文轮廓合并、柔化和单次着色的共用 SVG 滤镜      |
 | `src/components/Footer.astro`       | 版本、站点地图、服务状态和隐私入口               |
@@ -45,7 +45,7 @@ corepack pnpm dev
 
 版本由 `src/lib/version.ts#resolveRevision` 统一解析，Astro 配置在启动/构建时通过 Vite 注入，产物校验脚本复用同一规则：先取 checkout 的完整 SHA；Git 不可用时依次接受 `SITE_REVISION`、`GITHUB_SHA`、`CI_COMMIT_SHA`、`COMMIT_SHA`，均要求完整 40 位十六进制。没有有效版本就拒绝构建或校验；产物中的提交地址必须与解析结果一致。开发中提交代码后重启开发服务更新版本。
 
-头像直接使用 `resources.avatar` 的 public-cdn 地址，主页、加载壳、404 和付款跳转页统一引用。图片与直接 favicon 在 HTML 解析时即可加载，不加入入场等待。CDN 需保留 `Access-Control-Allow-Origin`，使有 `[data-avatar]` 的页面在图片载入后复用到 canvas，为 favicon 裁剪 35% 圆角；裁剪逻辑不另发图片请求。裁剪不可用、无脚本或没有页面头像的独立政策页保留 CDN 原图图标。`public/` 不保留头像副本，冻结设计与测试夹具中的图片保持不变。
+头像直接使用 `resources.avatar` 的 public-cdn 地址，主页、加载壳、404 和付款跳转页统一引用；所有页面的 favicon 也直接使用该地址。图片在 HTML 解析时即可加载，不加入入场等待。圆角由源图片提供，前端不使用 CSS 圆角裁切或 canvas 转换，不额外设置 `crossorigin`，图片服务无需提供像素读取的 CORS 许可。`public/` 不保留头像副本，冻结设计与测试夹具中的图片保持不变。`avatar.spec.ts` 验证延迟图片不阻塞入场、无 CORS 许可仍能显示头像、图片加载后 favicon 继续使用 CDN 原图。
 
 ## 门禁
 

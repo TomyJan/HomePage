@@ -148,7 +148,6 @@ summary:focus-visible {
   width: 30px;
   height: 30px;
   object-fit: cover;
-  border-radius: 35%;
   filter: drop-shadow(0 2px 7px #0005);
 }
 .dock {
@@ -951,7 +950,6 @@ summary:focus-visible {
   width: 36px;
   height: 36px;
   object-fit: cover;
-  border-radius: 35%;
 }
 .boot-logo span {
   font-size: 20px;

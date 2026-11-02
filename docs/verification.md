@@ -30,7 +30,7 @@ corepack pnpm test:e2e
 | 弹窗、页脚弹层、告知与媒体提示的四周渐隐阴影                  | `tests/e2e/overlay-shadows.spec.ts` |
 | 媒体错误恢复、播放位置、暂停意图、原生右键                    | `tests/e2e/media-stability.spec.ts` |
 | 域名弹层、触屏、短屏、异常文章接口                            | `tests/e2e/edge-cases.spec.ts`      |
-| CDN 头像异步加载与 favicon 圆角                               | `tests/e2e/avatar.spec.ts`          |
+| CDN 头像非阻塞显示与直接引用原图的 favicon                    | `tests/e2e/avatar.spec.ts`          |
 | 告知确认、跨标签同步、政策入口与滚动                          | `tests/e2e/privacy.spec.ts`         |
 
 修复行为缺陷时，先让对应回归在旧实现失败，再确认修复通过。检查新增用例是否复现了用户问题，避免仅检查实现细节或为通过测试放宽有效断言。冻结原型、图片与摘要不得随正式代码一并修改。
