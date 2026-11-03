@@ -102,7 +102,8 @@ export async function applyApprovedIcons(page: Page) {
     },
   );
   await page.addStyleTag({
-    content: '.icon { fill: currentColor; stroke: none }',
+    content:
+      '.icon { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round }',
   });
 }
 export async function acknowledgeNotice(page: Page) {

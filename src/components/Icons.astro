@@ -1,5 +1,5 @@
 ---
-import { icons } from '../lib/icons';
+import { icons, iconLicense } from '../lib/icons';
 ---
 
 <svg
@@ -8,6 +8,7 @@ import { icons } from '../lib/icons';
   focusable="false"
   xmlns="http://www.w3.org/2000/svg"
 >
+  <metadata>{iconLicense}</metadata>
   <defs>
     {icons.map(({ name, content }) => (
       <symbol id={`i-${name}`} viewBox="0 0 24 24" set:html={content} />

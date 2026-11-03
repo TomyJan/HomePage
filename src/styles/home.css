@@ -63,8 +63,11 @@ summary:focus-visible {
   display: block;
   width: 20px;
   height: 20px;
-  fill: currentColor;
-  stroke: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   flex: none;
 }
 .stage {

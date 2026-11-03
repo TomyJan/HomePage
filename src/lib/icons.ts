@@ -1,45 +1,61 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
-const sources = {
-  home: 'Buildings/home-5-line',
-  grid: 'Design/layout-grid-line',
-  posts: 'Document/article-line',
-  send: 'Business/send-plane-line',
-  arrow: 'Arrows/arrow-right-up-line',
-  blog: 'Design/quill-pen-line',
-  key: 'Others/key-2-line',
-  download: 'System/download-2-line',
-  drive: 'Business/cloud-line',
-  globe: 'Business/global-line',
-  robot: 'User & Faces/robot-2-line',
-  image: 'Media/image-line',
-  link: 'Business/links-line',
-  api: 'Development/code-box-line',
-  github: 'Logos/github-line',
-  heart: 'Health & Medical/heart-line',
-  telegram: 'Logos/telegram-line',
-  qq: 'Logos/qq-line',
-  play: 'Media/play-line',
-  pause: 'Media/pause-line',
-  volume: 'Media/volume-up-line',
-  muted: 'Media/volume-mute-line',
-  eye: 'System/eye-line',
-  'eye-off': 'System/eye-off-line',
-  chevron: 'Arrows/arrow-up-s-line',
-  close: 'System/close-line',
+const rounded = {
+  home: 'house',
+  grid: 'layout-grid',
+  posts: 'file-text',
+  send: 'send',
+  arrow: 'arrow-up-right',
+  blog: 'feather',
+  key: 'key-round',
+  download: 'download',
+  drive: 'cloud',
+  globe: 'globe',
+  robot: 'bot',
+  image: 'image',
+  link: 'link',
+  api: 'square-code',
+  heart: 'heart',
+  play: 'play',
+  pause: 'pause',
+  volume: 'volume-2',
+  muted: 'volume-x',
+  eye: 'eye',
+  'eye-off': 'eye-off',
+  chevron: 'chevron-up',
+  close: 'x',
 } as const;
 
-export type IconName = keyof typeof sources;
+const brands = {
+  github: 'github',
+  telegram: 'telegram',
+  qq: 'qq',
+} as const;
+
+export type IconName = keyof typeof rounded | keyof typeof brands;
 
 // Build-time only: inline selected SVG paths without shipping the library runtime.
 const require = createRequire(import.meta.url);
-export const icons = Object.entries(sources).map(([name, source]) => {
-  const svg = readFileSync(
-    require.resolve(`remixicon/icons/${source}.svg`),
-    'utf8',
-  );
-  const content = /^<svg\b[^>]*>([\s\S]*?)<\/svg>\s*$/.exec(svg)?.[1];
+function readIcon(source: string) {
+  const svg = readFileSync(require.resolve(source), 'utf8');
+  const content = /<svg\b[^>]*>([\s\S]*?)<\/svg>\s*$/.exec(svg)?.[1];
   if (!content?.trim()) throw new Error(`Invalid icon SVG: ${source}`);
-  return { name, content };
-});
+  return content;
+}
+
+export const icons = [
+  ...Object.entries(rounded).map(([name, source]) => ({
+    name,
+    content: readIcon(`lucide-static/icons/${source}.svg`),
+  })),
+  ...Object.entries(brands).map(([name, source]) => ({
+    name,
+    content: `<g fill="currentColor" stroke="none">${readIcon(`remixicon/icons/Logos/${source}-line.svg`)}</g>`,
+  })),
+];
+
+export const iconLicense = readFileSync(
+  require.resolve('lucide-static/LICENSE'),
+  'utf8',
+);
