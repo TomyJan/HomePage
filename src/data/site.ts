@@ -35,6 +35,12 @@ export const services = [
     icon: 'drive',
   },
   {
+    title: 'MoeCDN',
+    description: '公共静态资源加速',
+    href: 'https://cdn.amoe.cc/',
+    icon: 'globe',
+  },
+  {
     title: 'MoeAI',
     description: '大模型聚合网关',
     href: 'https://ai.amoe.cc/',

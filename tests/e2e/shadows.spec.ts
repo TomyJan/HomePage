@@ -23,8 +23,19 @@ for (const panel of [
     const points = await page
       .locator(`#${panel.id} .tile`)
       .evaluateAll((tiles) => {
-        const bounds = tiles.map((tile) => tile.getBoundingClientRect());
-        const gapX = (bounds[0].right + bounds[1].left) / 2;
+        const scroll = tiles[0].closest('.panel-scroll')!;
+        const viewport = scroll.getBoundingClientRect();
+        const style = getComputedStyle(scroll);
+        // Only compare fully visible cards, excluding the scroll-edge fades.
+        const bounds = tiles
+          .map((tile) => tile.getBoundingClientRect())
+          .filter(
+            (rect) =>
+              rect.top >= viewport.top + parseFloat(style.paddingTop) &&
+              rect.bottom <= viewport.bottom - parseFloat(style.paddingBottom),
+          );
+        const gapX =
+          (bounds[0].right + Math.max(...bounds.map((rect) => rect.left))) / 2;
         return [
           [gapX, bounds[0].top + bounds[0].height / 2],
           [gapX, bounds[2].top + bounds[2].height / 2],

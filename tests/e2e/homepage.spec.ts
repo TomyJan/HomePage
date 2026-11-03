@@ -56,7 +56,7 @@ test('navigation, hiding and native looping preserve the selected video', async 
   const src = await video.getAttribute('src');
   await page.getByRole('button', { name: '服务导航', exact: true }).click();
   await expect(page.locator('#panel-services')).toBeVisible();
-  await expect(page.locator('#panel-services .tile')).toHaveCount(8);
+  await expect(page.locator('#panel-services .tile')).toHaveCount(9);
   await page.getByRole('button', { name: '暂停背景视频', exact: true }).click();
   await page.getByRole('button', { name: '隐藏界面', exact: true }).click();
   await page.mouse.move(500, 200);

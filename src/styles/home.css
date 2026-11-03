@@ -378,6 +378,10 @@ summary:focus-visible {
   align-content: end;
   gap: var(--tile-gap);
 }
+.tiles > .tile:first-child:nth-last-child(odd) + .tile {
+  /* Keep the spare cell at the upper right without changing reading order. */
+  grid-column: 1;
+}
 .tiles:before {
   /* Soften one solid field, never the cards or their combined rendered alpha. */
   content: '';
