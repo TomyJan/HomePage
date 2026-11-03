@@ -1,9 +1,11 @@
 ---
+import type { IconName } from '../lib/icons';
+
 interface Props {
   title: string;
   description: string;
   href: string;
-  icon: string;
+  icon: IconName;
 }
 const { title, description, href, icon } = Astro.props;
 ---

@@ -1,7 +1,8 @@
 import { $, reduced } from './dom';
+import type { IconName } from '../lib/icons';
 const stage = $('#stage');
 const iconAnimations = new WeakMap<HTMLElement, Animation>();
-export function icon(button: HTMLElement, name: string) {
+export function icon(button: HTMLElement, name: IconName) {
   const svg = button.querySelector<SVGElement>('.icon')!,
     use = svg.querySelector('use')!,
     href = '#i-' + name;

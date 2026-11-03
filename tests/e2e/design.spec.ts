@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { resources, ready, omitApprovedShadows } from '../support/browser';
+import {
+  resources,
+  ready,
+  omitApprovedShadows,
+  applyApprovedIcons,
+} from '../support/browser';
 
 for (const width of [1440, 390, 320]) {
   test(`service, contact and article panels match frozen design at ${width}px`, async ({
@@ -32,10 +37,6 @@ for (const width of [1440, 390, 320]) {
         )!
         .cloneNode(true) as HTMLAnchorElement;
       cdn.href = 'https://cdn.amoe.cc/';
-      const glyph = cdn.querySelector('svg')!;
-      glyph.setAttribute('viewBox', '0 0 24 24');
-      glyph.innerHTML =
-        '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>';
       const label = cdn.querySelector('.tile-label')!;
       label.firstChild!.textContent = 'MoeCDN';
       label.querySelector('small')!.textContent = '公共静态资源加速';
@@ -48,6 +49,7 @@ for (const width of [1440, 390, 320]) {
       content:
         '.tiles > .tile:first-child:nth-last-child(odd) + .tile { grid-column: 1 }',
     });
+    await applyApprovedIcons(reference);
     await omitApprovedShadows(page);
     await omitApprovedShadows(reference);
     for (const name of ['服务导航', '联系支持', '博客文章']) {

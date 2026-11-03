@@ -1,6 +1,8 @@
 import { expect, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { icons } from '../../src/lib/icons';
+import { services, contact } from '../../src/data/site';
 // External services are the only substitutes: tests exercise the real built UI.
 export async function resources(page: Page, posts = 21) {
   const fixture = await readFile(resolve('tests/fixtures/loop.webm'));
@@ -73,6 +75,34 @@ export async function omitApprovedShadows(page: Page) {
   await page.addStyleTag({
     content:
       '.text-panel::before,.text-surface::before,.posts-layout::before,.tiles::before{display:none!important}.text-surface,.posts-layout{filter:none!important}.text-panel,.text-panel *{text-shadow:none!important}.entry{box-shadow:none!important}',
+  });
+}
+// Apply the approved icon assets only; preserve the frozen layout and content.
+export async function applyApprovedIcons(page: Page) {
+  await page.evaluate(
+    ({ icons, links }) => {
+      document.querySelector('.icon-defs defs')!.innerHTML = icons
+        .map(
+          ({ name, content }) =>
+            `<symbol id="i-${name}" viewBox="0 0 24 24">${content}</symbol>`,
+        )
+        .join('');
+      for (const { href, icon } of links) {
+        document
+          .querySelector(`.tile[href="${href}"] .icon use`)
+          ?.setAttribute('href', `#i-${icon}`);
+      }
+    },
+    {
+      icons,
+      links: [...services, ...contact].map(({ href, icon }) => ({
+        href,
+        icon,
+      })),
+    },
+  );
+  await page.addStyleTag({
+    content: '.icon { fill: currentColor; stroke: none }',
   });
 }
 export async function acknowledgeNotice(page: Page) {

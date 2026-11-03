@@ -227,6 +227,9 @@ importers:
       prettier-plugin-astro:
         specifier: 1.1.2
         version: 1.1.2(prettier@3.9.10)
+      remixicon:
+        specifier: 4.9.1
+        version: 4.9.1
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1422,6 +1425,9 @@ packages:
 
   regex@6.1.0:
     resolution: {integrity: sha512-6VwtthbV4o/7+OaAF9I5L5V3llLEsoPyq9P1JVXkedTP33c7MfCG0/5NOPcSJn0TzXcG9YUrR0gQSWioew3LDg==}
+
+  remixicon@4.9.1:
+    resolution: {integrity: sha512-36gLSoujkabnCFZFDyP17VNh9piuBA/rsXUb4auSJWLGsHVXtmxLj/EM5FjaEAGnk8oIAj1Azob/DZ2N+90lAQ==}
 
   request-light@0.5.8:
     resolution: {integrity: sha512-3Zjgh+8b5fhRJBQZoy+zbVKpAQGLyka0MPgW3zruTF4dFFJ8Fqcfu9YsAvi/rvdcaTeWG3MkbZv4WKxAn/84Lg==}
@@ -3032,6 +3038,8 @@ snapshots:
   regex@6.1.0:
     dependencies:
       regex-utilities: 2.3.0
+
+  remixicon@4.9.1: {}
 
   request-light@0.5.8: {}
 

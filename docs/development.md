@@ -23,6 +23,8 @@ corepack pnpm dev
 | ----------------------------------- | ------------------------------------------------ |
 | `src/pages/index.astro`             | 构建完整主页 HTML，加载主页交互模块              |
 | `src/components/Favicon.astro`      | 直接引用 CDN 图片的静态 favicon 链接             |
+| `src/lib/icons.ts`                  | 图标语义映射与构建时按需读取 Remix SVG           |
+| `src/components/Icons.astro`        | 输出内联 SVG symbol，供全站图标引用              |
 | `src/components/Navigation.astro`   | 首页介绍和四个内容面板的 HTML                    |
 | `src/components/TextBackdrop.astro` | 正文轮廓合并、柔化和单次着色的共用 SVG 滤镜      |
 | `src/components/Footer.astro`       | 版本、站点地图、服务状态和隐私入口               |
@@ -47,6 +49,10 @@ corepack pnpm dev
 
 头像直接使用 `resources.avatar` 的 public-cdn 地址，主页、加载壳、404 和付款跳转页统一引用；所有页面的 favicon 也直接使用该地址。图片在 HTML 解析时即可加载，不加入入场等待。圆角由源图片提供，前端不使用 CSS 圆角裁切或 canvas 转换，不额外设置 `crossorigin`，图片服务无需提供像素读取的 CORS 许可。`public/` 不保留头像副本，冻结设计与测试夹具中的图片保持不变。`avatar.spec.ts` 验证延迟图片不阻塞入场、无 CORS 许可仍能显示头像、图片加载后 favicon 继续使用 CDN 原图。
 
+## 图标
+
+图标统一来自 [Remix Icon](https://remixicon.com/)，使用安装包 `License` 中的 Remix Icon License v1.0；品牌图标仅链接到对应平台，站点头像与 favicon 不使用库图标。`remixicon` 是开发依赖，`src/lib/icons.ts` 维护语义名称与包内 SVG 路径，只在构建时读取所选文件，`Icons.astro` 输出内联 symbol。浏览器只引用 `#i-名称`，不请求外部 SVG、字体或库脚本。线性图标以填充轮廓编码，`.icon` 使用 `fill: currentColor; stroke: none`，不要额外描边。新增映射后同步核对入口语义；`IconName` 约束卡片配置及媒体图标切换，客户端只能使用类型导入，不得导入构建时读取逻辑。
+
 ## 门禁
 
 ```sh
@@ -59,7 +65,7 @@ corepack pnpm test:e2e
 
 浏览器测试先构建真实 `dist/`，用测试专用静态服务验证。外部网络由视频、文章 API 与图片夹具替代，阻止真实统计；部分媒体故障时序通过受控 MediaError 和 Promise 注入，实际加载、定位与解码仍由 Chromium 执行。无运行时测试开关或生产调试接口，测试工具不进入 `dist/`。
 
-视觉测试在同一浏览器进程、同一视口和字体回退条件下加载冻结原型与正式页面，消除鼠标悬停和随机视频差异后比较截图；避免把不同操作系统的字体光栅化误认为改版。正文衬底、字形投影、卡片组衬底与导航按钮投影由独立像素回归约束，冻结截图通过 `omitApprovedShadows` 在两页上仅移除这些已批准调整的效果，其余布局与样式仍严格比较。测试覆盖 1440、390、320px，对齐、透明边缘、滚动、控制栏与 popup 还使用真实 DOM 几何检查。
+视觉测试在同一浏览器进程、同一视口和字体回退条件下加载冻结原型与正式页面，消除鼠标悬停和随机视频差异后比较截图；避免把不同操作系统的字体光栅化误认为改版。正文衬底、字形投影、卡片组衬底与导航按钮投影由独立像素回归约束，冻结截图通过 `omitApprovedShadows` 在两页上仅移除这些已批准调整的效果。`applyApprovedIcons` 只向内存参考页补入已批准的 Remix 图标与对应填充规则，继续实际绘制和比较图标，不修改冻结文件；其余布局与样式仍严格比较。测试覆盖 1440、390、320px，对齐、透明边缘、滚动、控制栏与 popup 还使用真实 DOM 几何检查。
 
 确定性 CI 不能替代真实外部资源检查。发布前用不拦截网络的浏览器确认三个视频、MiSans、随机兜底图和文章 API；外部服务故障应与页面故障分别记录。
 

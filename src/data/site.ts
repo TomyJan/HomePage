@@ -1,3 +1,12 @@
+import type { IconName } from '../lib/icons';
+
+interface SiteLink {
+  title: string;
+  description: string;
+  href: string;
+  icon: IconName;
+}
+
 export const siteMetadata = {
   title: '荼蘼 TomyJan - 个人主页与官方网站',
   description:
@@ -14,7 +23,7 @@ export const services = [
     title: '博客',
     description: '114514年没更新',
     href: 'https://blog.tomys.top/',
-    icon: 'posts',
+    icon: 'blog',
   },
   {
     title: 'MoeAuth',
@@ -44,7 +53,7 @@ export const services = [
     title: 'MoeAI',
     description: '大模型聚合网关',
     href: 'https://ai.amoe.cc/',
-    icon: 'sparkle',
+    icon: 'robot',
   },
   {
     title: 'Moe 图床',
@@ -62,15 +71,15 @@ export const services = [
     title: 'TomyJan API',
     description: '公共免费API服务',
     href: 'https://api.tomys.top/',
-    icon: 'code',
+    icon: 'api',
   },
-];
+] satisfies SiteLink[];
 export const contact = [
   {
     title: 'GitHub',
     description: '@TomyJan',
     href: 'https://github.com/TomyJan',
-    icon: 'code',
+    icon: 'github',
   },
   {
     title: '支持小站',
@@ -82,15 +91,15 @@ export const contact = [
     title: 'Telegram',
     description: '@tomyjan',
     href: 'https://t.me/tomyjan/',
-    icon: 'send',
+    icon: 'telegram',
   },
   {
     title: 'QQ 群',
     description: '来聊一会儿',
     href: 'https://qun.tomys.top/',
-    icon: 'message',
+    icon: 'qq',
   },
-];
+] satisfies SiteLink[];
 export const resources = {
   avatar: 'https://public-cdn.tomys.top/head.png',
   font: 'https://cdn.amoe.cc/web-static/public/font/misans/misans.css',
