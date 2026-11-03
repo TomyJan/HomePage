@@ -816,8 +816,8 @@ summary:focus-visible {
 }
 .is-viewing .player-bar:before {
   inset: auto 0 0;
-  height: clamp(160px, 30dvh, 260px);
-  background: linear-gradient(180deg, #0000, #0003 30%, #0009 62%, #000e);
+  height: clamp(96px, 18dvh, 160px);
+  background: linear-gradient(180deg, #0000, #0001 36%, #0004 70%, #0009);
   opacity: 1;
 }
 .is-viewing.controls-asleep {
