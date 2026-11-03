@@ -10,8 +10,8 @@ import { icons, iconLicense } from '../lib/icons';
 >
   <metadata>{iconLicense}</metadata>
   <defs>
-    {icons.map(({ name, content }) => (
-      <symbol id={`i-${name}`} viewBox="0 0 24 24" set:html={content} />
+    {icons.map(({ name, viewBox, content }) => (
+      <symbol id={`i-${name}`} viewBox={viewBox} set:html={content} />
     ))}
   </defs>
 </svg>

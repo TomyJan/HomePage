@@ -6,7 +6,7 @@
 
 二次元、清爽、现代、简约、高效，略带科技感。视频优先，内容集中于左下角，右上留白。中性深色，文字阴影和到边缘完全透明的局部渐变保障可读性，不铺满屏遮罩。全部文字使用 MiSans。
 
-功能图标使用 Lucide 的圆润线性风格，统一 1.75px 描边与圆端点、圆转角，保持既有尺寸、布局、颜色、投影与切换动画。博客入口用羽毛笔，文章导航用文章图标；MoeAI 用机器人，API 用代码窗口，MoeCDN 用全球网络，镜像站用下载，云盘用云。导航、媒体控制、关闭与展开箭头同样使用 Lucide；GitHub、Telegram 与 QQ 保留 Remix Icon 的对应品牌图标。图标按需内联 SVG，不加载图标字体或浏览器图标库。
+全站图标统一使用 Font Awesome Free：功能使用 Classic Solid 实心款，GitHub、Telegram、QQ 使用官方 Brands。保持既有尺寸、布局、颜色、投影与切换动画。博客入口用钢笔尖，文章导航用文章图标；MoeAI 用机器人，TomyJan API 用代码，MoeCDN 用全球网络，镜像站用下载，云盘用云。导航、媒体控制、关闭与展开箭头也来自同一图标家族。保留每个图标原始 viewBox 和路径，以 currentColor 填充，不额外描边；图标按需内联 SVG，不加载图标字体或浏览器图标库。
 
 正式网页标题为“荼蘼 TomyJan - 个人主页与官方网站”，描述为“TomyJan 的个人主页与官方网站，提供博客文章、服务导航及联系信息。”。元信息集中在 `src/data/site.ts#siteMetadata`，Open Graph 使用同一标题和描述；canonical 与 Open Graph URL 指向 Astro 配置中的正式主域。冻结原型保留历史元信息，不作为 SEO 文案基准。
 

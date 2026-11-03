@@ -51,9 +51,9 @@ corepack pnpm dev
 
 ## 图标
 
-功能图标来自 [Lucide](https://lucide.dev/)，使用安装包 `LICENSE` 中的 ISC 与部分 Feather 衍生图标的 MIT 许可，完整许可保留在输出 SVG 的 metadata 中。GitHub、Telegram、QQ 的品牌图标来自 [Remix Icon](https://remixicon.com/)，使用安装包 `License` 中的 Remix Icon License v1.0，仅链接到对应平台；站点头像与 favicon 不使用库图标。
+功能与品牌入口图标统一来自 [Font Awesome Free](https://fontawesome.com/)，分别使用 Classic Solid 实心款与 Brands。SVG 图标适用 CC BY 4.0，安装包 `LICENSE.txt` 中的许可与 Fonticons 署名保留在输出 SVG 的 metadata 中。GitHub、Telegram、QQ 使用对应品牌图标，仅链接到对应平台；站点头像与 favicon 不使用库图标。
 
-`lucide-static` 与 `remixicon` 均为开发依赖。`src/lib/icons.ts` 维护语义名称与包内 SVG 路径，只在构建时读取所选文件，`Icons.astro` 输出内联 symbol。浏览器只引用 `#i-名称`，不请求外部 SVG、字体或库脚本。Lucide 使用无填充、1.75px 描边、圆端点与圆转角；品牌图标用单独的填充组保留原轮廓，不额外描边。新增映射后同步核对入口语义；`IconName` 约束卡片配置及媒体图标切换，客户端只能使用类型导入，不得导入构建时读取逻辑。
+图标开发依赖仅保留 `@fortawesome/free-solid-svg-icons` 与 `@fortawesome/free-brands-svg-icons`。`src/lib/icons.ts` 按需导入官方图标定义，维护语义名称映射，`Icons.astro` 在构建时输出内联 symbol；不将图标复制为独立维护的源码，也不引入 Font Awesome 客户端运行时。每个 symbol 保留原始 viewBox，路径使用 currentColor 填充且不额外描边，浏览器只引用 `#i-名称`，不请求外部 SVG、字体或库脚本。新增映射后同步核对入口语义；`IconName` 约束卡片配置及媒体图标切换，客户端只能使用类型导入，不得导入构建时逻辑。
 
 ## 门禁
 
@@ -67,7 +67,7 @@ corepack pnpm test:e2e
 
 浏览器测试先构建真实 `dist/`，用测试专用静态服务验证。外部网络由视频、文章 API 与图片夹具替代，阻止真实统计；部分媒体故障时序通过受控 MediaError 和 Promise 注入，实际加载、定位与解码仍由 Chromium 执行。无运行时测试开关或生产调试接口，测试工具不进入 `dist/`。
 
-视觉测试在同一浏览器进程、同一视口和字体回退条件下加载冻结原型与正式页面，消除鼠标悬停和随机视频差异后比较截图；避免把不同操作系统的字体光栅化误认为改版。正文衬底、字形投影、卡片组衬底与导航按钮投影由独立像素回归约束，冻结截图通过 `omitApprovedShadows` 在两页上仅移除这些已批准调整的效果。`applyApprovedIcons` 只向内存参考页补入当前功能与品牌图标及对应描边规则，继续实际绘制和比较图标，不修改冻结文件；其余布局与样式仍严格比较。测试覆盖 1440、390、320px，对齐、透明边缘、滚动、控制栏与 popup 还使用真实 DOM 几何检查。
+视觉测试在同一浏览器进程、同一视口和字体回退条件下加载冻结原型与正式页面，消除鼠标悬停和随机视频差异后比较截图；避免把不同操作系统的字体光栅化误认为改版。正文衬底、字形投影、卡片组衬底与导航按钮投影由独立像素回归约束，冻结截图通过 `omitApprovedShadows` 在两页上仅移除这些已批准调整的效果。`applyApprovedIcons` 只向内存参考页补入当前功能与品牌图标及对应填充规则，继续实际绘制和比较图标，不修改冻结文件；其余布局与样式仍严格比较。测试覆盖 1440、390、320px，对齐、透明边缘、滚动、控制栏与 popup 还使用真实 DOM 几何检查。
 
 确定性 CI 不能替代真实外部资源检查。发布前用不拦截网络的浏览器确认三个视频、MiSans、随机兜底图和文章 API；外部服务故障应与页面故障分别记录。
 

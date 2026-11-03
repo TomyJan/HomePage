@@ -83,8 +83,8 @@ export async function applyApprovedIcons(page: Page) {
     ({ icons, links }) => {
       document.querySelector('.icon-defs defs')!.innerHTML = icons
         .map(
-          ({ name, content }) =>
-            `<symbol id="i-${name}" viewBox="0 0 24 24">${content}</symbol>`,
+          ({ name, viewBox, content }) =>
+            `<symbol id="i-${name}" viewBox="${viewBox}">${content}</symbol>`,
         )
         .join('');
       for (const { href, icon } of links) {
@@ -102,8 +102,7 @@ export async function applyApprovedIcons(page: Page) {
     },
   );
   await page.addStyleTag({
-    content:
-      '.icon { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round }',
+    content: '.icon { fill: currentColor; stroke: none }',
   });
 }
 export async function acknowledgeNotice(page: Page) {
