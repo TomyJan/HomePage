@@ -22,7 +22,7 @@
     "verify": "pnpm format:check && pnpm check && pnpm test && pnpm build && pnpm verify:build"
   },
   "dependencies": {
-    "astro": "7.4.7"
+    "astro": "7.4.8"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
